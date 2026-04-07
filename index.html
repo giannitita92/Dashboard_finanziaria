@@ -10,24 +10,22 @@
   --bg:#0d0f12;--surface:#141720;--surface2:#1c2030;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
   --text:#e8eaf0;--text2:#8b90a0;--text3:#555c70;
-  --up:#22c98a;--up-bg:rgba(34,201,138,0.10);
-  --down:#f05252;--down-bg:rgba(240,82,82,0.10);
-  --accent:#4f8ef7;
+  --up:#22c98a;--up-bg:rgba(34,201,138,0.12);
+  --down:#f05252;--down-bg:rgba(240,82,82,0.12);
+  --accent:#4f8ef7;--accent-bg:rgba(79,142,247,0.10);
   --r:12px;--rs:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
 
-/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:10px}
 .header h1{font-size:18px;font-weight:500;display:flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
-.live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.25)}
+.live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.3)}
 
-/* TABS */
 .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
@@ -36,51 +34,64 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:20px}
 .sec-label:first-child{margin-top:0}
 
-/* TICKER TAPE */
 .tape-wrap{border-radius:var(--rs);overflow:hidden;margin-bottom:18px;background:var(--surface);border:.5px solid var(--border)}
 
 /* LAYOUT */
-.main-layout{display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start}
+.main-layout{display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:start}
 
-/* SIDEBAR — solo lista nomi cliccabili */
+/* SIDEBAR */
 .sidebar{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .sidebar-title{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:10px 13px 8px;border-bottom:.5px solid var(--border)}
-.scard{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 13px;border-bottom:.5px solid var(--border);
-  cursor:pointer;transition:background .12s;position:relative;
-}
+.scard{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:.5px solid var(--border);cursor:pointer;transition:background .12s;position:relative}
 .scard:last-child{border-bottom:none}
 .scard:hover{background:var(--surface2)}
 .scard.active{background:var(--surface2)}
 .scard.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--accent)}
-.scard-flag{font-size:14px;flex-shrink:0}
+.scard-flag{font-size:13px;flex-shrink:0}
 .scard-info{display:flex;flex-direction:column;min-width:0}
 .scard-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .scard-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
 
-/* COLONNA DESTRA: ticker box + grafico */
+/* COLONNA DESTRA */
 .right-col{display:flex;flex-direction:column;gap:10px}
 
-/* BOX TICKER — widget Tickers TV orizzontale */
-.ticker-box{
-  background:var(--surface);border:.5px solid var(--border);
-  border-radius:var(--r);overflow:hidden;
+/* PRICE BOXES */
+.price-boxes{display:grid;gap:7px}
+.pbox{
+  background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);
+  padding:10px 13px;display:flex;align-items:center;justify-content:space-between;
+  transition:border-color .15s;cursor:pointer;
 }
-.ticker-box-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:9px 14px 0}
+.pbox:hover{border-color:var(--border2)}
+.pbox.active{border-color:var(--accent);background:var(--surface2)}
+.pbox-left{display:flex;align-items:center;gap:8px}
+.pbox-flag{font-size:14px}
+.pbox-name{font-size:13px;font-weight:500;color:var(--text)}
+.pbox-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+.pbox-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.pbox-price{font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+.pbox-pct{font-size:11px;font-weight:500;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:3px}
+.pbox-chg{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)}
+.badge-up{background:var(--up-bg);color:var(--up)}
+.badge-down{background:var(--down-bg);color:var(--down)}
+.col-up{color:var(--up)}.col-down{color:var(--down)}
+.skel{display:inline-block;height:11px;border-radius:3px;background:var(--surface2);animation:sk 1.5s infinite}
+@keyframes sk{0%,100%{opacity:.3}50%{opacity:.8}}
 
-/* CHART PANEL */
+/* CHART */
 .chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
-.chart-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:8px}
-.chart-sym-name{font-size:14px;font-weight:500;color:var(--text)}
-.chart-sym-code{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+.chart-topbar{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:8px}
+.chart-meta{display:flex;flex-direction:column;gap:1px}
+.chart-name{font-size:13px;font-weight:500;color:var(--text)}
+.chart-code{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
 .range-btns{display:flex;gap:3px;flex-wrap:wrap}
-.rbtn{font-size:11px;padding:4px 10px;border:.5px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);background:none;font-family:'DM Sans',sans-serif;transition:all .12s}
+.rbtn{font-size:11px;padding:3px 9px;border:.5px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);background:none;font-family:'DM Sans',sans-serif;transition:all .12s}
 .rbtn:hover{background:var(--surface2);color:var(--text)}
 .rbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.chart-wrap{height:440px;width:100%}
+.chart-wrap{height:430px;width:100%}
 .chart-wrap .tradingview-widget-container,
 .chart-wrap .tradingview-widget-container__widget{height:100%!important;width:100%!important}
+.last-update{font-size:10px;color:var(--text3);padding:5px 13px;text-align:right}
 
 /* OVERVIEW */
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
@@ -95,7 +106,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ntitle{font-size:13px;color:var(--text);line-height:1.5;text-decoration:none;display:block}
 .ntitle:hover{color:var(--accent)}
 .ntime{font-size:11px;color:var(--text3);margin-top:7px}
-.ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:rgba(79,142,247,0.1);color:var(--accent);margin-left:5px}
+.ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:var(--accent-bg);color:var(--accent);margin-left:5px}
 .nimg{width:100%;height:130px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:block}
 
 /* PORTFOLIO */
@@ -108,13 +119,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 @media(max-width:960px){
   .main-layout{grid-template-columns:1fr}
-  .chart-wrap{height:360px}
+  .chart-wrap{height:340px}
   .ov-grid{grid-template-columns:1fr}
 }
 @media(max-width:600px){
   .tabs{overflow-x:auto;width:100%}
   .tab{padding:7px 11px;font-size:12px}
   .news-grid{grid-template-columns:1fr}
+  .price-boxes{grid-template-columns:1fr 1fr}
 }
 </style>
 </head>
@@ -138,24 +150,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
   <!-- ══ INDICI ══════════════════════════════════════════════════════════ -->
   <div id="sec-indices" class="section active">
-
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
         {"symbols":[
-          {"proName":"TVC:FTMIB","title":"FTSE MIB"},
-          {"proName":"XETR:DAX","title":"DAX"},
-          {"proName":"EURONEXT:PX1","title":"CAC 40"},
-          {"proName":"INDEX:UKX","title":"FTSE 100"},
-          {"proName":"BME:IBC","title":"IBEX 35"},
-          {"proName":"TVC:SX5E","title":"Euro Stoxx 50"},
-          {"proName":"SP:SPX","title":"S&P 500"},
-          {"proName":"NASDAQ:NDX","title":"Nasdaq 100"},
-          {"proName":"TVC:GOLD","title":"Oro"},
-          {"proName":"TVC:USOIL","title":"Petrolio"},
-          {"proName":"FX:EURUSD","title":"EUR/USD"},
-          {"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
+          {"proName":"TVC:FTMIB","title":"FTSE MIB"},{"proName":"XETR:DAX","title":"DAX"},
+          {"proName":"EURONEXT:PX1","title":"CAC 40"},{"proName":"INDEX:UKX","title":"FTSE 100"},
+          {"proName":"BME:IBC","title":"IBEX 35"},{"proName":"TVC:SX5E","title":"Euro Stoxx 50"},
+          {"proName":"SP:SPX","title":"S&P 500"},{"proName":"NASDAQ:NDX","title":"Nasdaq 100"},
+          {"proName":"TVC:GOLD","title":"Oro"},{"proName":"TVC:USOIL","title":"Petrolio"},
+          {"proName":"FX:EURUSD","title":"EUR/USD"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
           {"proName":"BINANCE:ETHUSDT","title":"Ethereum"}
         ],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"it"}
         </script>
@@ -164,41 +169,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
     <div class="sec-label">Seleziona un indice</div>
     <div class="main-layout">
-
-      <!-- Sidebar indici -->
-      <div class="sidebar" id="idx-sidebar">
-        <div class="sidebar-title">Indici mondiali</div>
-      </div>
-
-      <!-- Colonna destra: box prezzi + grafico -->
+      <div class="sidebar" id="idx-sidebar"><div class="sidebar-title">Indici mondiali</div></div>
       <div class="right-col">
-
-        <!-- BOX prezzi live tutti gli indici -->
-        <div class="ticker-box">
-          <div class="ticker-box-label">Prezzi e variazioni in tempo reale</div>
-          <div class="tradingview-widget-container" style="padding:4px 0">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
-            {"symbols":[
-              {"proName":"TVC:FTMIB","title":"FTSE MIB"},
-              {"proName":"XETR:DAX","title":"DAX"},
-              {"proName":"EURONEXT:PX1","title":"CAC 40"},
-              {"proName":"INDEX:UKX","title":"FTSE 100"},
-              {"proName":"BME:IBC","title":"IBEX 35"},
-              {"proName":"TVC:SX5E","title":"Euro Stoxx 50"},
-              {"proName":"SP:SPX","title":"S&P 500"},
-              {"proName":"NASDAQ:NDX","title":"Nasdaq 100"}
-            ],"colorTheme":"dark","isTransparent":true,"showSymbolLogo":true,"locale":"it"}
-            </script>
-          </div>
-        </div>
-
-        <!-- Grafico indice selezionato -->
+        <div class="price-boxes" id="idx-boxes" style="grid-template-columns:repeat(4,1fr)"></div>
         <div class="chart-panel">
           <div class="chart-topbar">
-            <div>
-              <div class="chart-sym-name" id="idx-chart-name">FTSE MIB</div>
-              <div class="chart-sym-code" id="idx-chart-code">TVC:FTMIB</div>
+            <div class="chart-meta">
+              <div class="chart-name" id="idx-chart-name">FTSE MIB</div>
+              <div class="chart-code" id="idx-chart-code">TVC:FTMIB</div>
             </div>
             <div class="range-btns" id="idx-rbns">
               <button class="rbtn active" onclick="setIdxRange(this,'1','')">Oggi</button>
@@ -210,11 +188,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             </div>
           </div>
           <div class="chart-wrap" id="idx-chart-wrap"></div>
+          <div class="last-update" id="idx-update"></div>
         </div>
       </div>
     </div>
 
-    <!-- Panoramica -->
     <div class="sec-label">Panoramica mercati</div>
     <div class="ov-grid">
       <div class="ov-card">
@@ -223,9 +201,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="tradingview-widget-container__widget" style="height:320px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
           {"colorTheme":"dark","dateRange":"1D","showChart":false,"locale":"it","isTransparent":true,"showSymbolLogo":true,"width":"100%","height":"320","tabs":[{"title":"Indici","symbols":[
-            {"s":"TVC:FTMIB","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},
-            {"s":"EURONEXT:PX1","d":"CAC 40"},{"s":"INDEX:UKX","d":"FTSE 100"},
-            {"s":"BME:IBC","d":"IBEX 35"},{"s":"TVC:SX5E","d":"Euro Stoxx 50"},
+            {"s":"TVC:FTMIB","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},{"s":"EURONEXT:PX1","d":"CAC 40"},
+            {"s":"INDEX:UKX","d":"FTSE 100"},{"s":"BME:IBC","d":"IBEX 35"},{"s":"TVC:SX5E","d":"Euro Stoxx 50"},
             {"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:NDX","d":"Nasdaq 100"}
           ],"originalTitle":"Indici"}]}
           </script>
@@ -257,46 +234,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- ══ TITOLI BIT ═══════════════════════════════════════════════════════ -->
+  <!-- ══ TITOLI BIT ══════════════════════════════════════════════════════ -->
   <div id="sec-stocks" class="section">
     <div class="sec-label">Seleziona un titolo</div>
     <div class="main-layout">
-
-      <!-- Sidebar titoli -->
-      <div class="sidebar" id="stk-sidebar">
-        <div class="sidebar-title">Borsa Italiana</div>
-      </div>
-
-      <!-- Colonna destra: box prezzi + grafico -->
+      <div class="sidebar" id="stk-sidebar"><div class="sidebar-title">Borsa Italiana</div></div>
       <div class="right-col">
-
-        <!-- BOX prezzi live tutti i titoli BIT -->
-        <div class="ticker-box">
-          <div class="ticker-box-label">Prezzi e variazioni in tempo reale</div>
-          <div class="tradingview-widget-container" style="padding:4px 0">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
-            {"symbols":[
-              {"proName":"MIL:BMPS","title":"Monte Paschi"},
-              {"proName":"MIL:ISP","title":"Intesa Sanpaolo"},
-              {"proName":"MIL:LDO","title":"Leonardo"},
-              {"proName":"MIL:BAMI","title":"Banco BPM"},
-              {"proName":"MIL:G","title":"Generali"},
-              {"proName":"MIL:UCG","title":"UniCredit"},
-              {"proName":"MIL:PST","title":"Poste Italiane"},
-              {"proName":"MIL:ENEL","title":"Enel"},
-              {"proName":"MIL:MB","title":"Mediobanca"}
-            ],"colorTheme":"dark","isTransparent":true,"showSymbolLogo":true,"locale":"it"}
-            </script>
-          </div>
-        </div>
-
-        <!-- Grafico titolo selezionato -->
+        <div class="price-boxes" id="stk-boxes" style="grid-template-columns:repeat(3,1fr)"></div>
         <div class="chart-panel">
           <div class="chart-topbar">
-            <div>
-              <div class="chart-sym-name" id="stk-chart-name">Enel</div>
-              <div class="chart-sym-code" id="stk-chart-code">MIL:ENEL</div>
+            <div class="chart-meta">
+              <div class="chart-name" id="stk-chart-name">Enel</div>
+              <div class="chart-code" id="stk-chart-code">MIL:ENEL</div>
             </div>
             <div class="range-btns" id="stk-rbns">
               <button class="rbtn active" onclick="setStkRange(this,'1','')">Oggi</button>
@@ -308,6 +257,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             </div>
           </div>
           <div class="chart-wrap" id="stk-chart-wrap"></div>
+          <div class="last-update" id="stk-update"></div>
         </div>
       </div>
     </div>
@@ -316,9 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <!-- ══ NOTIZIE ══════════════════════════════════════════════════════════ -->
   <div id="sec-news" class="section">
     <div class="sec-label">Ultime notizie economico-finanziarie</div>
-    <div class="news-grid" id="news-grid">
-      <div style="color:var(--text3);font-size:13px;padding:8px 0">Caricamento...</div>
-    </div>
+    <div class="news-grid" id="news-grid"><div style="color:var(--text3);font-size:13px;padding:8px 0">Caricamento...</div></div>
   </div>
 
   <!-- ══ PORTAFOGLIO ══════════════════════════════════════════════════════ -->
@@ -334,7 +282,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -348,32 +295,191 @@ setInterval(()=>{
 
 // ── DATI ───────────────────────────────────────────────────────────────────
 const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      sym:'TVC:FTMIB'},
-  {flag:'🇩🇪', name:'DAX',           sym:'XETR:DAX'},
-  {flag:'🇫🇷', name:'CAC 40',        sym:'EURONEXT:PX1'},
-  {flag:'🇬🇧', name:'FTSE 100',      sym:'INDEX:UKX'},
-  {flag:'🇪🇸', name:'IBEX 35',       sym:'BME:IBC'},
-  {flag:'🇪🇺', name:'Euro Stoxx 50', sym:'TVC:SX5E'},
-  {flag:'🇺🇸', name:'S&P 500',       sym:'SP:SPX'},
-  {flag:'🇺🇸', name:'Nasdaq 100',    sym:'NASDAQ:NDX'},
+  {flag:'🇮🇹', name:'FTSE MIB',      sym:'TVC:FTMIB',      scanner:'FTSEMIB',      market:'index'},
+  {flag:'🇩🇪', name:'DAX',           sym:'XETR:DAX',       scanner:'DAX',          market:'index'},
+  {flag:'🇫🇷', name:'CAC 40',        sym:'EURONEXT:PX1',   scanner:'CAC40',        market:'index'},
+  {flag:'🇬🇧', name:'FTSE 100',      sym:'INDEX:UKX',      scanner:'UKX',          market:'index'},
+  {flag:'🇪🇸', name:'IBEX 35',       sym:'BME:IBC',        scanner:'IBEX35',       market:'index'},
+  {flag:'🇪🇺', name:'Euro Stoxx 50', sym:'TVC:SX5E',       scanner:'SX5E',         market:'index'},
+  {flag:'🇺🇸', name:'S&P 500',       sym:'SP:SPX',         scanner:'SPX',          market:'index'},
+  {flag:'🇺🇸', name:'Nasdaq 100',    sym:'NASDAQ:NDX',     scanner:'NDX',          market:'index'},
 ];
+
 const STOCKS = [
-  {flag:'🏦', name:'Monte Paschi Siena', sym:'MIL:BMPS'},
-  {flag:'🏦', name:'Intesa Sanpaolo',    sym:'MIL:ISP'},
-  {flag:'✈️', name:'Leonardo',           sym:'MIL:LDO'},
-  {flag:'🏦', name:'Banco BPM',          sym:'MIL:BAMI'},
-  {flag:'🛡️', name:'Generali',           sym:'MIL:G'},
-  {flag:'🏦', name:'UniCredit',          sym:'MIL:UCG'},
-  {flag:'📮', name:'Poste Italiane',     sym:'MIL:PST'},
-  {flag:'⚡', name:'Enel',              sym:'MIL:ENEL'},
-  {flag:'🏦', name:'Mediobanca',         sym:'MIL:MB'},
+  {flag:'🏦', name:'Monte Paschi',   sym:'MIL:BMPS', scanner:'BMPS', market:'stock'},
+  {flag:'🏦', name:'Intesa Sanpaolo',sym:'MIL:ISP',  scanner:'ISP',  market:'stock'},
+  {flag:'✈️', name:'Leonardo',       sym:'MIL:LDO',  scanner:'LDO',  market:'stock'},
+  {flag:'🏦', name:'Banco BPM',      sym:'MIL:BAMI', scanner:'BAMI', market:'stock'},
+  {flag:'🛡️', name:'Generali',       sym:'MIL:G',    scanner:'G',    market:'stock'},
+  {flag:'🏦', name:'UniCredit',      sym:'MIL:UCG',  scanner:'UCG',  market:'stock'},
+  {flag:'📮', name:'Poste Italiane', sym:'MIL:PST',  scanner:'PST',  market:'stock'},
+  {flag:'⚡', name:'Enel',          sym:'MIL:ENEL', scanner:'ENEL', market:'stock'},
+  {flag:'🏦', name:'Mediobanca',     sym:'MIL:MB',   scanner:'MB',   market:'stock'},
 ];
 
-// ── STATO ──────────────────────────────────────────────────────────────────
-let idxSel = 0, idxInterval = '1', idxRange = '';
-let stkSel = 7, stkInterval = '1', stkRange = '';
+let idxSel=0, idxInterval='1', idxRange='';
+let stkSel=7, stkInterval='1', stkRange='';
+const cache = {};
 
-// ── GRAFICO TV ─────────────────────────────────────────────────────────────
+// ── TRADINGVIEW SCANNER API ─────────────────────────────────────────────────
+// Endpoint pubblico usato dal sito TradingView — restituisce dati intraday reali
+async function fetchScanner(symbols, market) {
+  const key = symbols.join(',') + market;
+  if (cache[key] && Date.now() - cache[key].ts < 15000) return cache[key].data;
+
+  const url = market === 'stock'
+    ? 'https://scanner.tradingview.com/italy/scan'
+    : 'https://scanner.tradingview.com/global/scan';
+
+  const body = {
+    symbols: { tickers: symbols.map(s => s.sym || s), query: { types: [] } },
+    columns: ['name','close','change','change_abs','open','high','low','volume'],
+  };
+
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    cache[key] = { data: d.data || [], ts: Date.now() };
+    return d.data || [];
+  } catch {
+    // fallback: scanner globale
+    try {
+      const r2 = await fetch('https://scanner.tradingview.com/global/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const d2 = await r2.json();
+      cache[key] = { data: d2.data || [], ts: Date.now() };
+      return d2.data || [];
+    } catch { return []; }
+  }
+}
+
+// ── FORMAT ─────────────────────────────────────────────────────────────────
+function fmt(n, d=2) {
+  if (n == null || isNaN(n)) return '—';
+  return Number(n).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function sign(n) { return n >= 0 ? '+' : ''; }
+
+// ── BUILD PRICE BOXES ───────────────────────────────────────────────────────
+function buildBoxes(containerId, items, onSelect, selIdx) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  items.forEach((item, i) => {
+    const box = document.createElement('div');
+    box.className = 'pbox' + (i === selIdx ? ' active' : '');
+    box.id = 'box-' + containerId + '-' + i;
+    box.innerHTML = `
+      <div class="pbox-left">
+        <span class="pbox-flag">${item.flag||''}</span>
+        <div>
+          <div class="pbox-name">${item.name}</div>
+          <div class="pbox-sym">${item.sym.split(':')[1]}</div>
+        </div>
+      </div>
+      <div class="pbox-right">
+        <span class="pbox-price" id="bp-${containerId}-${i}"><span class="skel" style="width:55px"></span></span>
+        <span class="pbox-pct badge-up" id="bpct-${containerId}-${i}"><span class="skel" style="width:38px"></span></span>
+        <span class="pbox-chg" id="bchg-${containerId}-${i}"></span>
+      </div>`;
+    box.onclick = () => {
+      wrap.querySelectorAll('.pbox').forEach(b => b.classList.remove('active'));
+      box.classList.add('active');
+      onSelect(item, i);
+    };
+    wrap.appendChild(box);
+  });
+}
+
+function updateBoxes(containerId, items, rows) {
+  const byName = {};
+  rows.forEach(r => { byName[r.s] = r.d; });
+
+  items.forEach((item, i) => {
+    const shortSym = item.sym.split(':')[1]; // es. "ENEL", "BMPS"
+    // Il scanner restituisce simboli nel formato "MIL:ENEL" oppure "ENEL"
+    const key = Object.keys(byName).find(k =>
+      k === item.sym || k.endsWith(':' + shortSym) || k === shortSym
+    );
+    if (!key) return;
+    const d = byName[key]; // [name, close, change%, change_abs, open, high, low, volume]
+    if (!d || d[1] == null) return;
+
+    const price   = d[1];
+    const pct     = d[2];
+    const chgAbs  = d[3];
+    const up      = pct >= 0;
+
+    const priceEl = document.getElementById(`bp-${containerId}-${i}`);
+    const pctEl   = document.getElementById(`bpct-${containerId}-${i}`);
+    const chgEl   = document.getElementById(`bchg-${containerId}-${i}`);
+
+    if (priceEl) priceEl.textContent = fmt(price);
+    if (pctEl) {
+      pctEl.textContent = `${sign(pct)}${fmt(pct,2)}%`;
+      pctEl.className = `pbox-pct ${up ? 'badge-up' : 'badge-down'}`;
+    }
+    if (chgEl) {
+      chgEl.textContent = `${sign(chgAbs)}${fmt(chgAbs,2)}`;
+      chgEl.className = `pbox-chg ${up ? 'col-up' : 'col-down'}`;
+    }
+  });
+}
+
+// ── REFRESH PRICES ──────────────────────────────────────────────────────────
+async function refreshPrices() {
+  const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+  // Indici
+  const idxRows = await fetchScanner(INDICES, 'index');
+  updateBoxes('idx-boxes', INDICES, idxRows);
+  const idxUpEl = document.getElementById('idx-update');
+  if (idxUpEl) idxUpEl.textContent = `Aggiornato alle ${now}`;
+
+  // Titoli BIT
+  const stkRows = await fetchScanner(STOCKS, 'stock');
+  updateBoxes('stk-boxes', STOCKS, stkRows);
+  const stkUpEl = document.getElementById('stk-update');
+  if (stkUpEl) stkUpEl.textContent = `Aggiornato alle ${now}`;
+}
+
+// ── SIDEBAR ─────────────────────────────────────────────────────────────────
+function buildSidebar(containerId, items, boxesId, chartId, nameId, codeId, getInt, getRng, setSel) {
+  const sidebar = document.getElementById(containerId);
+  sidebar.querySelectorAll('.scard').forEach(c => c.remove());
+  items.forEach((item, i) => {
+    const isDefault = (containerId === 'idx-sidebar' && i === 0) || (containerId === 'stk-sidebar' && i === 7);
+    const card = document.createElement('div');
+    card.className = 'scard' + (isDefault ? ' active' : '');
+    card.innerHTML = `
+      <span class="scard-flag">${item.flag||''}</span>
+      <div class="scard-info">
+        <span class="scard-name">${item.name}</span>
+        <span class="scard-sym">${item.sym.split(':')[1]}</span>
+      </div>`;
+    card.onclick = () => {
+      sidebar.querySelectorAll('.scard').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      // Sincronizza anche il box attivo
+      const wrap = document.getElementById(boxesId);
+      wrap.querySelectorAll('.pbox').forEach((b,j) => b.classList.toggle('active', j===i));
+      setSel(i);
+      document.getElementById(nameId).textContent = item.name;
+      document.getElementById(codeId).textContent = item.sym;
+      buildChart(chartId, item.sym, getInt(), getRng());
+    };
+    sidebar.appendChild(card);
+  });
+}
+
+// ── CHART ───────────────────────────────────────────────────────────────────
 function buildChart(containerId, sym, interval, range) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
@@ -401,47 +507,21 @@ function buildChart(containerId, sym, interval, range) {
   div.appendChild(s);
 }
 
-// ── SIDEBAR ────────────────────────────────────────────────────────────────
-function buildSidebar(containerId, items, chartId, nameId, codeId, getInterval, getRange, setSel) {
-  const sidebar = document.getElementById(containerId);
-  sidebar.querySelectorAll('.scard').forEach(c => c.remove());
-  items.forEach((item, i) => {
-    const card = document.createElement('div');
-    const isFirst = (containerId === 'idx-sidebar' && i === 0) || (containerId === 'stk-sidebar' && i === 7);
-    card.className = 'scard' + (isFirst ? ' active' : '');
-    card.innerHTML = `
-      <span class="scard-flag">${item.flag||''}</span>
-      <div class="scard-info">
-        <span class="scard-name">${item.name}</span>
-        <span class="scard-sym">${item.sym.split(':')[1]}</span>
-      </div>`;
-    card.onclick = () => {
-      sidebar.querySelectorAll('.scard').forEach(c => c.classList.remove('active'));
-      card.classList.add('active');
-      setSel(i);
-      document.getElementById(nameId).textContent = item.name;
-      document.getElementById(codeId).textContent = item.sym;
-      buildChart(chartId, item.sym, getInterval(), getRange());
-    };
-    sidebar.appendChild(card);
-  });
-}
-
-// ── RANGE BUTTONS ──────────────────────────────────────────────────────────
+// ── RANGE BUTTONS ───────────────────────────────────────────────────────────
 function setIdxRange(btn, interval, range) {
-  idxInterval = interval; idxRange = range;
-  document.querySelectorAll('#idx-rbns .rbtn').forEach(b => b.classList.remove('active'));
+  idxInterval=interval; idxRange=range;
+  document.querySelectorAll('#idx-rbns .rbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   buildChart('idx-chart-wrap', INDICES[idxSel].sym, interval, range);
 }
 function setStkRange(btn, interval, range) {
-  stkInterval = interval; stkRange = range;
-  document.querySelectorAll('#stk-rbns .rbtn').forEach(b => b.classList.remove('active'));
+  stkInterval=interval; stkRange=range;
+  document.querySelectorAll('#stk-rbns .rbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   buildChart('stk-chart-wrap', STOCKS[stkSel].sym, interval, range);
 }
 
-// ── NEWS ───────────────────────────────────────────────────────────────────
+// ── NEWS ────────────────────────────────────────────────────────────────────
 const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
 async function loadNews() {
   const grid = document.getElementById('news-grid');
@@ -449,50 +529,52 @@ async function loadNews() {
     const r = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FKEY}`);
     const items = await r.json();
     if (!items?.length) throw new Error();
-    items.sort((a,b) => b.datetime - a.datetime);
-    grid.innerHTML = items.slice(0,18).map(n => `
+    items.sort((a,b)=>b.datetime-a.datetime);
+    grid.innerHTML = items.slice(0,18).map(n=>`
       <div class="ncard">
-        ${n.image ? `<img class="nimg" src="${n.image}" onerror="this.style.display='none'" alt="">` : ''}
+        ${n.image?`<img class="nimg" src="${n.image}" onerror="this.style.display='none'" alt="">` :''}
         <div class="nsrc">${n.source}<span class="ncat">${n.category}</span></div>
         <a class="ntitle" href="${n.url}" target="_blank" rel="noopener">${n.headline}</a>
         <div class="ntime">${new Date(n.datetime*1000).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
       </div>`).join('');
   } catch {
     try {
-      const r2 = await fetch('https://api.rss2json.com/v1/api.json?rss_url='
-        + encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml') + '&count=18');
+      const r2 = await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml')+'&count=18');
       const d = await r2.json();
-      grid.innerHTML = (d.items||[]).map(i => `
+      grid.innerHTML = (d.items||[]).map(i=>`
         <div class="ncard">
-          ${i.thumbnail ? `<img class="nimg" src="${i.thumbnail}" onerror="this.style.display='none'" alt="">` : ''}
+          ${i.thumbnail?`<img class="nimg" src="${i.thumbnail}" onerror="this.style.display='none'" alt="">`:''}
           <div class="nsrc">Il Sole 24 Ore</div>
           <a class="ntitle" href="${i.link}" target="_blank" rel="noopener">${i.title}</a>
           <div class="ntime">${new Date(i.pubDate).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-        </div>`).join('') || '<p style="color:var(--text3)">Nessuna notizia.</p>';
+        </div>`).join('')||'<p style="color:var(--text3)">Nessuna notizia.</p>';
     } catch {
-      grid.innerHTML = '<p style="color:var(--text3);font-size:13px">Notizie non disponibili.</p>';
+      grid.innerHTML='<p style="color:var(--text3);font-size:13px">Notizie non disponibili.</p>';
     }
   }
 }
 
-// ── NAV ────────────────────────────────────────────────────────────────────
+// ── NAV ─────────────────────────────────────────────────────────────────────
 function showTab(name) {
-  ['indices','stocks','news','portfolio'].forEach((n,i) => {
-    document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
-    document.getElementById('sec-'+n).classList.toggle('active', n===name);
+  ['indices','stocks','news','portfolio'].forEach((n,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('active',n===name);
+    document.getElementById('sec-'+n).classList.toggle('active',n===name);
   });
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────────
-buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap', 'idx-chart-name', 'idx-chart-code',
-  ()=>idxInterval, ()=>idxRange, i=>idxSel=i);
+// ── INIT ────────────────────────────────────────────────────────────────────
+buildBoxes('idx-boxes', INDICES, (item,i)=>{ idxSel=i; document.getElementById('idx-chart-name').textContent=item.name; document.getElementById('idx-chart-code').textContent=item.sym; buildChart('idx-chart-wrap',item.sym,idxInterval,idxRange); const sb=document.getElementById('idx-sidebar'); sb.querySelectorAll('.scard').forEach((c,j)=>c.classList.toggle('active',j===i)); }, 0);
 
-buildSidebar('stk-sidebar', STOCKS, 'stk-chart-wrap', 'stk-chart-name', 'stk-chart-code',
-  ()=>stkInterval, ()=>stkRange, i=>stkSel=i);
+buildBoxes('stk-boxes', STOCKS, (item,i)=>{ stkSel=i; document.getElementById('stk-chart-name').textContent=item.name; document.getElementById('stk-chart-code').textContent=item.sym; buildChart('stk-chart-wrap',item.sym,stkInterval,stkRange); const sb=document.getElementById('stk-sidebar'); sb.querySelectorAll('.scard').forEach((c,j)=>c.classList.toggle('active',j===i)); }, 7);
+
+buildSidebar('idx-sidebar', INDICES, 'idx-boxes', 'idx-chart-wrap', 'idx-chart-name', 'idx-chart-code', ()=>idxInterval, ()=>idxRange, i=>idxSel=i);
+buildSidebar('stk-sidebar', STOCKS,  'stk-boxes', 'stk-chart-wrap', 'stk-chart-name', 'stk-chart-code', ()=>stkInterval, ()=>stkRange, i=>stkSel=i);
 
 buildChart('idx-chart-wrap', INDICES[0].sym, idxInterval, idxRange);
 buildChart('stk-chart-wrap', STOCKS[7].sym,  stkInterval, stkRange);
 
+refreshPrices();
+setInterval(refreshPrices, 30000); // ogni 30 secondi
 loadNews();
 setInterval(loadNews, 120000);
 </script>
