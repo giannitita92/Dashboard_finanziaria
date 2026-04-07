@@ -12,13 +12,14 @@
   --text:#e8eaf0;--text2:#8b90a0;--text3:#555c70;
   --up:#22c98a;--up-bg:rgba(34,201,138,0.10);
   --down:#f05252;--down-bg:rgba(240,82,82,0.10);
-  --accent:#4f8ef7;--accent-bg:rgba(79,142,247,0.10);
+  --accent:#4f8ef7;
   --r:12px;--rs:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
 
+/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:10px}
 .header h1{font-size:18px;font-weight:500;display:flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
@@ -26,6 +27,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
 .live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.25)}
 
+/* TABS */
 .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
@@ -34,49 +36,49 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:20px}
 .sec-label:first-child{margin-top:0}
 
+/* TICKER TAPE */
 .tape-wrap{border-radius:var(--rs);overflow:hidden;margin-bottom:18px;background:var(--surface);border:.5px solid var(--border)}
 
 /* LAYOUT */
-.main-layout{display:grid;grid-template-columns:290px 1fr;gap:14px;align-items:start}
+.main-layout{display:grid;grid-template-columns:220px 1fr;gap:14px;align-items:start}
 
-/* SIDEBAR */
+/* SIDEBAR — solo lista nomi cliccabili */
 .sidebar{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .sidebar-title{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:10px 13px 8px;border-bottom:.5px solid var(--border)}
-
-/* Card singola sidebar */
 .scard{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:9px 13px;border-bottom:.5px solid var(--border);
-  cursor:pointer;transition:background .12s;gap:8px;
-  position:relative;
+  display:flex;align-items:center;gap:9px;
+  padding:10px 13px;border-bottom:.5px solid var(--border);
+  cursor:pointer;transition:background .12s;position:relative;
 }
 .scard:last-child{border-bottom:none}
 .scard:hover{background:var(--surface2)}
 .scard.active{background:var(--surface2)}
 .scard.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--accent)}
-.scard-left{display:flex;align-items:center;gap:8px;min-width:0}
 .scard-flag{font-size:14px;flex-shrink:0}
 .scard-info{display:flex;flex-direction:column;min-width:0}
-.scard-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+.scard-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .scard-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
-.scard-right{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px}
-.scard-price{font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
-.scard-pct{font-size:11px;font-weight:500;font-family:'DM Mono',monospace;padding:1px 5px;border-radius:3px}
-.up{color:var(--up)}.bg-up{background:var(--up-bg);color:var(--up)}
-.down{color:var(--down)}.bg-down{background:var(--down-bg);color:var(--down)}
-.skel{display:inline-block;height:10px;border-radius:3px;background:var(--surface2);animation:sk 1.4s infinite}
-@keyframes sk{0%,100%{opacity:.3}50%{opacity:.8}}
 
-/* CHART */
-.chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;position:sticky;top:12px}
+/* COLONNA DESTRA: ticker box + grafico */
+.right-col{display:flex;flex-direction:column;gap:10px}
+
+/* BOX TICKER — widget Tickers TV orizzontale */
+.ticker-box{
+  background:var(--surface);border:.5px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.ticker-box-label{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:9px 14px 0}
+
+/* CHART PANEL */
+.chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .chart-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:8px}
 .chart-sym-name{font-size:14px;font-weight:500;color:var(--text)}
 .chart-sym-code{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
-.range-btns{display:flex;gap:3px}
-.rbtn{font-size:11px;padding:3px 9px;border:.5px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);background:none;font-family:'DM Sans',sans-serif;transition:all .12s}
+.range-btns{display:flex;gap:3px;flex-wrap:wrap}
+.rbtn{font-size:11px;padding:4px 10px;border:.5px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);background:none;font-family:'DM Sans',sans-serif;transition:all .12s}
 .rbtn:hover{background:var(--surface2);color:var(--text)}
 .rbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.chart-wrap{height:460px;width:100%}
+.chart-wrap{height:440px;width:100%}
 .chart-wrap .tradingview-widget-container,
 .chart-wrap .tradingview-widget-container__widget{height:100%!important;width:100%!important}
 
@@ -93,7 +95,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ntitle{font-size:13px;color:var(--text);line-height:1.5;text-decoration:none;display:block}
 .ntitle:hover{color:var(--accent)}
 .ntime{font-size:11px;color:var(--text3);margin-top:7px}
-.ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:var(--accent-bg);color:var(--accent);margin-left:5px}
+.ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:rgba(79,142,247,0.1);color:var(--accent);margin-left:5px}
 .nimg{width:100%;height:130px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:block}
 
 /* PORTFOLIO */
@@ -106,7 +108,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 @media(max-width:960px){
   .main-layout{grid-template-columns:1fr}
-  .chart-panel{position:static}
   .chart-wrap{height:360px}
   .ov-grid{grid-template-columns:1fr}
 }
@@ -114,7 +115,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   .tabs{overflow-x:auto;width:100%}
   .tab{padding:7px 11px;font-size:12px}
   .news-grid{grid-template-columns:1fr}
-  .range-btns{flex-wrap:wrap}
 }
 </style>
 </head>
@@ -164,17 +164,43 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
     <div class="sec-label">Seleziona un indice</div>
     <div class="main-layout">
+
+      <!-- Sidebar indici -->
       <div class="sidebar" id="idx-sidebar">
         <div class="sidebar-title">Indici mondiali</div>
       </div>
-      <div>
+
+      <!-- Colonna destra: box prezzi + grafico -->
+      <div class="right-col">
+
+        <!-- BOX prezzi live tutti gli indici -->
+        <div class="ticker-box">
+          <div class="ticker-box-label">Prezzi e variazioni in tempo reale</div>
+          <div class="tradingview-widget-container" style="padding:4px 0">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
+            {"symbols":[
+              {"proName":"TVC:FTMIB","title":"FTSE MIB"},
+              {"proName":"XETR:DAX","title":"DAX"},
+              {"proName":"EURONEXT:PX1","title":"CAC 40"},
+              {"proName":"INDEX:UKX","title":"FTSE 100"},
+              {"proName":"BME:IBC","title":"IBEX 35"},
+              {"proName":"TVC:SX5E","title":"Euro Stoxx 50"},
+              {"proName":"SP:SPX","title":"S&P 500"},
+              {"proName":"NASDAQ:NDX","title":"Nasdaq 100"}
+            ],"colorTheme":"dark","isTransparent":true,"showSymbolLogo":true,"locale":"it"}
+            </script>
+          </div>
+        </div>
+
+        <!-- Grafico indice selezionato -->
         <div class="chart-panel">
           <div class="chart-topbar">
             <div>
               <div class="chart-sym-name" id="idx-chart-name">FTSE MIB</div>
               <div class="chart-sym-code" id="idx-chart-code">TVC:FTMIB</div>
             </div>
-            <div class="range-btns" id="idx-range-btns">
+            <div class="range-btns" id="idx-rbns">
               <button class="rbtn active" onclick="setIdxRange(this,'1','')">Oggi</button>
               <button class="rbtn" onclick="setIdxRange(this,'5','5D')">5G</button>
               <button class="rbtn" onclick="setIdxRange(this,'D','1M')">1M</button>
@@ -188,6 +214,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
+    <!-- Panoramica -->
     <div class="sec-label">Panoramica mercati</div>
     <div class="ov-grid">
       <div class="ov-card">
@@ -234,17 +261,44 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div id="sec-stocks" class="section">
     <div class="sec-label">Seleziona un titolo</div>
     <div class="main-layout">
+
+      <!-- Sidebar titoli -->
       <div class="sidebar" id="stk-sidebar">
         <div class="sidebar-title">Borsa Italiana</div>
       </div>
-      <div>
+
+      <!-- Colonna destra: box prezzi + grafico -->
+      <div class="right-col">
+
+        <!-- BOX prezzi live tutti i titoli BIT -->
+        <div class="ticker-box">
+          <div class="ticker-box-label">Prezzi e variazioni in tempo reale</div>
+          <div class="tradingview-widget-container" style="padding:4px 0">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
+            {"symbols":[
+              {"proName":"MIL:BMPS","title":"Monte Paschi"},
+              {"proName":"MIL:ISP","title":"Intesa Sanpaolo"},
+              {"proName":"MIL:LDO","title":"Leonardo"},
+              {"proName":"MIL:BAMI","title":"Banco BPM"},
+              {"proName":"MIL:G","title":"Generali"},
+              {"proName":"MIL:UCG","title":"UniCredit"},
+              {"proName":"MIL:PST","title":"Poste Italiane"},
+              {"proName":"MIL:ENEL","title":"Enel"},
+              {"proName":"MIL:MB","title":"Mediobanca"}
+            ],"colorTheme":"dark","isTransparent":true,"showSymbolLogo":true,"locale":"it"}
+            </script>
+          </div>
+        </div>
+
+        <!-- Grafico titolo selezionato -->
         <div class="chart-panel">
           <div class="chart-topbar">
             <div>
               <div class="chart-sym-name" id="stk-chart-name">Enel</div>
               <div class="chart-sym-code" id="stk-chart-code">MIL:ENEL</div>
             </div>
-            <div class="range-btns" id="stk-range-btns">
+            <div class="range-btns" id="stk-rbns">
               <button class="rbtn active" onclick="setStkRange(this,'1','')">Oggi</button>
               <button class="rbtn" onclick="setStkRange(this,'5','5D')">5G</button>
               <button class="rbtn" onclick="setStkRange(this,'D','1M')">1M</button>
@@ -303,7 +357,6 @@ const INDICES = [
   {flag:'🇺🇸', name:'S&P 500',       sym:'SP:SPX'},
   {flag:'🇺🇸', name:'Nasdaq 100',    sym:'NASDAQ:NDX'},
 ];
-
 const STOCKS = [
   {flag:'🏦', name:'Monte Paschi Siena', sym:'MIL:BMPS'},
   {flag:'🏦', name:'Intesa Sanpaolo',    sym:'MIL:ISP'},
@@ -317,94 +370,8 @@ const STOCKS = [
 ];
 
 // ── STATO ──────────────────────────────────────────────────────────────────
-let idxSel = 0, stkSel = 7; // default: FTSE MIB, Enel
-let idxInterval = '1', idxRange = '';
-let stkInterval = '1', stkRange = '';
-const prices = {}; // cache prezzi
-
-// ── WEBSOCKET TRADINGVIEW ──────────────────────────────────────────────────
-// TradingView espone un WebSocket pubblico per dati quote real-time
-// Protocollo: messaggi separati da ~m~ con lunghezza ~N~
-let ws = null;
-const wsCallbacks = {};
-
-function tvMsg(type, params) {
-  const body = JSON.stringify({m: type, p: params});
-  return `~m~${body.length}~m~${body}`;
-}
-
-function parseMsg(raw) {
-  const msgs = [];
-  const re = /~m~\d+~m~/g;
-  const parts = raw.split(re).filter(Boolean);
-  for (const p of parts) {
-    try { msgs.push(JSON.parse(p)); } catch {}
-  }
-  return msgs;
-}
-
-function connectWS() {
-  if (ws && ws.readyState < 2) return; // già connesso o connettendo
-  ws = new WebSocket('wss://data.tradingview.com/socket.io/websocket?type=chart');
-  const session = 'qs_' + Math.random().toString(36).slice(2, 12);
-
-  ws.onopen = () => {
-    ws.send(tvMsg('quote_create_session', [session]));
-    ws.send(tvMsg('quote_set_fields', [session, 'lp', 'ch', 'chp', 'prev_close_price', 'volume']));
-    // Aggiungi tutti i simboli
-    [...INDICES, ...STOCKS].forEach(item => {
-      ws.send(tvMsg('quote_add_symbols', [session, item.sym]));
-    });
-  };
-
-  ws.onmessage = (e) => {
-    // Heartbeat TV
-    if (e.data.includes('~h~')) {
-      ws.send(`~h~${e.data.split('~h~')[1]}`);
-      return;
-    }
-    const msgs = parseMsg(e.data);
-    for (const msg of msgs) {
-      if (msg.m === 'qsd' && msg.p && msg.p[1]) {
-        const sym = msg.p[1].n;
-        const v   = msg.p[1].v;
-        if (!sym || !v) continue;
-        if (v.lp != null) {
-          if (!prices[sym]) prices[sym] = {};
-          if (v.lp)  prices[sym].price = v.lp;
-          if (v.ch != null)  prices[sym].change = v.ch;
-          if (v.chp != null) prices[sym].pct    = v.chp;
-          if (v.prev_close_price) prices[sym].prev = v.prev_close_price;
-          updateCard(sym);
-        }
-      }
-    }
-  };
-
-  ws.onerror = () => {};
-  ws.onclose = () => { setTimeout(connectWS, 3000); };
-}
-
-function updateCard(sym) {
-  const q = prices[sym];
-  if (!q || q.price == null) return;
-  const el = document.getElementById('card-' + sym.replace(/[^a-z0-9]/gi,'_'));
-  if (!el) return;
-  const up = q.pct >= 0;
-  const priceEl = el.querySelector('.scard-price');
-  const pctEl   = el.querySelector('.scard-pct');
-  if (priceEl) priceEl.textContent = fmt(q.price);
-  if (pctEl) {
-    pctEl.textContent = (up ? '+' : '') + fmt(q.pct, 2) + '%';
-    pctEl.className = 'scard-pct ' + (up ? 'bg-up' : 'bg-down');
-  }
-}
-
-// ── FORMAT ─────────────────────────────────────────────────────────────────
-function fmt(n, d=2) {
-  if (n == null || isNaN(n)) return '—';
-  return Number(n).toLocaleString('it-IT', {minimumFractionDigits:d, maximumFractionDigits:d});
-}
+let idxSel = 0, idxInterval = '1', idxRange = '';
+let stkSel = 7, stkInterval = '1', stkRange = '';
 
 // ── GRAFICO TV ─────────────────────────────────────────────────────────────
 function buildChart(containerId, sym, interval, range) {
@@ -423,19 +390,11 @@ function buildChart(containerId, sym, interval, range) {
   s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
   s.async = true;
   const cfg = {
-    autosize: true,
-    symbol: sym,
-    interval: interval,
-    timezone: 'Europe/Rome',
-    theme: 'dark',
-    style: '1',
-    locale: 'it',
-    backgroundColor: '#141720',
-    gridColor: 'rgba(255,255,255,0.04)',
-    withdateranges: true,
-    allow_symbol_change: false,
-    save_image: false,
-    hide_top_toolbar: false,
+    autosize:true, symbol:sym, interval:interval,
+    timezone:'Europe/Rome', theme:'dark', style:'1', locale:'it',
+    backgroundColor:'#141720', gridColor:'rgba(255,255,255,0.04)',
+    withdateranges:true, allow_symbol_change:false,
+    save_image:false, hide_top_toolbar:false,
   };
   if (range) cfg.range = range;
   s.innerHTML = JSON.stringify(cfg);
@@ -443,61 +402,41 @@ function buildChart(containerId, sym, interval, range) {
 }
 
 // ── SIDEBAR ────────────────────────────────────────────────────────────────
-function buildSidebar(containerId, items, onSelect, selIdx) {
+function buildSidebar(containerId, items, chartId, nameId, codeId, getInterval, getRange, setSel) {
   const sidebar = document.getElementById(containerId);
-  // rimuovi vecchie card mantenendo il titolo
   sidebar.querySelectorAll('.scard').forEach(c => c.remove());
-
   items.forEach((item, i) => {
-    const id = 'card-' + item.sym.replace(/[^a-z0-9]/gi,'_');
     const card = document.createElement('div');
-    card.className = 'scard' + (i === selIdx ? ' active' : '');
-    card.id = id;
+    const isFirst = (containerId === 'idx-sidebar' && i === 0) || (containerId === 'stk-sidebar' && i === 7);
+    card.className = 'scard' + (isFirst ? ' active' : '');
     card.innerHTML = `
-      <div class="scard-left">
-        <span class="scard-flag">${item.flag||''}</span>
-        <div class="scard-info">
-          <span class="scard-name">${item.name}</span>
-          <span class="scard-sym">${item.sym.split(':')[1]}</span>
-        </div>
-      </div>
-      <div class="scard-right">
-        <span class="scard-price"><span class="skel" style="width:55px"></span></span>
-        <span class="scard-pct bg-up"><span class="skel" style="width:35px"></span></span>
+      <span class="scard-flag">${item.flag||''}</span>
+      <div class="scard-info">
+        <span class="scard-name">${item.name}</span>
+        <span class="scard-sym">${item.sym.split(':')[1]}</span>
       </div>`;
     card.onclick = () => {
       sidebar.querySelectorAll('.scard').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
-      onSelect(item, i);
+      setSel(i);
+      document.getElementById(nameId).textContent = item.name;
+      document.getElementById(codeId).textContent = item.sym;
+      buildChart(chartId, item.sym, getInterval(), getRange());
     };
     sidebar.appendChild(card);
   });
 }
 
-// ── INDICI ─────────────────────────────────────────────────────────────────
-function setIdxSym(item) {
-  document.getElementById('idx-chart-name').textContent = item.name;
-  document.getElementById('idx-chart-code').textContent = item.sym;
-  buildChart('idx-chart-wrap', item.sym, idxInterval, idxRange);
-}
-
+// ── RANGE BUTTONS ──────────────────────────────────────────────────────────
 function setIdxRange(btn, interval, range) {
   idxInterval = interval; idxRange = range;
-  document.querySelectorAll('#idx-range-btns .rbtn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#idx-rbns .rbtn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   buildChart('idx-chart-wrap', INDICES[idxSel].sym, interval, range);
 }
-
-// ── STOCKS ─────────────────────────────────────────────────────────────────
-function setStkSym(item) {
-  document.getElementById('stk-chart-name').textContent = item.name;
-  document.getElementById('stk-chart-code').textContent = item.sym;
-  buildChart('stk-chart-wrap', item.sym, stkInterval, stkRange);
-}
-
 function setStkRange(btn, interval, range) {
   stkInterval = interval; stkRange = range;
-  document.querySelectorAll('#stk-range-btns .rbtn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#stk-rbns .rbtn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   buildChart('stk-chart-wrap', STOCKS[stkSel].sym, interval, range);
 }
@@ -545,13 +484,15 @@ function showTab(name) {
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-buildSidebar('idx-sidebar', INDICES, (item, i) => { idxSel = i; setIdxSym(item); }, idxSel);
-buildSidebar('stk-sidebar', STOCKS,  (item, i) => { stkSel = i; setStkSym(item); }, stkSel);
+buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap', 'idx-chart-name', 'idx-chart-code',
+  ()=>idxInterval, ()=>idxRange, i=>idxSel=i);
 
-buildChart('idx-chart-wrap', INDICES[idxSel].sym, idxInterval, idxRange);
-buildChart('stk-chart-wrap', STOCKS[stkSel].sym,  stkInterval, stkRange);
+buildSidebar('stk-sidebar', STOCKS, 'stk-chart-wrap', 'stk-chart-name', 'stk-chart-code',
+  ()=>stkInterval, ()=>stkRange, i=>stkSel=i);
 
-connectWS();
+buildChart('idx-chart-wrap', INDICES[0].sym, idxInterval, idxRange);
+buildChart('stk-chart-wrap', STOCKS[7].sym,  stkInterval, stkRange);
+
 loadNews();
 setInterval(loadNews, 120000);
 </script>
