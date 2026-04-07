@@ -8,10 +8,10 @@
 <style>
 :root{
   --bg:#0d0f12;--surface:#141720;--surface2:#1c2030;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
   --text:#e8eaf0;--text2:#8b90a0;--text3:#555c70;
-  --up:#22c98a;--up-bg:rgba(34,201,138,0.1);
-  --down:#f05252;--down-bg:rgba(240,82,82,0.1);
+  --up:#22c98a;--up-bg:rgba(34,201,138,0.08);
+  --down:#f05252;--down-bg:rgba(240,82,82,0.08);
   --accent:#4f8ef7;--accent-bg:rgba(79,142,247,0.1);
   --r:12px;--rs:8px;
 }
@@ -19,13 +19,15 @@
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
 
+/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:10px}
 .header h1{font-size:18px;font-weight:500;display:flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
-.live-pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace}
+.live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.2)}
 
+/* TABS */
 .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
@@ -34,34 +36,57 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:20px}
 .sec-label:first-child{margin-top:0}
 
+/* TAPE */
 .tape-wrap{border-radius:var(--rs);overflow:hidden;margin-bottom:18px;background:var(--surface);border:.5px solid var(--border)}
 
-/* MAIN LAYOUT */
-.main-layout{display:grid;grid-template-columns:290px 1fr;gap:14px;align-items:start}
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns:310px 1fr;gap:14px;align-items:start}
 
-/* SIDEBAR CARDS */
+/* SIDEBAR */
 .sidebar{display:flex;flex-direction:column;gap:6px}
-.scard{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:all .15s;position:relative;overflow:hidden;padding:11px 13px}
-.scard:hover{border-color:var(--border2);background:var(--surface2)}
-.scard.active{border-color:var(--accent);background:var(--surface2)}
-.scard.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--accent)}
-.scard-top{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.scard-flag{font-size:16px;line-height:1;flex-shrink:0}
-.scard-name{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.scard-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0}
-.scard-data{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.scard-price{font-size:15px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
-.scard-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
-.scard-pct{font-size:12px;font-weight:500;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:4px}
-.scard-abs{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)}
-.up{color:var(--up)}.up-bg{background:var(--up-bg);color:var(--up)}
-.down{color:var(--down)}.down-bg{background:var(--down-bg);color:var(--down)}
-.skel{background:var(--surface2);border-radius:3px;animation:sk 1.4s infinite}
-@keyframes sk{0%,100%{opacity:.35}50%{opacity:.7}}
 
-/* CHART */
+/* Card sidebar — contiene nome + widget symbol-info TV */
+.scard{
+  background:var(--surface);border:.5px solid var(--border);
+  border-radius:var(--rs);cursor:pointer;transition:border-color .15s,background .15s;
+  position:relative;overflow:hidden;
+}
+.scard:hover{border-color:var(--border2);background:var(--surface2)}
+.scard.active{border-color:var(--accent)}
+.scard.active::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:2.5px;background:var(--accent);z-index:2;
+}
+
+/* Header card: flag + nome + simbolo */
+.scard-hdr{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px 0;pointer-events:none;
+}
+.scard-flag{font-size:15px;line-height:1;flex-shrink:0}
+.scard-name{font-size:12px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0}
+
+/* Wrapper del widget symbol-info — altezza fissa, overflow hidden per tagliare chrome TV */
+.scard-widget{
+  height:58px;overflow:hidden;margin:0 0 0 0;
+  /* shift up per nascondere padding interno del widget */
+  position:relative;
+}
+/* L'iframe del widget TV ha sfondi e bordi — li azzeriamo con clip */
+.scard-widget iframe{
+  width:100%!important;
+  border:none!important;
+  background:transparent!important;
+}
+/* Overlay cliccabile sopra il widget per intercettare il click sulla card */
+.scard-overlay{
+  position:absolute;inset:0;z-index:1;cursor:pointer;
+}
+
+/* CHART PANEL */
 .chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;position:sticky;top:12px}
-.chart-wrap{height:490px}
+.chart-wrap{height:500px}
 
 /* OVERVIEW */
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
@@ -79,7 +104,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:var(--accent-bg);color:var(--accent);margin-left:5px}
 .nimg{width:100%;height:130px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:block}
 
-/* PORTFOLIO */
+/* PORTAFOGLIO */
 .pf-hint{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:28px 24px;font-size:13px;color:var(--text2);line-height:1.9}
 .pf-hint strong{color:var(--text);font-weight:500}
 .pf-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
@@ -87,10 +112,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-@media(max-width:900px){
+@media(max-width:920px){
   .main-layout{grid-template-columns:1fr}
   .chart-panel{position:static}
-  .chart-wrap{height:360px}
+  .chart-wrap{height:380px}
   .ov-grid{grid-template-columns:1fr}
 }
 @media(max-width:600px){
@@ -118,8 +143,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
   </div>
 
-  <!-- INDICI -->
+  <!-- ══════════════════════════════════════════ INDICI -->
   <div id="sec-indices" class="section active">
+
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -143,7 +169,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
-    <div class="sec-label">Seleziona un indice</div>
+    <div class="sec-label">Seleziona un indice — prezzo e variazione % in tempo reale</div>
     <div class="main-layout">
       <div class="sidebar" id="idx-sidebar"></div>
       <div class="chart-panel">
@@ -168,7 +194,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         </div>
       </div>
       <div class="ov-card">
-        <div class="ov-label">Materie prime &amp; Crypto &amp; Forex</div>
+        <div class="ov-label">Materie prime · Crypto · Forex</div>
         <div class="tradingview-widget-container" style="height:320px">
           <div class="tradingview-widget-container__widget" style="height:320px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -193,9 +219,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- TITOLI BIT -->
+  <!-- ══════════════════════════════════════════ TITOLI BIT -->
   <div id="sec-stocks" class="section">
-    <div class="sec-label">Seleziona un titolo</div>
+    <div class="sec-label">Seleziona un titolo — prezzo e variazione % in tempo reale</div>
     <div class="main-layout">
       <div class="sidebar" id="stk-sidebar"></div>
       <div class="chart-panel">
@@ -204,7 +230,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- NOTIZIE -->
+  <!-- ══════════════════════════════════════════ NOTIZIE -->
   <div id="sec-news" class="section">
     <div class="sec-label">Ultime notizie economico-finanziarie</div>
     <div class="news-grid" id="news-grid">
@@ -212,7 +238,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- PORTAFOGLIO -->
+  <!-- ══════════════════════════════════════════ PORTAFOGLIO -->
   <div id="sec-portfolio" class="section">
     <div class="sec-label">Il mio portafoglio</div>
     <div class="pf-hint">
@@ -221,11 +247,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       &bull; <strong>Ticker</strong> — es. <code>ENEL</code>, <code>ISP</code>, <code>UCG</code><br>
       &bull; <strong>Quantità</strong> di azioni<br>
       &bull; <strong>Prezzo medio di carico</strong> — es. <code>6.20</code> €<br>
-      &bull; <strong>Data di acquisto</strong> (opzionale, per il grafico P&amp;L)<br><br>
+      &bull; <strong>Data di acquisto</strong> (opzionale, per grafico P&amp;L nel tempo)<br><br>
       Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em>
     </div>
   </div>
-</div>
+
+</div><!-- /app -->
 
 <script>
 // ── CLOCK ──────────────────────────────────────────────────────────────────
@@ -236,177 +263,154 @@ setInterval(()=>{
   })+' CET';
 },1000);
 
-// ── CONFIG ─────────────────────────────────────────────────────────────────
-const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
-
-// Finnhub symbols per la sidebar (quote REST)
-// Indici: Finnhub usa simboli diversi da TradingView
+// ── DATI ───────────────────────────────────────────────────────────────────
 const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'TVC:FTMIB',       fhSym:'INDEX:FTSEMIB',  isFx:false},
-  {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',        fhSym:'INDEX:DEU30',    isFx:false},
-  {flag:'🇫🇷', name:'CAC 40',        tvSym:'EURONEXT:PX1',    fhSym:'INDEX:CAC40',    isFx:false},
-  {flag:'🇬🇧', name:'FTSE 100',      tvSym:'INDEX:UKX',       fhSym:'INDEX:UKX',      isFx:false},
-  {flag:'🇪🇸', name:'IBEX 35',       tvSym:'BME:IBC',         fhSym:'INDEX:IBEX35',   isFx:false},
-  {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',        fhSym:'INDEX:SX5E',     isFx:false},
-  {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',          fhSym:'INDEX:SPX',      isFx:false},
-  {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',      fhSym:'INDEX:NDX',      isFx:false},
+  {flag:'🇮🇹', name:'FTSE MIB',      sym:'TVC:FTMIB'},
+  {flag:'🇩🇪', name:'DAX',           sym:'XETR:DAX'},
+  {flag:'🇫🇷', name:'CAC 40',        sym:'EURONEXT:PX1'},
+  {flag:'🇬🇧', name:'FTSE 100',      sym:'INDEX:UKX'},
+  {flag:'🇪🇸', name:'IBEX 35',       sym:'BME:IBC'},
+  {flag:'🇪🇺', name:'Euro Stoxx 50', sym:'TVC:SX5E'},
+  {flag:'🇺🇸', name:'S&P 500',       sym:'SP:SPX'},
+  {flag:'🇺🇸', name:'Nasdaq 100',    sym:'NASDAQ:NDX'},
 ];
 
 const STOCKS = [
-  {flag:'🏦', name:'Monte Paschi Siena', tvSym:'MIL:BMPS', fhSym:'BMPS.MI'},
-  {flag:'🏦', name:'Intesa Sanpaolo',    tvSym:'MIL:ISP',  fhSym:'ISP.MI'},
-  {flag:'✈️', name:'Leonardo',           tvSym:'MIL:LDO',  fhSym:'LDO.MI'},
-  {flag:'🏦', name:'Banco BPM',          tvSym:'MIL:BAMI', fhSym:'BAMI.MI'},
-  {flag:'🛡️', name:'Generali',           tvSym:'MIL:G',    fhSym:'G.MI'},
-  {flag:'🏦', name:'UniCredit',          tvSym:'MIL:UCG',  fhSym:'UCG.MI'},
-  {flag:'📮', name:'Poste Italiane',     tvSym:'MIL:PST',  fhSym:'PST.MI'},
-  {flag:'⚡', name:'Enel',              tvSym:'MIL:ENEL', fhSym:'ENEL.MI'},
-  {flag:'🏦', name:'Mediobanca',         tvSym:'MIL:MB',   fhSym:'MB.MI'},
+  {flag:'🏦', name:'Monte Paschi Siena', sym:'MIL:BMPS'},
+  {flag:'🏦', name:'Intesa Sanpaolo',    sym:'MIL:ISP'},
+  {flag:'✈️', name:'Leonardo',           sym:'MIL:LDO'},
+  {flag:'🏦', name:'Banco BPM',          sym:'MIL:BAMI'},
+  {flag:'🛡️', name:'Generali',           sym:'MIL:G'},
+  {flag:'🏦', name:'UniCredit',          sym:'MIL:UCG'},
+  {flag:'📮', name:'Poste Italiane',     sym:'MIL:PST'},
+  {flag:'⚡', name:'Enel',              sym:'MIL:ENEL'},
+  {flag:'🏦', name:'Mediobanca',         sym:'MIL:MB'},
 ];
 
-// ── FETCH QUOTE DA FINNHUB ─────────────────────────────────────────────────
-// Finnhub free: stocks italiani NON disponibili → usiamo Yahoo Finance
-// come fallback via fetch diretto (no CORS issue su GitHub Pages)
-async function fetchQuote(fhSym, isIndex) {
-  // Proviamo Finnhub prima
-  try {
-    const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(fhSym)}&token=${FKEY}`);
-    const d = await r.json();
-    // Finnhub restituisce {c,d,dp,h,l,o,pc} — se c>0 è valido
-    if (d && d.c && d.c > 0) {
-      return { price: d.c, change: d.d, pct: d.dp, prev: d.pc };
-    }
-  } catch {}
+// ── WIDGET SYMBOL-INFO (prezzo + % live) ───────────────────────────────────
+// Il widget "symbol-info" di TradingView mostra: nome, exchange, prezzo, variazione
+// Lo inseriamo in un iframe tramite il meccanismo embed standard di TV.
+// Usiamo un div con altezza fissa e clip per mostrare solo prezzo e %.
+function buildSymbolInfo(containerId, symbol) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = '';
 
-  // Fallback: Yahoo Finance (funziona da GitHub Pages)
-  try {
-    const yf = fhSym.startsWith('INDEX:') 
-      ? '^' + fhSym.replace('INDEX:','')
-      : fhSym;
-    const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yf)}?interval=1d&range=2d`);
-    const d = await r.json();
-    const m = d?.chart?.result?.[0]?.meta;
-    if (m && m.regularMarketPrice) {
-      const price = m.regularMarketPrice;
-      const prev  = m.previousClose || m.chartPreviousClose;
-      const change = price - prev;
-      const pct   = prev ? (change / prev * 100) : 0;
-      return { price, change, pct, prev };
-    }
-  } catch {}
-  return null;
-}
+  const container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'width:100%;height:60px;overflow:hidden;';
 
-// ── FORMATO NUMERI ─────────────────────────────────────────────────────────
-function fmt(n, d=2) {
-  if (n == null || isNaN(n)) return '—';
-  return Number(n).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
-}
-function sign(n) { return n >= 0 ? '+' : ''; }
+  const widget = document.createElement('div');
+  widget.className = 'tradingview-widget-container__widget';
+  widget.style.cssText = 'width:100%;height:60px;';
+  container.appendChild(widget);
 
-// ── BUILD SIDEBAR CARD ─────────────────────────────────────────────────────
-function makeSkeleton() {
-  return `<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
-    <div class="skel" style="width:80px;height:14px;border-radius:3px"></div>
-    <div class="skel" style="width:50px;height:14px;border-radius:3px"></div>
-  </div>`;
-}
-
-function renderPrice(card, q, isCurrency) {
-  if (!q) {
-    card.querySelector('.scard-data').innerHTML = '<span style="color:var(--text3);font-size:12px">N/D</span>';
-    return;
-  }
-  const up = q.pct >= 0;
-  const curr = isCurrency ? ' €' : '';
-  card.querySelector('.scard-data').innerHTML = `
-    <div class="scard-price">${fmt(q.price)}${curr}</div>
-    <div class="scard-right">
-      <span class="scard-pct ${up?'up-bg':'down-bg'}">${sign(q.pct)}${fmt(q.pct,2)}%</span>
-      <span class="scard-abs ${up?'up':'down'}">${sign(q.change)}${fmt(q.change,2)}${curr}</span>
-    </div>`;
-}
-
-// ── BUILD SIDEBAR ──────────────────────────────────────────────────────────
-function buildSidebar(containerId, items, chartId, isCurrency) {
-  const sidebar = document.getElementById(containerId);
-  sidebar.innerHTML = '';
-  let sel = 0;
-
-  items.forEach((item, i) => {
-    const card = document.createElement('div');
-    card.className = 'scard' + (i === 0 ? ' active' : '');
-    card.id = `${containerId}_${i}`;
-    card.innerHTML = `
-      <div class="scard-top">
-        <div class="scard-flag">${item.flag||''}</div>
-        <div class="scard-name">${item.name}</div>
-        <div class="scard-sym">${item.tvSym.split(':')[1]}</div>
-      </div>
-      <div class="scard-data">${makeSkeleton()}</div>`;
-
-    card.onclick = () => {
-      document.getElementById(`${containerId}_${sel}`).classList.remove('active');
-      sel = i;
-      card.classList.add('active');
-      buildTVChart(chartId, item.tvSym, isCurrency);
-    };
-
-    sidebar.appendChild(card);
-
-    // Carica prezzo
-    fetchQuote(item.fhSym, !isCurrency).then(q => renderPrice(card, q, isCurrency));
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js';
+  script.async = true;
+  script.innerHTML = JSON.stringify({
+    symbol: symbol,
+    width: '100%',
+    locale: 'it',
+    colorTheme: 'dark',
+    isTransparent: true,
   });
-
-  // Grafico iniziale — intraday
-  buildTVChart(chartId, items[0].tvSym, isCurrency);
-
-  // Aggiornamento prezzi ogni 60 secondi
-  setInterval(() => {
-    items.forEach((item, i) => {
-      const card = document.getElementById(`${containerId}_${i}`);
-      if (!card) return;
-      fetchQuote(item.fhSym, !isCurrency).then(q => renderPrice(card, q, isCurrency));
-    });
-  }, 60000);
+  container.appendChild(script);
+  wrap.appendChild(container);
 }
 
-// ── TV ADVANCED CHART (intraday di default) ────────────────────────────────
-function buildTVChart(containerId, symbol, isCurrency) {
+// ── GRAFICO AVANZATO TV — intraday 1 min di default ────────────────────────
+function buildTVChart(containerId, symbol) {
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = '';
+
   const div = document.createElement('div');
   div.className = 'tradingview-widget-container';
   div.style.height = '100%';
+
   const inner = document.createElement('div');
   inner.className = 'tradingview-widget-container__widget';
   inner.style.height = '100%';
   div.appendChild(inner);
   wrap.appendChild(div);
+
   const s = document.createElement('script');
   s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
   s.async = true;
   s.innerHTML = JSON.stringify({
     autosize: true,
     symbol: symbol,
-    interval: '5',          // 5 minuti → mostra andamento intraday
-    range: '1D',            // range di default: oggi
+    interval: '1',       // 1 minuto
+    range: '1D',         // oggi di default
     timezone: 'Europe/Rome',
     theme: 'dark',
     style: '1',
     locale: 'it',
     backgroundColor: '#141720',
     gridColor: 'rgba(255,255,255,0.04)',
-    withdateranges: true,   // l'utente può cambiare range (1D, 5D, 1M, 1A...)
+    withdateranges: true,      // pulsanti per cambiare range: 1D 5D 1M 1A ecc
     allow_symbol_change: false,
     save_image: false,
     hide_top_toolbar: false,
-    details: true,
+    details: false,
+    hotlist: false,
+    calendar: false,
   });
   div.appendChild(s);
 }
 
+// ── BUILD SIDEBAR ──────────────────────────────────────────────────────────
+function buildSidebar(sidebarId, items, chartId) {
+  const sidebar = document.getElementById(sidebarId);
+  sidebar.innerHTML = '';
+  let sel = 0;
+
+  items.forEach((item, i) => {
+    // Card esterna
+    const card = document.createElement('div');
+    card.className = 'scard' + (i === 0 ? ' active' : '');
+    card.id = `${sidebarId}_${i}`;
+
+    const tickerDivId = `${sidebarId}_ticker_${i}`;
+    const shortSym = item.sym.split(':')[1];
+
+    card.innerHTML = `
+      <div class="scard-hdr">
+        <span class="scard-flag">${item.flag || ''}</span>
+        <span class="scard-name">${item.name}</span>
+        <span class="scard-sym">${shortSym}</span>
+      </div>
+      <div class="scard-widget" id="${tickerDivId}">
+        <div class="scard-overlay"></div>
+      </div>`;
+
+    // Click sulla card o sull'overlay
+    const clickHandler = () => {
+      document.getElementById(`${sidebarId}_${sel}`).classList.remove('active');
+      sel = i;
+      card.classList.add('active');
+      buildTVChart(chartId, item.sym);
+    };
+    card.querySelector('.scard-overlay').addEventListener('click', clickHandler);
+    card.addEventListener('click', (e) => {
+      // evita doppio trigger se click su overlay
+      if (!e.target.classList.contains('scard-overlay')) clickHandler();
+    });
+
+    sidebar.appendChild(card);
+
+    // Carica il widget symbol-info con un piccolo delay per non sovraccaricare il browser
+    setTimeout(() => buildSymbolInfo(tickerDivId, item.sym), i * 80);
+  });
+
+  // Grafico iniziale
+  buildTVChart(chartId, items[0].sym);
+}
+
 // ── NEWS ───────────────────────────────────────────────────────────────────
+const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
+
 async function loadNews() {
   const grid = document.getElementById('news-grid');
   try {
@@ -423,7 +427,8 @@ async function loadNews() {
       </div>`).join('');
   } catch {
     try {
-      const r2 = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml') + '&count=18');
+      const r2 = await fetch('https://api.rss2json.com/v1/api.json?rss_url='
+        + encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml') + '&count=18');
       const d = await r2.json();
       grid.innerHTML = (d.items||[]).map(i => `
         <div class="ncard">
@@ -441,14 +446,14 @@ async function loadNews() {
 // ── NAV ────────────────────────────────────────────────────────────────────
 function showTab(name) {
   ['indices','stocks','news','portfolio'].forEach((n,i) => {
-    document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
-    document.getElementById('sec-'+n).classList.toggle('active', n===name);
+    document.querySelectorAll('.tab')[i].classList.toggle('active', n === name);
+    document.getElementById('sec-' + n).classList.toggle('active', n === name);
   });
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap', false);
-buildSidebar('stk-sidebar', STOCKS,  'stk-chart-wrap', true);
+buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap');
+buildSidebar('stk-sidebar', STOCKS,  'stk-chart-wrap');
 loadNews();
 setInterval(loadNews, 120000);
 </script>
