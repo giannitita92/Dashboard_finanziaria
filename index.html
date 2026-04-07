@@ -13,71 +13,64 @@
   --up:#22c98a;--up-bg:rgba(34,201,138,0.1);
   --down:#f05252;--down-bg:rgba(240,82,82,0.1);
   --accent:#4f8ef7;--accent-bg:rgba(79,142,247,0.1);
-  --radius:12px;--radius-sm:8px;
+  --r:12px;--rs:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
 
-/* HEADER */
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;gap:10px}
-.header h1{font-size:18px;font-weight:500;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:10px}
+.header h1{font-size:18px;font-weight:500;display:flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.hdr-right{display:flex;align-items:center;gap:12px}
-.clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
-.live-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;letter-spacing:.04em}
+.clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
+.live-pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace}
 
-/* TABS */
-.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--radius-sm);padding:3px;width:fit-content;max-width:100%}
+.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
-.tab.active{background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)}
+.tab.active{background:var(--surface2);color:var(--text);border:.5px solid var(--border2)}
 .section{display:none}.section.active{display:block}
 .sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:20px}
 .sec-label:first-child{margin-top:0}
 
-/* TAPE */
-.tape-wrap{border-radius:var(--radius-sm);overflow:hidden;margin-bottom:18px;background:var(--surface);border:0.5px solid var(--border)}
+.tape-wrap{border-radius:var(--rs);overflow:hidden;margin-bottom:18px;background:var(--surface);border:.5px solid var(--border)}
 
-/* LAYOUT PRINCIPALE */
-.main-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
+/* MAIN LAYOUT */
+.main-layout{display:grid;grid-template-columns:290px 1fr;gap:14px;align-items:start}
 
-/* SIDEBAR ITEMS — indici e stocks */
+/* SIDEBAR CARDS */
 .sidebar{display:flex;flex-direction:column;gap:6px}
+.scard{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);cursor:pointer;transition:all .15s;position:relative;overflow:hidden;padding:11px 13px}
+.scard:hover{border-color:var(--border2);background:var(--surface2)}
+.scard.active{border-color:var(--accent);background:var(--surface2)}
+.scard.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:var(--accent)}
+.scard-top{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.scard-flag{font-size:16px;line-height:1;flex-shrink:0}
+.scard-name{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0}
+.scard-data{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.scard-price{font-size:15px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+.scard-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.scard-pct{font-size:12px;font-weight:500;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:4px}
+.scard-abs{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3)}
+.up{color:var(--up)}.up-bg{background:var(--up-bg);color:var(--up)}
+.down{color:var(--down)}.down-bg{background:var(--down-bg);color:var(--down)}
+.skel{background:var(--surface2);border-radius:3px;animation:sk 1.4s infinite}
+@keyframes sk{0%,100%{opacity:.35}50%{opacity:.7}}
 
-.side-item{
-  background:var(--surface);border:0.5px solid var(--border);
-  border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;
-  overflow:hidden;position:relative;
-}
-.side-item:hover{border-color:var(--border2);background:var(--surface2)}
-.side-item.active{border-color:var(--accent);background:var(--surface2)}
-.side-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+/* CHART */
+.chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;position:sticky;top:12px}
+.chart-wrap{height:490px}
 
-/* Header del side-item: flag + nome */
-.side-item-hdr{display:flex;align-items:center;gap:8px;padding:10px 12px 6px}
-.side-flag{font-size:16px;line-height:1;flex-shrink:0}
-.side-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-.side-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0}
-
-/* Mini ticker widget TV dentro la card */
-.side-ticker{height:46px;overflow:hidden;padding:0 4px 6px}
-.side-ticker .tradingview-widget-container{height:40px!important}
-.side-ticker .tradingview-widget-container__widget{height:40px!important}
-
-/* CHART PANEL */
-.chart-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;position:sticky;top:12px}
-.chart-wrap{height:500px}
-
-/* OVERVIEW GRID */
-.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
-.ov-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+/* OVERVIEW */
+.ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
+.ov-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .ov-label{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:12px 16px 0}
 
 /* NEWS */
 .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.ncard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color .15s}
+.ncard{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);padding:14px 16px;transition:border-color .15s}
 .ncard:hover{border-color:var(--border2)}
 .nsrc{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
 .ntitle{font-size:13px;color:var(--text);line-height:1.5;text-decoration:none;display:block}
@@ -86,8 +79,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:var(--accent-bg);color:var(--accent);margin-left:5px}
 .nimg{width:100%;height:130px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:block}
 
-/* PORTAFOGLIO */
-.pf-hint{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:28px 24px;font-size:13px;color:var(--text2);line-height:1.9}
+/* PORTFOLIO */
+.pf-hint{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:28px 24px;font-size:13px;color:var(--text2);line-height:1.9}
 .pf-hint strong{color:var(--text);font-weight:500}
 .pf-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
 
@@ -97,8 +90,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 @media(max-width:900px){
   .main-layout{grid-template-columns:1fr}
   .chart-panel{position:static}
-  .chart-wrap{height:380px}
-  .overview-grid{grid-template-columns:1fr}
+  .chart-wrap{height:360px}
+  .ov-grid{grid-template-columns:1fr}
 }
 @media(max-width:600px){
   .tabs{overflow-x:auto;width:100%}
@@ -115,9 +108,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <h1><span class="dot"></span>Dashboard Finanziaria</h1>
       <div class="clock" id="clock"></div>
     </div>
-    <div class="hdr-right">
-      <span class="live-badge">● LIVE</span>
-    </div>
+    <span class="live-pill">● LIVE</span>
   </div>
 
   <div class="tabs">
@@ -127,9 +118,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
   </div>
 
-  <!-- ═══ INDICI ════════════════════════════════════════════════════════════ -->
+  <!-- INDICI -->
   <div id="sec-indices" class="section active">
-
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -153,7 +143,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
-    <div class="sec-label">Seleziona un indice — prezzi e variazioni in tempo reale</div>
+    <div class="sec-label">Seleziona un indice</div>
     <div class="main-layout">
       <div class="sidebar" id="idx-sidebar"></div>
       <div class="chart-panel">
@@ -162,50 +152,39 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
 
     <div class="sec-label">Panoramica mercati</div>
-    <div class="overview-grid">
+    <div class="ov-grid">
       <div class="ov-card">
         <div class="ov-label">Indici azionari</div>
         <div class="tradingview-widget-container" style="height:320px">
           <div class="tradingview-widget-container__widget" style="height:320px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
           {"colorTheme":"dark","dateRange":"1D","showChart":false,"locale":"it","isTransparent":true,"showSymbolLogo":true,"width":"100%","height":"320","tabs":[{"title":"Indici","symbols":[
-            {"s":"TVC:FTMIB","d":"FTSE MIB"},
-            {"s":"XETR:DAX","d":"DAX"},
-            {"s":"EURONEXT:PX1","d":"CAC 40"},
-            {"s":"INDEX:UKX","d":"FTSE 100"},
-            {"s":"BME:IBC","d":"IBEX 35"},
-            {"s":"TVC:SX5E","d":"Euro Stoxx 50"},
-            {"s":"SP:SPX","d":"S&P 500"},
-            {"s":"NASDAQ:NDX","d":"Nasdaq 100"}
+            {"s":"TVC:FTMIB","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},
+            {"s":"EURONEXT:PX1","d":"CAC 40"},{"s":"INDEX:UKX","d":"FTSE 100"},
+            {"s":"BME:IBC","d":"IBEX 35"},{"s":"TVC:SX5E","d":"Euro Stoxx 50"},
+            {"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:NDX","d":"Nasdaq 100"}
           ],"originalTitle":"Indici"}]}
           </script>
         </div>
       </div>
       <div class="ov-card">
-        <div class="ov-label">Forex, Materie prime &amp; Crypto</div>
+        <div class="ov-label">Materie prime &amp; Crypto &amp; Forex</div>
         <div class="tradingview-widget-container" style="height:320px">
           <div class="tradingview-widget-container__widget" style="height:320px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
           {"colorTheme":"dark","dateRange":"1D","showChart":false,"locale":"it","isTransparent":true,"showSymbolLogo":true,"width":"100%","height":"320","tabs":[
-            {"title":"Materie prime","symbols":[
-              {"s":"TVC:GOLD","d":"Oro"},
-              {"s":"TVC:SILVER","d":"Argento"},
-              {"s":"TVC:USOIL","d":"Petrolio WTI"},
-              {"s":"CAPITALCOM:NATURALGAS","d":"Gas naturale"}
-            ],"originalTitle":"Materie prime"},
             {"title":"Crypto","symbols":[
-              {"s":"BINANCE:BTCUSDT","d":"Bitcoin"},
-              {"s":"BINANCE:ETHUSDT","d":"Ethereum"},
-              {"s":"BINANCE:BNBUSDT","d":"BNB"},
-              {"s":"BINANCE:SOLUSDT","d":"Solana"},
-              {"s":"BINANCE:XRPUSDT","d":"XRP"},
-              {"s":"BINANCE:ADAUSDT","d":"Cardano"}
+              {"s":"BINANCE:BTCUSDT","d":"Bitcoin"},{"s":"BINANCE:ETHUSDT","d":"Ethereum"},
+              {"s":"BINANCE:BNBUSDT","d":"BNB"},{"s":"BINANCE:SOLUSDT","d":"Solana"},
+              {"s":"BINANCE:XRPUSDT","d":"XRP"},{"s":"BINANCE:ADAUSDT","d":"Cardano"}
             ],"originalTitle":"Crypto"},
+            {"title":"Materie prime","symbols":[
+              {"s":"TVC:GOLD","d":"Oro"},{"s":"TVC:SILVER","d":"Argento"},
+              {"s":"TVC:USOIL","d":"Petrolio WTI"},{"s":"CAPITALCOM:NATURALGAS","d":"Gas naturale"}
+            ],"originalTitle":"Materie prime"},
             {"title":"Forex","symbols":[
-              {"s":"FX:EURUSD","d":"EUR/USD"},
-              {"s":"FX:GBPUSD","d":"GBP/USD"},
-              {"s":"FX:USDJPY","d":"USD/JPY"},
-              {"s":"FX:USDCHF","d":"USD/CHF"}
+              {"s":"FX:EURUSD","d":"EUR/USD"},{"s":"FX:GBPUSD","d":"GBP/USD"},
+              {"s":"FX:USDJPY","d":"USD/JPY"},{"s":"FX:USDCHF","d":"USD/CHF"}
             ],"originalTitle":"Forex"}
           ]}
           </script>
@@ -214,9 +193,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- ═══ TITOLI BIT ════════════════════════════════════════════════════════ -->
+  <!-- TITOLI BIT -->
   <div id="sec-stocks" class="section">
-    <div class="sec-label">Seleziona un titolo — prezzi e variazioni in tempo reale</div>
+    <div class="sec-label">Seleziona un titolo</div>
     <div class="main-layout">
       <div class="sidebar" id="stk-sidebar"></div>
       <div class="chart-panel">
@@ -225,7 +204,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- ═══ NOTIZIE ═══════════════════════════════════════════════════════════ -->
+  <!-- NOTIZIE -->
   <div id="sec-news" class="section">
     <div class="sec-label">Ultime notizie economico-finanziarie</div>
     <div class="news-grid" id="news-grid">
@@ -233,7 +212,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- ═══ PORTAFOGLIO ═══════════════════════════════════════════════════════ -->
+  <!-- PORTAFOGLIO -->
   <div id="sec-portfolio" class="section">
     <div class="sec-label">Il mio portafoglio</div>
     <div class="pf-hint">
@@ -242,12 +221,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       &bull; <strong>Ticker</strong> — es. <code>ENEL</code>, <code>ISP</code>, <code>UCG</code><br>
       &bull; <strong>Quantità</strong> di azioni<br>
       &bull; <strong>Prezzo medio di carico</strong> — es. <code>6.20</code> €<br>
-      &bull; <strong>Data di acquisto</strong> (opzionale, per il grafico P&amp;L nel tempo)<br><br>
-      Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em><br><br>
-      Calcolerò: valore attuale, P&amp;L in € e %, peso % sul portafoglio, grafico storico rendimento.
+      &bull; <strong>Data di acquisto</strong> (opzionale, per il grafico P&amp;L)<br><br>
+      Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -259,59 +236,143 @@ setInterval(()=>{
   })+' CET';
 },1000);
 
-// ── DATA ───────────────────────────────────────────────────────────────────
-const INDICES=[
-  {flag:'🇮🇹',name:'FTSE MIB',      sym:'TVC:FTMIB'},
-  {flag:'🇩🇪',name:'DAX',           sym:'XETR:DAX'},
-  {flag:'🇫🇷',name:'CAC 40',        sym:'EURONEXT:PX1'},
-  {flag:'🇬🇧',name:'FTSE 100',      sym:'INDEX:UKX'},
-  {flag:'🇪🇸',name:'IBEX 35',       sym:'BME:IBC'},
-  {flag:'🇪🇺',name:'Euro Stoxx 50', sym:'TVC:SX5E'},
-  {flag:'🇺🇸',name:'S&P 500',       sym:'SP:SPX'},
-  {flag:'🇺🇸',name:'Nasdaq 100',    sym:'NASDAQ:NDX'},
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
+
+// Finnhub symbols per la sidebar (quote REST)
+// Indici: Finnhub usa simboli diversi da TradingView
+const INDICES = [
+  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'TVC:FTMIB',       fhSym:'INDEX:FTSEMIB',  isFx:false},
+  {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',        fhSym:'INDEX:DEU30',    isFx:false},
+  {flag:'🇫🇷', name:'CAC 40',        tvSym:'EURONEXT:PX1',    fhSym:'INDEX:CAC40',    isFx:false},
+  {flag:'🇬🇧', name:'FTSE 100',      tvSym:'INDEX:UKX',       fhSym:'INDEX:UKX',      isFx:false},
+  {flag:'🇪🇸', name:'IBEX 35',       tvSym:'BME:IBC',         fhSym:'INDEX:IBEX35',   isFx:false},
+  {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',        fhSym:'INDEX:SX5E',     isFx:false},
+  {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',          fhSym:'INDEX:SPX',      isFx:false},
+  {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',      fhSym:'INDEX:NDX',      isFx:false},
 ];
 
-const STOCKS=[
-  {flag:'🏦',name:'Monte Paschi Siena',sym:'MIL:BMPS'},
-  {flag:'🏦',name:'Intesa Sanpaolo',   sym:'MIL:ISP'},
-  {flag:'✈️',name:'Leonardo',          sym:'MIL:LDO'},
-  {flag:'🏦',name:'Banco BPM',         sym:'MIL:BAMI'},
-  {flag:'🛡️',name:'Generali',          sym:'MIL:G'},
-  {flag:'🏦',name:'UniCredit',         sym:'MIL:UCG'},
-  {flag:'📮',name:'Poste Italiane',    sym:'MIL:PST'},
-  {flag:'⚡',name:'Enel',             sym:'MIL:ENEL'},
-  {flag:'🏦',name:'Mediobanca',        sym:'MIL:MB'},
+const STOCKS = [
+  {flag:'🏦', name:'Monte Paschi Siena', tvSym:'MIL:BMPS', fhSym:'BMPS.MI'},
+  {flag:'🏦', name:'Intesa Sanpaolo',    tvSym:'MIL:ISP',  fhSym:'ISP.MI'},
+  {flag:'✈️', name:'Leonardo',           tvSym:'MIL:LDO',  fhSym:'LDO.MI'},
+  {flag:'🏦', name:'Banco BPM',          tvSym:'MIL:BAMI', fhSym:'BAMI.MI'},
+  {flag:'🛡️', name:'Generali',           tvSym:'MIL:G',    fhSym:'G.MI'},
+  {flag:'🏦', name:'UniCredit',          tvSym:'MIL:UCG',  fhSym:'UCG.MI'},
+  {flag:'📮', name:'Poste Italiane',     tvSym:'MIL:PST',  fhSym:'PST.MI'},
+  {flag:'⚡', name:'Enel',              tvSym:'MIL:ENEL', fhSym:'ENEL.MI'},
+  {flag:'🏦', name:'Mediobanca',         tvSym:'MIL:MB',   fhSym:'MB.MI'},
 ];
 
-// ── TV MINI TICKER (simbolo singolo, mostra prezzo + %) ───────────────────
-// Usiamo il widget "single-quote" che è leggero e si aggiorna in tempo reale
-function buildMiniTicker(containerId, symbol) {
-  const wrap = document.getElementById(containerId);
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  const div = document.createElement('div');
-  div.className = 'tradingview-widget-container';
-  div.style.cssText = 'height:40px;';
-  const inner = document.createElement('div');
-  inner.className = 'tradingview-widget-container__widget';
-  inner.style.cssText = 'height:40px;';
-  div.appendChild(inner);
-  const s = document.createElement('script');
-  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
-  s.async = true;
-  s.innerHTML = JSON.stringify({
-    symbol: symbol,
-    width: '100%',
-    colorTheme: 'dark',
-    isTransparent: true,
-    locale: 'it',
-  });
-  div.appendChild(s);
-  wrap.appendChild(div);
+// ── FETCH QUOTE DA FINNHUB ─────────────────────────────────────────────────
+// Finnhub free: stocks italiani NON disponibili → usiamo Yahoo Finance
+// come fallback via fetch diretto (no CORS issue su GitHub Pages)
+async function fetchQuote(fhSym, isIndex) {
+  // Proviamo Finnhub prima
+  try {
+    const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(fhSym)}&token=${FKEY}`);
+    const d = await r.json();
+    // Finnhub restituisce {c,d,dp,h,l,o,pc} — se c>0 è valido
+    if (d && d.c && d.c > 0) {
+      return { price: d.c, change: d.d, pct: d.dp, prev: d.pc };
+    }
+  } catch {}
+
+  // Fallback: Yahoo Finance (funziona da GitHub Pages)
+  try {
+    const yf = fhSym.startsWith('INDEX:') 
+      ? '^' + fhSym.replace('INDEX:','')
+      : fhSym;
+    const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(yf)}?interval=1d&range=2d`);
+    const d = await r.json();
+    const m = d?.chart?.result?.[0]?.meta;
+    if (m && m.regularMarketPrice) {
+      const price = m.regularMarketPrice;
+      const prev  = m.previousClose || m.chartPreviousClose;
+      const change = price - prev;
+      const pct   = prev ? (change / prev * 100) : 0;
+      return { price, change, pct, prev };
+    }
+  } catch {}
+  return null;
 }
 
-// ── TV ADVANCED CHART ─────────────────────────────────────────────────────
-function buildTVChart(containerId, symbol) {
+// ── FORMATO NUMERI ─────────────────────────────────────────────────────────
+function fmt(n, d=2) {
+  if (n == null || isNaN(n)) return '—';
+  return Number(n).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
+}
+function sign(n) { return n >= 0 ? '+' : ''; }
+
+// ── BUILD SIDEBAR CARD ─────────────────────────────────────────────────────
+function makeSkeleton() {
+  return `<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+    <div class="skel" style="width:80px;height:14px;border-radius:3px"></div>
+    <div class="skel" style="width:50px;height:14px;border-radius:3px"></div>
+  </div>`;
+}
+
+function renderPrice(card, q, isCurrency) {
+  if (!q) {
+    card.querySelector('.scard-data').innerHTML = '<span style="color:var(--text3);font-size:12px">N/D</span>';
+    return;
+  }
+  const up = q.pct >= 0;
+  const curr = isCurrency ? ' €' : '';
+  card.querySelector('.scard-data').innerHTML = `
+    <div class="scard-price">${fmt(q.price)}${curr}</div>
+    <div class="scard-right">
+      <span class="scard-pct ${up?'up-bg':'down-bg'}">${sign(q.pct)}${fmt(q.pct,2)}%</span>
+      <span class="scard-abs ${up?'up':'down'}">${sign(q.change)}${fmt(q.change,2)}${curr}</span>
+    </div>`;
+}
+
+// ── BUILD SIDEBAR ──────────────────────────────────────────────────────────
+function buildSidebar(containerId, items, chartId, isCurrency) {
+  const sidebar = document.getElementById(containerId);
+  sidebar.innerHTML = '';
+  let sel = 0;
+
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'scard' + (i === 0 ? ' active' : '');
+    card.id = `${containerId}_${i}`;
+    card.innerHTML = `
+      <div class="scard-top">
+        <div class="scard-flag">${item.flag||''}</div>
+        <div class="scard-name">${item.name}</div>
+        <div class="scard-sym">${item.tvSym.split(':')[1]}</div>
+      </div>
+      <div class="scard-data">${makeSkeleton()}</div>`;
+
+    card.onclick = () => {
+      document.getElementById(`${containerId}_${sel}`).classList.remove('active');
+      sel = i;
+      card.classList.add('active');
+      buildTVChart(chartId, item.tvSym, isCurrency);
+    };
+
+    sidebar.appendChild(card);
+
+    // Carica prezzo
+    fetchQuote(item.fhSym, !isCurrency).then(q => renderPrice(card, q, isCurrency));
+  });
+
+  // Grafico iniziale — intraday
+  buildTVChart(chartId, items[0].tvSym, isCurrency);
+
+  // Aggiornamento prezzi ogni 60 secondi
+  setInterval(() => {
+    items.forEach((item, i) => {
+      const card = document.getElementById(`${containerId}_${i}`);
+      if (!card) return;
+      fetchQuote(item.fhSym, !isCurrency).then(q => renderPrice(card, q, isCurrency));
+    });
+  }, 60000);
+}
+
+// ── TV ADVANCED CHART (intraday di default) ────────────────────────────────
+function buildTVChart(containerId, symbol, isCurrency) {
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = '';
   const div = document.createElement('div');
@@ -328,65 +389,24 @@ function buildTVChart(containerId, symbol) {
   s.innerHTML = JSON.stringify({
     autosize: true,
     symbol: symbol,
-    interval: 'D',
+    interval: '5',          // 5 minuti → mostra andamento intraday
+    range: '1D',            // range di default: oggi
     timezone: 'Europe/Rome',
     theme: 'dark',
     style: '1',
     locale: 'it',
     backgroundColor: '#141720',
     gridColor: 'rgba(255,255,255,0.04)',
-    withdateranges: true,
+    withdateranges: true,   // l'utente può cambiare range (1D, 5D, 1M, 1A...)
     allow_symbol_change: false,
     save_image: false,
     hide_top_toolbar: false,
     details: true,
-    hotlist: false,
-    calendar: false,
   });
   div.appendChild(s);
 }
 
-// ── BUILD SIDEBAR ─────────────────────────────────────────────────────────
-function buildSidebar(containerId, items, chartContainerId, onSelect) {
-  const sidebar = document.getElementById(containerId);
-  sidebar.innerHTML = '';
-  let selected = 0;
-
-  items.forEach((item, i) => {
-    const card = document.createElement('div');
-    card.className = 'side-item' + (i === 0 ? ' active' : '');
-    card.id = containerId + '-item-' + i;
-
-    // Unique id for the mini ticker inside this card
-    const tickerId = containerId + '-ticker-' + i;
-
-    card.innerHTML = `
-      <div class="side-item-hdr">
-        <div class="side-flag">${item.flag || ''}</div>
-        <div class="side-name">${item.name}</div>
-        <div class="side-sym">${item.sym.split(':')[1]}</div>
-      </div>
-      <div class="side-ticker" id="${tickerId}"></div>`;
-
-    card.onclick = () => {
-      document.getElementById(containerId + '-item-' + selected).classList.remove('active');
-      selected = i;
-      card.classList.add('active');
-      buildTVChart(chartContainerId, item.sym);
-    };
-
-    sidebar.appendChild(card);
-
-    // Build the mini ticker after appending to DOM
-    setTimeout(() => buildMiniTicker(tickerId, item.sym), i * 60);
-  });
-
-  // Build initial chart
-  buildTVChart(chartContainerId, items[0].sym);
-}
-
 // ── NEWS ───────────────────────────────────────────────────────────────────
-const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
 async function loadNews() {
   const grid = document.getElementById('news-grid');
   try {
@@ -427,11 +447,10 @@ function showTab(name) {
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap');
-buildSidebar('stk-sidebar', STOCKS, 'stk-chart-wrap');
+buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap', false);
+buildSidebar('stk-sidebar', STOCKS,  'stk-chart-wrap', true);
 loadNews();
-setInterval(loadNews, 120000); // notizie ogni 2 minuti
+setInterval(loadNews, 120000);
 </script>
 </body>
 </html>
-ENDOFFILE
