@@ -24,7 +24,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
-.live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.2)}
+.live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.25)}
 
 .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
@@ -36,53 +36,27 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 .tape-wrap{border-radius:var(--rs);overflow:hidden;margin-bottom:18px;background:var(--surface);border:.5px solid var(--border)}
 
-/* Layout a due colonne */
-.main-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
+/* Layout: sidebar sinistra + grafico destra */
+.main-layout{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
 
-/* Sidebar */
-.sidebar{display:flex;flex-direction:column;gap:5px}
-
-/* Ogni card nella sidebar */
-.scard{
-  background:var(--surface);
-  border:.5px solid var(--border);
-  border-radius:var(--rs);
-  cursor:pointer;
-  transition:border-color .15s, background .15s;
-  position:relative;
-  padding:10px 12px 8px;
+/* Sidebar = widget Market Data TV dentro un box */
+.sidebar-box{
+  background:var(--surface);border:.5px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
 }
-.scard:hover{border-color:var(--border2);background:var(--surface2)}
-.scard.active{border-color:var(--accent);background:var(--surface2)}
-.scard.active::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  width:2.5px;background:var(--accent);border-radius:2px 0 0 2px;
+.sidebar-box-label{
+  font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text3);padding:12px 14px 8px;
 }
-
-/* Riga superiore: flag + nome + simbolo */
-.scard-top{display:flex;align-items:center;gap:7px;margin-bottom:6px;pointer-events:none}
-.scard-flag{font-size:14px;line-height:1;flex-shrink:0}
-.scard-name{font-size:12px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.scard-badge{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0;background:var(--surface2);padding:1px 5px;border-radius:3px}
-
-/* Riga inferiore: prezzo + variazione — popolata via JS con dati TV */
-.scard-data{
-  display:flex;align-items:center;justify-content:space-between;
-  pointer-events:none;min-height:22px;
-}
-.scard-price{font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
-.scard-pct{font-size:12px;font-weight:500;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px}
-.scard-abs{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-left:4px}
-.badge-up{background:var(--up-bg);color:var(--up)}
-.badge-down{background:var(--down-bg);color:var(--down)}
-.skel{display:inline-block;background:var(--surface2);border-radius:3px;animation:sk 1.4s infinite}
-@keyframes sk{0%,100%{opacity:.3}50%{opacity:.7}}
 
 /* Grafico */
 .chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;position:sticky;top:12px}
-.chart-wrap{height:500px;width:100%;position:relative}
+.chart-wrap{height:500px;width:100%}
 .chart-wrap .tradingview-widget-container{height:100%!important;width:100%!important}
 .chart-wrap .tradingview-widget-container__widget{height:100%!important;width:100%!important}
+
+/* Istruzione grafico */
+.chart-hint{font-size:11px;color:var(--text3);padding:8px 14px;border-top:.5px solid var(--border);text-align:center}
 
 /* Overview */
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
@@ -108,7 +82,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-@media(max-width:920px){
+@media(max-width:960px){
   .main-layout{grid-template-columns:1fr}
   .chart-panel{position:static}
   .chart-wrap{height:360px}
@@ -139,8 +113,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
   </div>
 
-  <!-- INDICI -->
+  <!-- ════════════ INDICI ════════════ -->
   <div id="sec-indices" class="section active">
+
+    <!-- Ticker tape -->
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -164,14 +140,51 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
-    <div class="sec-label">Seleziona un indice — prezzo e % live</div>
+    <div class="sec-label">Indici — prezzi e variazioni live · clicca sul nome per il grafico</div>
     <div class="main-layout">
-      <div class="sidebar" id="idx-sidebar"></div>
+
+      <!-- Sidebar: Market Data widget con tutti gli indici -->
+      <div class="sidebar-box">
+        <div class="sidebar-box-label">Indici mondiali</div>
+        <div class="tradingview-widget-container" id="idx-market-data">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+          {
+            "width": "100%",
+            "height": 420,
+            "symbolsGroups": [
+              {
+                "name": "Indici",
+                "originalName": "Indici",
+                "symbols": [
+                  {"name":"TVC:FTMIB","displayName":"FTSE MIB 🇮🇹"},
+                  {"name":"XETR:DAX","displayName":"DAX 🇩🇪"},
+                  {"name":"EURONEXT:PX1","displayName":"CAC 40 🇫🇷"},
+                  {"name":"INDEX:UKX","displayName":"FTSE 100 🇬🇧"},
+                  {"name":"BME:IBC","displayName":"IBEX 35 🇪🇸"},
+                  {"name":"TVC:SX5E","displayName":"Euro Stoxx 50 🇪🇺"},
+                  {"name":"SP:SPX","displayName":"S&P 500 🇺🇸"},
+                  {"name":"NASDAQ:NDX","displayName":"Nasdaq 100 🇺🇸"}
+                ]
+              }
+            ],
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "locale": "it",
+            "showSymbolLogo": true
+          }
+          </script>
+        </div>
+        <div class="chart-hint">Clicca sul nome di un indice per aprire il grafico →</div>
+      </div>
+
+      <!-- Grafico indice selezionato -->
       <div class="chart-panel">
         <div class="chart-wrap" id="idx-chart-wrap"></div>
       </div>
     </div>
 
+    <!-- Panoramica -->
     <div class="sec-label">Panoramica mercati</div>
     <div class="ov-grid">
       <div class="ov-card">
@@ -214,18 +227,55 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- TITOLI BIT -->
+  <!-- ════════════ TITOLI BIT ════════════ -->
   <div id="sec-stocks" class="section">
-    <div class="sec-label">Seleziona un titolo — prezzo e % live</div>
+    <div class="sec-label">Titoli Borsa Italiana — prezzi e variazioni live · clicca sul nome per il grafico</div>
     <div class="main-layout">
-      <div class="sidebar" id="stk-sidebar"></div>
+
+      <!-- Sidebar: Market Data widget con tutti i titoli -->
+      <div class="sidebar-box">
+        <div class="sidebar-box-label">Titoli BIT</div>
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+          {
+            "width": "100%",
+            "height": 480,
+            "symbolsGroups": [
+              {
+                "name": "Borsa Italiana",
+                "originalName": "Borsa Italiana",
+                "symbols": [
+                  {"name":"MIL:BMPS","displayName":"Monte Paschi Siena"},
+                  {"name":"MIL:ISP","displayName":"Intesa Sanpaolo"},
+                  {"name":"MIL:LDO","displayName":"Leonardo"},
+                  {"name":"MIL:BAMI","displayName":"Banco BPM"},
+                  {"name":"MIL:G","displayName":"Generali"},
+                  {"name":"MIL:UCG","displayName":"UniCredit"},
+                  {"name":"MIL:PST","displayName":"Poste Italiane"},
+                  {"name":"MIL:ENEL","displayName":"Enel"},
+                  {"name":"MIL:MB","displayName":"Mediobanca"}
+                ]
+              }
+            ],
+            "colorTheme": "dark",
+            "isTransparent": true,
+            "locale": "it",
+            "showSymbolLogo": true
+          }
+          </script>
+        </div>
+        <div class="chart-hint">Clicca sul nome di un titolo per aprire il grafico →</div>
+      </div>
+
+      <!-- Grafico titolo selezionato -->
       <div class="chart-panel">
         <div class="chart-wrap" id="stk-chart-wrap"></div>
       </div>
     </div>
   </div>
 
-  <!-- NOTIZIE -->
+  <!-- ════════════ NOTIZIE ════════════ -->
   <div id="sec-news" class="section">
     <div class="sec-label">Ultime notizie economico-finanziarie</div>
     <div class="news-grid" id="news-grid">
@@ -233,7 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- PORTAFOGLIO -->
+  <!-- ════════════ PORTAFOGLIO ════════════ -->
   <div id="sec-portfolio" class="section">
     <div class="sec-label">Il mio portafoglio</div>
     <div class="pf-hint">
@@ -247,10 +297,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-</div>
+</div><!-- /app -->
 
 <script>
-// ── CLOCK ──────────────────────────────────────────────────────────────────
+// ── CLOCK ─────────────────────────────────────────────────────────────────
 setInterval(()=>{
   document.getElementById('clock').textContent = new Date().toLocaleString('it-IT',{
     weekday:'short',day:'2-digit',month:'short',year:'numeric',
@@ -258,33 +308,11 @@ setInterval(()=>{
   })+' CET';
 },1000);
 
-// ── DATI ───────────────────────────────────────────────────────────────────
-const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      sym:'TVC:FTMIB'},
-  {flag:'🇩🇪', name:'DAX',           sym:'XETR:DAX'},
-  {flag:'🇫🇷', name:'CAC 40',        sym:'EURONEXT:PX1'},
-  {flag:'🇬🇧', name:'FTSE 100',      sym:'INDEX:UKX'},
-  {flag:'🇪🇸', name:'IBEX 35',       sym:'BME:IBC'},
-  {flag:'🇪🇺', name:'Euro Stoxx 50', sym:'TVC:SX5E'},
-  {flag:'🇺🇸', name:'S&P 500',       sym:'SP:SPX'},
-  {flag:'🇺🇸', name:'Nasdaq 100',    sym:'NASDAQ:NDX'},
-];
-
-const STOCKS = [
-  {flag:'🏦', name:'Monte Paschi Siena', sym:'MIL:BMPS'},
-  {flag:'🏦', name:'Intesa Sanpaolo',    sym:'MIL:ISP'},
-  {flag:'✈️', name:'Leonardo',           sym:'MIL:LDO'},
-  {flag:'🏦', name:'Banco BPM',          sym:'MIL:BAMI'},
-  {flag:'🛡️', name:'Generali',           sym:'MIL:G'},
-  {flag:'🏦', name:'UniCredit',          sym:'MIL:UCG'},
-  {flag:'📮', name:'Poste Italiane',     sym:'MIL:PST'},
-  {flag:'⚡', name:'Enel',              sym:'MIL:ENEL'},
-  {flag:'🏦', name:'Mediobanca',         sym:'MIL:MB'},
-];
-
 // ── GRAFICO INTRADAY ───────────────────────────────────────────────────────
+// interval:'1' = 1 minuto; NO range → TV mostra automaticamente la sessione corrente
 function buildTVChart(containerId, symbol) {
   const wrap = document.getElementById(containerId);
+  if (!wrap) return;
   wrap.innerHTML = '';
   const div = document.createElement('div');
   div.className = 'tradingview-widget-container';
@@ -300,115 +328,50 @@ function buildTVChart(containerId, symbol) {
   s.innerHTML = JSON.stringify({
     autosize: true,
     symbol: symbol,
-    interval: '1',
-    range: '1D',
+    interval: '1',          // 1 minuto
     timezone: 'Europe/Rome',
     theme: 'dark',
-    style: '1',
+    style: '2',             // area chart — più leggibile per intraday
     locale: 'it',
     backgroundColor: '#141720',
     gridColor: 'rgba(255,255,255,0.04)',
-    withdateranges: true,
-    allow_symbol_change: false,
+    withdateranges: true,   // barra range: 1D 5D 1M 3M 1A 5A
+    allow_symbol_change: true,
     save_image: false,
     hide_top_toolbar: false,
+    hide_side_toolbar: false,
+    details: false,
+    // NON impostiamo range → TV mostra la sessione di oggi di default
   });
   div.appendChild(s);
 }
 
-// ── FETCH PREZZI via WebSocket TradingView ─────────────────────────────────
-// Usiamo il WebSocket pubblico di TradingView per ottenere prezzi live
-// senza autenticazione — funziona per dati delayed/EOD
-const priceCallbacks = {};
+// Inizializza i due grafici con i simboli di default
+buildTVChart('idx-chart-wrap', 'TVC:FTMIB');
+buildTVChart('stk-chart-wrap', 'MIL:ENEL');
 
-function fetchTVPrice(symbol, callback) {
-  // Mappatura simbolo TV → formato per la quote REST pubblica di TradingView
-  // Endpoint pubblico: https://symbol-overview.tradingview.com
-  const encoded = encodeURIComponent(symbol);
-  const url = `https://symbol-overview.tradingview.com/symbol_info?symbol=${encoded}&fields=lp,ch,chp,prev_close_price`;
-  fetch(url)
-    .then(r => r.json())
-    .then(d => {
-      if (d && d.lp) {
-        callback({ price: d.lp, change: d.ch, pct: d.chp, prev: d.prev_close_price });
-      }
-    })
-    .catch(() => callback(null));
-}
+// ── INTERCETTA CLICK SUI WIDGET MARKET-DATA ────────────────────────────────
+// Il widget market-quotes non espone eventi JS diretti, ma possiamo intercettare
+// i messaggi postMessage che TradingView invia quando l'utente clicca un simbolo.
+// Formato messaggio: { name: 'tv-widget-market-quotes', data: { symbol: 'MIL:ISP' } }
+window.addEventListener('message', (e) => {
+  try {
+    const msg = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+    if (!msg || !msg.name) return;
 
-// ── FORMAT ─────────────────────────────────────────────────────────────────
-function fmt(n, d=2) {
-  if (n == null || isNaN(n)) return '—';
-  return Number(n).toLocaleString('it-IT', {minimumFractionDigits:d, maximumFractionDigits:d});
-}
-function sign(n) { return n >= 0 ? '+' : ''; }
-
-function renderCardData(card, q, isCurrency) {
-  const dataEl = card.querySelector('.scard-data');
-  if (!q) {
-    dataEl.innerHTML = '<span style="color:var(--text3);font-size:11px">dati non disp.</span>';
-    return;
-  }
-  const up = q.pct >= 0;
-  const curr = isCurrency ? ' €' : '';
-  dataEl.innerHTML = `
-    <span class="scard-price">${fmt(q.price)}${curr}</span>
-    <span>
-      <span class="scard-pct ${up?'badge-up':'badge-down'}">${sign(q.pct)}${fmt(q.pct,2)}%</span>
-      <span class="scard-abs" style="color:${up?'var(--up)':'var(--down)'}">${sign(q.change)}${fmt(q.change,2)}</span>
-    </span>`;
-}
-
-// ── BUILD SIDEBAR ──────────────────────────────────────────────────────────
-function buildSidebar(sidebarId, items, chartId, isCurrency) {
-  const sidebar = document.getElementById(sidebarId);
-  sidebar.innerHTML = '';
-  let sel = 0;
-
-  items.forEach((item, i) => {
-    const shortSym = item.sym.split(':')[1];
-    const card = document.createElement('div');
-    card.className = 'scard' + (i === 0 ? ' active' : '');
-    card.id = `${sidebarId}_${i}`;
-    card.innerHTML = `
-      <div class="scard-top">
-        <span class="scard-flag">${item.flag||''}</span>
-        <span class="scard-name">${item.name}</span>
-        <span class="scard-badge">${shortSym}</span>
-      </div>
-      <div class="scard-data">
-        <span class="skel" style="width:70px;height:13px"></span>
-        <span class="skel" style="width:50px;height:13px"></span>
-      </div>`;
-
-    card.onclick = () => {
-      document.getElementById(`${sidebarId}_${sel}`).classList.remove('active');
-      sel = i;
-      card.classList.add('active');
-      buildTVChart(chartId, item.sym);
-    };
-
-    sidebar.appendChild(card);
-
-    // Carica prezzo
-    fetchTVPrice(item.sym, q => renderCardData(card, q, isCurrency));
-  });
-
-  // Grafico iniziale
-  buildTVChart(chartId, items[0].sym);
-
-  // Aggiornamento prezzi ogni 60s
-  setInterval(() => {
-    items.forEach((item, i) => {
-      const card = document.getElementById(`${sidebarId}_${i}`);
-      if (card) fetchTVPrice(item.sym, q => renderCardData(card, q, isCurrency));
-    });
-  }, 60000);
-}
+    // Click su simbolo nel widget market-quotes
+    if (msg.name === 'tv-widget-market-quotes' && msg.data?.symbol) {
+      const sym = msg.data.symbol;
+      // Determina se è un indice o un titolo BIT
+      const isMil = sym.startsWith('MIL:');
+      buildTVChart(isMil ? 'stk-chart-wrap' : 'idx-chart-wrap', sym);
+      // Porta in primo piano la tab corretta se l'utente è nell'altra
+    }
+  } catch {}
+});
 
 // ── NEWS ───────────────────────────────────────────────────────────────────
 const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
-
 async function loadNews() {
   const grid = document.getElementById('news-grid');
   try {
@@ -450,8 +413,6 @@ function showTab(name) {
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
-buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap', false);
-buildSidebar('stk-sidebar', STOCKS,  'stk-chart-wrap', true);
 loadNews();
 setInterval(loadNews, 120000);
 </script>
