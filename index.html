@@ -8,52 +8,74 @@
 <style>
 :root{
   --bg:#0d0f12;--surface:#141720;--surface2:#1c2030;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);
   --text:#e8eaf0;--text2:#8b90a0;--text3:#555c70;
-  --up:#22c98a;--down:#f05252;--accent:#4f8ef7;
+  --up:#22c98a;--up-bg:rgba(34,201,138,0.1);
+  --down:#f05252;--down-bg:rgba(240,82,82,0.1);
+  --accent:#4f8ef7;--accent-bg:rgba(79,142,247,0.1);
   --radius:12px;--radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;gap:10px}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;gap:10px}
 .header h1{font-size:18px;font-weight:500;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.clock{font-size:12px;color:var(--text2);margin-top:3px;font-family:'DM Mono',monospace}
-.tabs{display:flex;gap:2px;margin-bottom:22px;background:var(--surface);border-radius:var(--radius-sm);padding:3px;width:fit-content;max-width:100%}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.live-badge{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;letter-spacing:.04em}
+
+/* TABS */
+.tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--radius-sm);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
 .tab.active{background:var(--surface2);color:var(--text);border:0.5px solid var(--border2)}
 .section{display:none}.section.active{display:block}
-.sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:14px;margin-top:22px}
+.sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:20px}
 .sec-label:first-child{margin-top:0}
-.tape-wrap{border-radius:var(--radius-sm);overflow:hidden;margin-bottom:20px;background:var(--surface);border:0.5px solid var(--border)}
-.idx-layout{display:grid;grid-template-columns:260px 1fr;gap:14px;align-items:start}
-.idx-selector{display:flex;flex-direction:column;gap:6px}
-.idx-btn{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
-.idx-btn:hover{border-color:var(--border2);background:var(--surface2)}
-.idx-btn.active{border-color:var(--accent);background:var(--surface2)}
-.idx-flag{font-size:18px;line-height:1}
-.idx-info{display:flex;flex-direction:column;gap:1px;flex:1}
-.idx-name{font-size:13px;font-weight:500;color:var(--text)}
-.idx-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
-.idx-dot{width:6px;height:6px;border-radius:50%;background:var(--border2);flex-shrink:0;transition:background .15s}
-.idx-btn.active .idx-dot{background:var(--accent)}
-.stk-layout{display:grid;grid-template-columns:260px 1fr;gap:14px;align-items:start}
-.stk-list{display:flex;flex-direction:column;gap:6px}
-.stk-btn{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
-.stk-btn:hover{border-color:var(--border2);background:var(--surface2)}
-.stk-btn.active{border-color:var(--accent);background:var(--surface2)}
-.stk-name{font-size:13px;font-weight:500;color:var(--text)}
-.stk-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
-.stk-arrow{color:var(--text3);font-size:18px}
-.stk-btn.active .stk-arrow{color:var(--accent)}
-.chart-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.chart-wrap{height:480px}
+
+/* TAPE */
+.tape-wrap{border-radius:var(--radius-sm);overflow:hidden;margin-bottom:18px;background:var(--surface);border:0.5px solid var(--border)}
+
+/* LAYOUT PRINCIPALE */
+.main-layout{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}
+
+/* SIDEBAR ITEMS — indici e stocks */
+.sidebar{display:flex;flex-direction:column;gap:6px}
+
+.side-item{
+  background:var(--surface);border:0.5px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;
+  overflow:hidden;position:relative;
+}
+.side-item:hover{border-color:var(--border2);background:var(--surface2)}
+.side-item.active{border-color:var(--accent);background:var(--surface2)}
+.side-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+
+/* Header del side-item: flag + nome */
+.side-item-hdr{display:flex;align-items:center;gap:8px;padding:10px 12px 6px}
+.side-flag{font-size:16px;line-height:1;flex-shrink:0}
+.side-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.side-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0}
+
+/* Mini ticker widget TV dentro la card */
+.side-ticker{height:46px;overflow:hidden;padding:0 4px 6px}
+.side-ticker .tradingview-widget-container{height:40px!important}
+.side-ticker .tradingview-widget-container__widget{height:40px!important}
+
+/* CHART PANEL */
+.chart-panel{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden;position:sticky;top:12px}
+.chart-wrap{height:500px}
+
+/* OVERVIEW GRID */
 .overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
 .ov-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .ov-label{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:12px 16px 0}
+
+/* NEWS */
 .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .ncard{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color .15s}
 .ncard:hover{border-color:var(--border2)}
@@ -61,16 +83,21 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ntitle{font-size:13px;color:var(--text);line-height:1.5;text-decoration:none;display:block}
 .ntitle:hover{color:var(--accent)}
 .ntime{font-size:11px;color:var(--text3);margin-top:7px}
-.ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:rgba(79,142,247,0.1);color:var(--accent);margin-left:5px}
+.ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:var(--accent-bg);color:var(--accent);margin-left:5px}
 .nimg{width:100%;height:130px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:block}
+
+/* PORTAFOGLIO */
 .pf-hint{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:28px 24px;font-size:13px;color:var(--text2);line-height:1.9}
 .pf-hint strong{color:var(--text);font-weight:500}
 .pf-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-@media(max-width:860px){
-  .idx-layout,.stk-layout{grid-template-columns:1fr}
-  .chart-wrap{height:360px}
+
+@media(max-width:900px){
+  .main-layout{grid-template-columns:1fr}
+  .chart-panel{position:static}
+  .chart-wrap{height:380px}
   .overview-grid{grid-template-columns:1fr}
 }
 @media(max-width:600px){
@@ -88,6 +115,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <h1><span class="dot"></span>Dashboard Finanziaria</h1>
       <div class="clock" id="clock"></div>
     </div>
+    <div class="hdr-right">
+      <span class="live-badge">● LIVE</span>
+    </div>
   </div>
 
   <div class="tabs">
@@ -97,8 +127,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
   </div>
 
-  <!-- INDICI -->
+  <!-- ═══ INDICI ════════════════════════════════════════════════════════════ -->
   <div id="sec-indices" class="section active">
+
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -114,15 +145,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           {"proName":"NASDAQ:NDX","title":"Nasdaq 100"},
           {"proName":"TVC:GOLD","title":"Oro"},
           {"proName":"TVC:USOIL","title":"Petrolio"},
-          {"proName":"FX:EURUSD","title":"EUR/USD"}
+          {"proName":"FX:EURUSD","title":"EUR/USD"},
+          {"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
+          {"proName":"BINANCE:ETHUSDT","title":"Ethereum"}
         ],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"it"}
         </script>
       </div>
     </div>
 
-    <div class="sec-label">Seleziona un indice per il grafico</div>
-    <div class="idx-layout">
-      <div class="idx-selector" id="idx-selector"></div>
+    <div class="sec-label">Seleziona un indice — prezzi e variazioni in tempo reale</div>
+    <div class="main-layout">
+      <div class="sidebar" id="idx-sidebar"></div>
       <div class="chart-panel">
         <div class="chart-wrap" id="idx-chart-wrap"></div>
       </div>
@@ -149,13 +182,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         </div>
       </div>
       <div class="ov-card">
-        <div class="ov-label">Forex &amp; Materie prime</div>
+        <div class="ov-label">Forex, Materie prime &amp; Crypto</div>
         <div class="tradingview-widget-container" style="height:320px">
           <div class="tradingview-widget-container__widget" style="height:320px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
           {"colorTheme":"dark","dateRange":"1D","showChart":false,"locale":"it","isTransparent":true,"showSymbolLogo":true,"width":"100%","height":"320","tabs":[
-            {"title":"Forex","symbols":[{"s":"FX:EURUSD","d":"EUR/USD"},{"s":"FX:GBPUSD","d":"GBP/USD"},{"s":"FX:USDJPY","d":"USD/JPY"},{"s":"FX:USDCHF","d":"USD/CHF"}],"originalTitle":"Forex"},
-            {"title":"Materie prime","symbols":[{"s":"TVC:GOLD","d":"Oro"},{"s":"TVC:SILVER","d":"Argento"},{"s":"TVC:USOIL","d":"Petrolio WTI"},{"s":"CAPITALCOM:NATURALGAS","d":"Gas naturale"}],"originalTitle":"Materie prime"}
+            {"title":"Materie prime","symbols":[
+              {"s":"TVC:GOLD","d":"Oro"},
+              {"s":"TVC:SILVER","d":"Argento"},
+              {"s":"TVC:USOIL","d":"Petrolio WTI"},
+              {"s":"CAPITALCOM:NATURALGAS","d":"Gas naturale"}
+            ],"originalTitle":"Materie prime"},
+            {"title":"Crypto","symbols":[
+              {"s":"BINANCE:BTCUSDT","d":"Bitcoin"},
+              {"s":"BINANCE:ETHUSDT","d":"Ethereum"},
+              {"s":"BINANCE:BNBUSDT","d":"BNB"},
+              {"s":"BINANCE:SOLUSDT","d":"Solana"},
+              {"s":"BINANCE:XRPUSDT","d":"XRP"},
+              {"s":"BINANCE:ADAUSDT","d":"Cardano"}
+            ],"originalTitle":"Crypto"},
+            {"title":"Forex","symbols":[
+              {"s":"FX:EURUSD","d":"EUR/USD"},
+              {"s":"FX:GBPUSD","d":"GBP/USD"},
+              {"s":"FX:USDJPY","d":"USD/JPY"},
+              {"s":"FX:USDCHF","d":"USD/CHF"}
+            ],"originalTitle":"Forex"}
           ]}
           </script>
         </div>
@@ -163,18 +214,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- TITOLI BIT -->
+  <!-- ═══ TITOLI BIT ════════════════════════════════════════════════════════ -->
   <div id="sec-stocks" class="section">
-    <div class="sec-label">Seleziona un titolo per il grafico</div>
-    <div class="stk-layout">
-      <div class="stk-list" id="stk-list"></div>
+    <div class="sec-label">Seleziona un titolo — prezzi e variazioni in tempo reale</div>
+    <div class="main-layout">
+      <div class="sidebar" id="stk-sidebar"></div>
       <div class="chart-panel">
         <div class="chart-wrap" id="stk-chart-wrap"></div>
       </div>
     </div>
   </div>
 
-  <!-- NOTIZIE -->
+  <!-- ═══ NOTIZIE ═══════════════════════════════════════════════════════════ -->
   <div id="sec-news" class="section">
     <div class="sec-label">Ultime notizie economico-finanziarie</div>
     <div class="news-grid" id="news-grid">
@@ -182,7 +233,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- PORTAFOGLIO -->
+  <!-- ═══ PORTAFOGLIO ═══════════════════════════════════════════════════════ -->
   <div id="sec-portfolio" class="section">
     <div class="sec-label">Il mio portafoglio</div>
     <div class="pf-hint">
@@ -192,13 +243,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       &bull; <strong>Quantità</strong> di azioni<br>
       &bull; <strong>Prezzo medio di carico</strong> — es. <code>6.20</code> €<br>
       &bull; <strong>Data di acquisto</strong> (opzionale, per il grafico P&amp;L nel tempo)<br><br>
-      Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em>
+      Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em><br><br>
+      Calcolerò: valore attuale, P&amp;L in € e %, peso % sul portafoglio, grafico storico rendimento.
     </div>
   </div>
 
 </div>
 
 <script>
+// ── CLOCK ──────────────────────────────────────────────────────────────────
 setInterval(()=>{
   document.getElementById('clock').textContent = new Date().toLocaleString('it-IT',{
     weekday:'short',day:'2-digit',month:'short',year:'numeric',
@@ -206,6 +259,7 @@ setInterval(()=>{
   })+' CET';
 },1000);
 
+// ── DATA ───────────────────────────────────────────────────────────────────
 const INDICES=[
   {flag:'🇮🇹',name:'FTSE MIB',      sym:'TVC:FTMIB'},
   {flag:'🇩🇪',name:'DAX',           sym:'XETR:DAX'},
@@ -218,119 +272,166 @@ const INDICES=[
 ];
 
 const STOCKS=[
-  {name:'Monte Paschi Siena',sym:'MIL:BMPS'},
-  {name:'Intesa Sanpaolo',   sym:'MIL:ISP'},
-  {name:'Leonardo',          sym:'MIL:LDO'},
-  {name:'Banco BPM',         sym:'MIL:BAMI'},
-  {name:'Generali',          sym:'MIL:G'},
-  {name:'UniCredit',         sym:'MIL:UCG'},
-  {name:'Poste Italiane',    sym:'MIL:PST'},
-  {name:'Enel',              sym:'MIL:ENEL'},
-  {name:'Mediobanca',        sym:'MIL:MB'},
+  {flag:'🏦',name:'Monte Paschi Siena',sym:'MIL:BMPS'},
+  {flag:'🏦',name:'Intesa Sanpaolo',   sym:'MIL:ISP'},
+  {flag:'✈️',name:'Leonardo',          sym:'MIL:LDO'},
+  {flag:'🏦',name:'Banco BPM',         sym:'MIL:BAMI'},
+  {flag:'🛡️',name:'Generali',          sym:'MIL:G'},
+  {flag:'🏦',name:'UniCredit',         sym:'MIL:UCG'},
+  {flag:'📮',name:'Poste Italiane',    sym:'MIL:PST'},
+  {flag:'⚡',name:'Enel',             sym:'MIL:ENEL'},
+  {flag:'🏦',name:'Mediobanca',        sym:'MIL:MB'},
 ];
 
-function buildTVChart(containerId, symbol){
-  const wrap=document.getElementById(containerId);
-  wrap.innerHTML='';
-  const div=document.createElement('div');
-  div.className='tradingview-widget-container';
-  div.style.height='100%';
-  const inner=document.createElement('div');
-  inner.className='tradingview-widget-container__widget';
-  inner.style.height='100%';
+// ── TV MINI TICKER (simbolo singolo, mostra prezzo + %) ───────────────────
+// Usiamo il widget "single-quote" che è leggero e si aggiorna in tempo reale
+function buildMiniTicker(containerId, symbol) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'tradingview-widget-container';
+  div.style.cssText = 'height:40px;';
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:40px;';
+  div.appendChild(inner);
+  const s = document.createElement('script');
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js';
+  s.async = true;
+  s.innerHTML = JSON.stringify({
+    symbol: symbol,
+    width: '100%',
+    colorTheme: 'dark',
+    isTransparent: true,
+    locale: 'it',
+  });
+  div.appendChild(s);
+  wrap.appendChild(div);
+}
+
+// ── TV ADVANCED CHART ─────────────────────────────────────────────────────
+function buildTVChart(containerId, symbol) {
+  const wrap = document.getElementById(containerId);
+  wrap.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = 'tradingview-widget-container';
+  div.style.height = '100%';
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.height = '100%';
   div.appendChild(inner);
   wrap.appendChild(div);
-  const s=document.createElement('script');
-  s.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-  s.async=true;
-  s.innerHTML=JSON.stringify({
-    autosize:true,symbol,interval:'D',timezone:'Europe/Rome',
-    theme:'dark',style:'1',locale:'it',
-    backgroundColor:'#141720',gridColor:'rgba(255,255,255,0.04)',
-    withdateranges:true,allow_symbol_change:false,save_image:false
+  const s = document.createElement('script');
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  s.async = true;
+  s.innerHTML = JSON.stringify({
+    autosize: true,
+    symbol: symbol,
+    interval: 'D',
+    timezone: 'Europe/Rome',
+    theme: 'dark',
+    style: '1',
+    locale: 'it',
+    backgroundColor: '#141720',
+    gridColor: 'rgba(255,255,255,0.04)',
+    withdateranges: true,
+    allow_symbol_change: false,
+    save_image: false,
+    hide_top_toolbar: false,
+    details: true,
+    hotlist: false,
+    calendar: false,
   });
   div.appendChild(s);
 }
 
-let selIdx=0;
-function buildIdxSelector(){
-  const sel=document.getElementById('idx-selector');
-  INDICES.forEach((idx,i)=>{
-    const btn=document.createElement('div');
-    btn.className='idx-btn'+(i===0?' active':'');
-    btn.id='ibtn-'+i;
-    btn.innerHTML=`<div class="idx-flag">${idx.flag}</div><div class="idx-info"><div class="idx-name">${idx.name}</div><div class="idx-sym">${idx.sym}</div></div><div class="idx-dot"></div>`;
-    btn.onclick=()=>{
-      document.getElementById('ibtn-'+selIdx).classList.remove('active');
-      selIdx=i; btn.classList.add('active');
-      buildTVChart('idx-chart-wrap',idx.sym);
+// ── BUILD SIDEBAR ─────────────────────────────────────────────────────────
+function buildSidebar(containerId, items, chartContainerId, onSelect) {
+  const sidebar = document.getElementById(containerId);
+  sidebar.innerHTML = '';
+  let selected = 0;
+
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'side-item' + (i === 0 ? ' active' : '');
+    card.id = containerId + '-item-' + i;
+
+    // Unique id for the mini ticker inside this card
+    const tickerId = containerId + '-ticker-' + i;
+
+    card.innerHTML = `
+      <div class="side-item-hdr">
+        <div class="side-flag">${item.flag || ''}</div>
+        <div class="side-name">${item.name}</div>
+        <div class="side-sym">${item.sym.split(':')[1]}</div>
+      </div>
+      <div class="side-ticker" id="${tickerId}"></div>`;
+
+    card.onclick = () => {
+      document.getElementById(containerId + '-item-' + selected).classList.remove('active');
+      selected = i;
+      card.classList.add('active');
+      buildTVChart(chartContainerId, item.sym);
     };
-    sel.appendChild(btn);
+
+    sidebar.appendChild(card);
+
+    // Build the mini ticker after appending to DOM
+    setTimeout(() => buildMiniTicker(tickerId, item.sym), i * 60);
   });
-  buildTVChart('idx-chart-wrap',INDICES[0].sym);
+
+  // Build initial chart
+  buildTVChart(chartContainerId, items[0].sym);
 }
 
-let selStk=0;
-function buildStkList(){
-  const list=document.getElementById('stk-list');
-  STOCKS.forEach((s,i)=>{
-    const btn=document.createElement('div');
-    btn.className='stk-btn'+(i===0?' active':'');
-    btn.id='sbtn-'+i;
-    btn.innerHTML=`<div><div class="stk-name">${s.name}</div><div class="stk-sym">${s.sym}</div></div><div class="stk-arrow">›</div>`;
-    btn.onclick=()=>{
-      document.getElementById('sbtn-'+selStk).classList.remove('active');
-      selStk=i; btn.classList.add('active');
-      buildTVChart('stk-chart-wrap',s.sym);
-    };
-    list.appendChild(btn);
-  });
-  buildTVChart('stk-chart-wrap',STOCKS[0].sym);
-}
-
-const FKEY='d783tv1r01qsamsis050d783tv1r01qsamsis05g';
-async function loadNews(){
-  const grid=document.getElementById('news-grid');
-  try{
-    const r=await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FKEY}`);
-    const items=await r.json();
-    if(!items?.length) throw new Error();
-    items.sort((a,b)=>b.datetime-a.datetime);
-    grid.innerHTML=items.slice(0,18).map(n=>`
+// ── NEWS ───────────────────────────────────────────────────────────────────
+const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
+async function loadNews() {
+  const grid = document.getElementById('news-grid');
+  try {
+    const r = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FKEY}`);
+    const items = await r.json();
+    if (!items?.length) throw new Error();
+    items.sort((a,b) => b.datetime - a.datetime);
+    grid.innerHTML = items.slice(0,18).map(n => `
       <div class="ncard">
-        ${n.image?`<img class="nimg" src="${n.image}" onerror="this.style.display='none'" alt="">`:''}
+        ${n.image ? `<img class="nimg" src="${n.image}" onerror="this.style.display='none'" alt="">` : ''}
         <div class="nsrc">${n.source}<span class="ncat">${n.category}</span></div>
         <a class="ntitle" href="${n.url}" target="_blank" rel="noopener">${n.headline}</a>
         <div class="ntime">${new Date(n.datetime*1000).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
       </div>`).join('');
-  }catch{
-    try{
-      const r2=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml')+'&count=18');
-      const d=await r2.json();
-      grid.innerHTML=(d.items||[]).map(i=>`
+  } catch {
+    try {
+      const r2 = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml') + '&count=18');
+      const d = await r2.json();
+      grid.innerHTML = (d.items||[]).map(i => `
         <div class="ncard">
-          ${i.thumbnail?`<img class="nimg" src="${i.thumbnail}" onerror="this.style.display='none'" alt="">`:''}
+          ${i.thumbnail ? `<img class="nimg" src="${i.thumbnail}" onerror="this.style.display='none'" alt="">` : ''}
           <div class="nsrc">Il Sole 24 Ore</div>
           <a class="ntitle" href="${i.link}" target="_blank" rel="noopener">${i.title}</a>
           <div class="ntime">${new Date(i.pubDate).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
-        </div>`).join('')||'<p style="color:var(--text3)">Nessuna notizia.</p>';
-    }catch{
-      grid.innerHTML='<p style="color:var(--text3);font-size:13px">Notizie non disponibili.</p>';
+        </div>`).join('') || '<p style="color:var(--text3)">Nessuna notizia.</p>';
+    } catch {
+      grid.innerHTML = '<p style="color:var(--text3);font-size:13px">Notizie non disponibili.</p>';
     }
   }
 }
 
-function showTab(name){
-  ['indices','stocks','news','portfolio'].forEach((n,i)=>{
-    document.querySelectorAll('.tab')[i].classList.toggle('active',n===name);
-    document.getElementById('sec-'+n).classList.toggle('active',n===name);
+// ── NAV ────────────────────────────────────────────────────────────────────
+function showTab(name) {
+  ['indices','stocks','news','portfolio'].forEach((n,i) => {
+    document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
+    document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
 }
 
-buildIdxSelector();
-buildStkList();
+// ── INIT ───────────────────────────────────────────────────────────────────
+buildSidebar('idx-sidebar', INDICES, 'idx-chart-wrap');
+buildSidebar('stk-sidebar', STOCKS, 'stk-chart-wrap');
 loadNews();
-setInterval(loadNews,300000);
+setInterval(loadNews, 120000); // notizie ogni 2 minuti
 </script>
 </body>
 </html>
+ENDOFFILE
