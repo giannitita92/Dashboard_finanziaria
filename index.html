@@ -24,7 +24,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
-.live-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:var(--up-bg);color:var(--up);font-family:'DM Mono',monospace;border:.5px solid rgba(34,201,138,0.3)}
+.delay-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:rgba(239,159,39,0.12);color:#ef9f27;font-family:'DM Mono',monospace;border:.5px solid rgba(239,159,39,0.3)}
 
 .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
@@ -54,9 +54,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 /* COLONNA DESTRA */
 .right-col{display:flex;flex-direction:column;gap:10px}
 
-/* PRICE BOXES GRID */
+/* PRICE BOXES */
 .pboxes{display:grid;gap:7px}
-
 .pbox{
   background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);
   padding:11px 14px;display:flex;align-items:center;justify-content:space-between;
@@ -68,8 +67,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pbox-flag{font-size:15px;flex-shrink:0}
 .pbox-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.2}
 .pbox-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
-.pbox-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;min-width:90px}
+.pbox-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;min-width:95px}
 .pbox-price{font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+.pbox-row{display:flex;align-items:center;gap:5px}
 .pbox-pct{font-size:11px;font-weight:500;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:3px}
 .pbox-chg{font-size:10px;font-family:'DM Mono',monospace}
 .badge-up{background:var(--up-bg);color:var(--up)}
@@ -81,8 +81,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 /* CHART */
 .chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .chart-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:8px}
-.chart-meta .chart-name{font-size:14px;font-weight:500;color:var(--text)}
-.chart-meta .chart-code{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
+.chart-name{font-size:14px;font-weight:500;color:var(--text)}
+.chart-code{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
 .range-btns{display:flex;gap:3px;flex-wrap:wrap}
 .rbtn{font-size:11px;padding:4px 10px;border:.5px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);background:none;font-family:'DM Sans',sans-serif;transition:all .12s}
 .rbtn:hover{background:var(--surface2);color:var(--text)}
@@ -90,7 +90,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .chart-wrap{height:430px;width:100%}
 .chart-wrap .tradingview-widget-container,
 .chart-wrap .tradingview-widget-container__widget{height:100%!important;width:100%!important}
-.chart-footer{font-size:10px;color:var(--text3);padding:5px 14px;display:flex;justify-content:space-between;border-top:.5px solid var(--border)}
+.chart-footer{font-size:10px;color:var(--text3);padding:5px 14px;display:flex;justify-content:space-between;border-top:.5px solid var(--border);flex-wrap:wrap;gap:4px}
 
 /* OVERVIEW */
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
@@ -137,7 +137,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <h1><span class="dot"></span>Dashboard Finanziaria</h1>
       <div class="clock" id="clock"></div>
     </div>
-    <span class="live-pill">● LIVE</span>
+    <span class="delay-pill">⏱ dati con 15 min di ritardo</span>
   </div>
 
   <div class="tabs">
@@ -173,7 +173,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="pboxes" id="idx-boxes" style="grid-template-columns:repeat(4,1fr)"></div>
         <div class="chart-panel">
           <div class="chart-topbar">
-            <div class="chart-meta">
+            <div>
               <div class="chart-name" id="idx-chart-name">FTSE MIB</div>
               <div class="chart-code" id="idx-chart-code">TVC:FTMIB</div>
             </div>
@@ -189,7 +189,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="chart-wrap" id="idx-chart-wrap"></div>
           <div class="chart-footer">
             <span id="idx-update">—</span>
-            <span>Grafico: TradingView · Prezzi: Twelve Data</span>
+            <span>Prezzi: EODHD (ritardo ~15 min) · Grafici: TradingView</span>
           </div>
         </div>
       </div>
@@ -235,7 +235,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="pboxes" id="stk-boxes" style="grid-template-columns:repeat(3,1fr)"></div>
         <div class="chart-panel">
           <div class="chart-topbar">
-            <div class="chart-meta">
+            <div>
               <div class="chart-name" id="stk-chart-name">Enel</div>
               <div class="chart-code" id="stk-chart-code">MIL:ENEL</div>
             </div>
@@ -251,7 +251,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="chart-wrap" id="stk-chart-wrap"></div>
           <div class="chart-footer">
             <span id="stk-update">—</span>
-            <span>Grafico: TradingView · Prezzi: Twelve Data</span>
+            <span>Prezzi: EODHD (ritardo ~15 min) · Grafici: TradingView</span>
           </div>
         </div>
       </div>
@@ -289,62 +289,60 @@ setInterval(()=>{
 },1000);
 
 // ── CONFIG ─────────────────────────────────────────────────────────────────
-const TD_KEY = 'fc149c8b9add4527bac765ac6945cd63';
-const TD_BASE = 'https://api.twelvedata.com';
+const EODHD_KEY = '69d622b9205744.40064343';
+const EODHD_BASE = 'https://eodhd.com/api/real-time';
 
-// Twelve Data symbols
-// Indici: formato standard
-// Titoli MIL: formato TICKER:MIL
+// EODHD symbol format: TICKER.EXCHANGE
+// Indici: ^GSPC.INDX, ^FTMIB.INDX, ^GDAXI.INDX ecc.
+// Titoli MIL: ENEL.MI, ISP.MI ecc.
 const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'TVC:FTMIB',      tdSym:'FTSEMIB',      tdExchange:'INDEX'},
-  {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',       tdSym:'DAX',          tdExchange:'INDEX'},
-  {flag:'🇫🇷', name:'CAC 40',        tvSym:'EURONEXT:PX1',   tdSym:'CAC40',        tdExchange:'INDEX'},
-  {flag:'🇬🇧', name:'FTSE 100',      tvSym:'INDEX:UKX',      tdSym:'FTSE100',      tdExchange:'INDEX'},
-  {flag:'🇪🇸', name:'IBEX 35',       tvSym:'BME:IBC',        tdSym:'IBEX35',       tdExchange:'INDEX'},
-  {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',       tdSym:'STOXX50E',     tdExchange:'INDEX'},
-  {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',         tdSym:'SPX',          tdExchange:'INDEX'},
-  {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',     tdSym:'NDX',          tdExchange:'INDEX'},
+  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'TVC:FTMIB',      eoSym:'FTSEMIB.INDX'},
+  {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',       eoSym:'GDAXI.INDX'},
+  {flag:'🇫🇷', name:'CAC 40',        tvSym:'EURONEXT:PX1',   eoSym:'FCHI.INDX'},
+  {flag:'🇬🇧', name:'FTSE 100',      tvSym:'INDEX:UKX',      eoSym:'FTSE.INDX'},
+  {flag:'🇪🇸', name:'IBEX 35',       tvSym:'BME:IBC',        eoSym:'IBEX.INDX'},
+  {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',       eoSym:'STOXX50E.INDX'},
+  {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',         eoSym:'GSPC.INDX'},
+  {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',     eoSym:'NDX.INDX'},
 ];
 
 const STOCKS = [
-  {flag:'🏦', name:'Monte Paschi',    tvSym:'MIL:BMPS', tdSym:'BMPS',  tdExchange:'MIL'},
-  {flag:'🏦', name:'Intesa Sanpaolo', tvSym:'MIL:ISP',  tdSym:'ISP',   tdExchange:'MIL'},
-  {flag:'✈️', name:'Leonardo',        tvSym:'MIL:LDO',  tdSym:'LDO',   tdExchange:'MIL'},
-  {flag:'🏦', name:'Banco BPM',       tvSym:'MIL:BAMI', tdSym:'BAMI',  tdExchange:'MIL'},
-  {flag:'🛡️', name:'Generali',        tvSym:'MIL:G',    tdSym:'G',     tdExchange:'MIL'},
-  {flag:'🏦', name:'UniCredit',       tvSym:'MIL:UCG',  tdSym:'UCG',   tdExchange:'MIL'},
-  {flag:'📮', name:'Poste Italiane',  tvSym:'MIL:PST',  tdSym:'PST',   tdExchange:'MIL'},
-  {flag:'⚡', name:'Enel',           tvSym:'MIL:ENEL', tdSym:'ENEL',  tdExchange:'MIL'},
-  {flag:'🏦', name:'Mediobanca',      tvSym:'MIL:MB',   tdSym:'MB',    tdExchange:'MIL'},
+  {flag:'🏦', name:'Monte Paschi',    tvSym:'MIL:BMPS', eoSym:'BMPS.MI'},
+  {flag:'🏦', name:'Intesa Sanpaolo', tvSym:'MIL:ISP',  eoSym:'ISP.MI'},
+  {flag:'✈️', name:'Leonardo',        tvSym:'MIL:LDO',  eoSym:'LDO.MI'},
+  {flag:'🏦', name:'Banco BPM',       tvSym:'MIL:BAMI', eoSym:'BAMI.MI'},
+  {flag:'🛡️', name:'Generali',        tvSym:'MIL:G',    eoSym:'G.MI'},
+  {flag:'🏦', name:'UniCredit',       tvSym:'MIL:UCG',  eoSym:'UCG.MI'},
+  {flag:'📮', name:'Poste Italiane',  tvSym:'MIL:PST',  eoSym:'PST.MI'},
+  {flag:'⚡', name:'Enel',           tvSym:'MIL:ENEL', eoSym:'ENEL.MI'},
+  {flag:'🏦', name:'Mediobanca',      tvSym:'MIL:MB',   eoSym:'MB.MI'},
 ];
 
 let idxSel=0, idxInterval='1', idxRange='';
 let stkSel=7, stkInterval='1', stkRange='';
 
-// ── TWELVE DATA — batch quote ───────────────────────────────────────────────
-// Twelve Data supporta batch: ?symbol=A,B,C
-async function fetchTD(items) {
-  const syms = items.map(i =>
-    i.tdExchange === 'INDEX'
-      ? `${i.tdSym}`
-      : `${i.tdSym}:${i.tdExchange}`
-  ).join(',');
-
-  const url = `${TD_BASE}/quote?symbol=${encodeURIComponent(syms)}&apikey=${TD_KEY}&dp=2`;
+// ── EODHD BATCH FETCH ──────────────────────────────────────────────────────
+// EODHD real-time: GET /api/real-time/FIRST_SYMBOL?s=SYM2,SYM3&api_token=KEY&fmt=json
+async function fetchEOHD(items) {
+  const first = items[0].eoSym;
+  const rest  = items.slice(1).map(i => i.eoSym).join(',');
+  const url = `${EODHD_BASE}/${encodeURIComponent(first)}?s=${encodeURIComponent(rest)}&api_token=${EODHD_KEY}&fmt=json`;
   try {
     const r = await fetch(url);
-    if (!r.ok) throw new Error(r.status);
-    return await r.json();
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    // Risposta: array di oggetti, ognuno con .code, .close, .change, .change_p, .open, .previousClose
+    return Array.isArray(data) ? data : [data];
   } catch(e) {
-    console.error('TD fetch error:', e);
-    return null;
+    console.error('EODHD error:', e);
+    return [];
   }
 }
 
 // ── FORMAT ─────────────────────────────────────────────────────────────────
 function fmt(n, d=2) {
   const num = parseFloat(n);
-  if (isNaN(num)) return '—';
+  if (isNaN(num) || num === 0) return '—';
   return num.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
 }
 function sign(n) { return parseFloat(n) >= 0 ? '+' : ''; }
@@ -367,17 +365,18 @@ function buildBoxes(containerId, items, selIdx, onSelect) {
       </div>
       <div class="pbox-right">
         <span class="pbox-price" id="pp-${containerId}-${i}">
-          <span class="skel" style="width:60px;display:inline-block"></span>
+          <span class="skel" style="width:65px;display:inline-block"></span>
         </span>
-        <span class="pbox-pct" id="ppct-${containerId}-${i}">
-          <span class="skel" style="width:45px;display:inline-block"></span>
-        </span>
-        <span class="pbox-chg" id="pchg-${containerId}-${i}"></span>
+        <div class="pbox-row">
+          <span class="pbox-pct badge-up" id="ppct-${containerId}-${i}">
+            <span class="skel" style="width:42px;display:inline-block"></span>
+          </span>
+          <span class="pbox-chg" id="pchg-${containerId}-${i}"></span>
+        </div>
       </div>`;
     box.onclick = () => {
       wrap.querySelectorAll('.pbox').forEach(b => b.classList.remove('active'));
       box.classList.add('active');
-      // Sincronizza sidebar
       const sb = document.getElementById(containerId.replace('boxes','sidebar'));
       if (sb) sb.querySelectorAll('.scard').forEach((c,j) => c.classList.toggle('active', j===i));
       onSelect(item, i);
@@ -386,56 +385,56 @@ function buildBoxes(containerId, items, selIdx, onSelect) {
   });
 }
 
-function updateBox(containerId, i, data) {
-  if (!data || data.status === 'error') return;
-  const price  = parseFloat(data.close || data.price || 0);
-  const prev   = parseFloat(data.previous_close || 0);
-  const open   = parseFloat(data.open || 0);
-  // Twelve Data "percent_change" è rispetto alla chiusura di ieri
-  const pct    = parseFloat(data.percent_change || 0);
-  const chgAbs = parseFloat(data.change || 0);
-  const up     = pct >= 0;
+function applyPrices(containerId, items, rows) {
+  // rows è array di {code, close, change, change_p, previousClose, open, high, low, volume, timestamp}
+  const byCode = {};
+  rows.forEach(r => {
+    if (r.code) byCode[r.code] = r;
+  });
 
-  const priceEl = document.getElementById(`pp-${containerId}-${i}`);
-  const pctEl   = document.getElementById(`ppct-${containerId}-${i}`);
-  const chgEl   = document.getElementById(`pchg-${containerId}-${i}`);
+  items.forEach((item, i) => {
+    const d = byCode[item.eoSym];
+    if (!d) return;
 
-  if (priceEl) priceEl.textContent = fmt(price);
-  if (pctEl) {
-    pctEl.textContent = `${sign(pct)}${fmt(Math.abs(pct),2)}%`;
-    pctEl.className = `pbox-pct ${up ? 'badge-up' : 'badge-down'}`;
-  }
-  if (chgEl) {
-    chgEl.textContent = `${sign(chgAbs)}${fmt(chgAbs,2)}`;
-    chgEl.className = `pbox-chg ${up ? 'col-up' : 'col-down'}`;
-  }
+    const price  = parseFloat(d.close);
+    const chgAbs = parseFloat(d.change);
+    const chgPct = parseFloat(d.change_p);
+    const up     = chgPct >= 0;
+
+    const priceEl = document.getElementById(`pp-${containerId}-${i}`);
+    const pctEl   = document.getElementById(`ppct-${containerId}-${i}`);
+    const chgEl   = document.getElementById(`pchg-${containerId}-${i}`);
+
+    if (priceEl) priceEl.textContent = fmt(price);
+    if (pctEl) {
+      pctEl.textContent = `${sign(chgPct)}${fmt(Math.abs(chgPct),2)}%`;
+      pctEl.className = `pbox-pct ${up ? 'badge-up' : 'badge-down'}`;
+    }
+    if (chgEl) {
+      chgEl.textContent = `${sign(chgAbs)}${fmt(chgAbs,2)}`;
+      chgEl.className = `pbox-chg ${up ? 'col-up' : 'col-down'}`;
+    }
+  });
 }
 
-// ── REFRESH PRICES ──────────────────────────────────────────────────────────
+// ── REFRESH ─────────────────────────────────────────────────────────────────
 async function refreshPrices() {
-  const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
+  const now = new Date().toLocaleTimeString('it-IT',{
+    hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'
+  });
 
   // Indici
-  const idxData = await fetchTD(INDICES);
-  if (idxData) {
-    INDICES.forEach((item, i) => {
-      // Twelve Data batch: se 1 simbolo → oggetto, se multipli → oggetto con chiavi
-      const key = item.tdExchange === 'INDEX' ? item.tdSym : `${item.tdSym}:${item.tdExchange}`;
-      const d = Array.isArray(idxData) ? null : (idxData[key] || idxData[item.tdSym] || idxData);
-      if (d) updateBox('idx-boxes', i, d);
-    });
-    document.getElementById('idx-update').textContent = `Aggiornato: ${now} CET`;
+  const idxRows = await fetchEOHD(INDICES);
+  if (idxRows.length) {
+    applyPrices('idx-boxes', INDICES, idxRows);
+    document.getElementById('idx-update').textContent = `Aggiornato: ${now} (dati con ~15 min ritardo)`;
   }
 
   // Titoli BIT
-  const stkData = await fetchTD(STOCKS);
-  if (stkData) {
-    STOCKS.forEach((item, i) => {
-      const key = `${item.tdSym}:${item.tdExchange}`;
-      const d = stkData[key] || stkData[item.tdSym] || (STOCKS.length === 1 ? stkData : null);
-      if (d) updateBox('stk-boxes', i, d);
-    });
-    document.getElementById('stk-update').textContent = `Aggiornato: ${now} CET`;
+  const stkRows = await fetchEOHD(STOCKS);
+  if (stkRows.length) {
+    applyPrices('stk-boxes', STOCKS, stkRows);
+    document.getElementById('stk-update').textContent = `Aggiornato: ${now} (dati con ~15 min ritardo)`;
   }
 }
 
@@ -493,7 +492,7 @@ function buildChart(containerId, sym, interval, range) {
   div.appendChild(s);
 }
 
-// ── RANGE BUTTONS ───────────────────────────────────────────────────────────
+// ── RANGE ───────────────────────────────────────────────────────────────────
 function setIdxRange(btn, interval, range) {
   idxInterval=interval; idxRange=range;
   document.querySelectorAll('#idx-rbns .rbtn').forEach(b=>b.classList.remove('active'));
@@ -555,7 +554,6 @@ buildBoxes('idx-boxes', INDICES, 0, (item,i)=>{
   document.getElementById('idx-chart-code').textContent=item.tvSym;
   buildChart('idx-chart-wrap',item.tvSym,idxInterval,idxRange);
 });
-
 buildBoxes('stk-boxes', STOCKS, 7, (item,i)=>{
   stkSel=i;
   document.getElementById('stk-chart-name').textContent=item.name;
@@ -572,7 +570,7 @@ buildChart('idx-chart-wrap', INDICES[0].tvSym, idxInterval, idxRange);
 buildChart('stk-chart-wrap', STOCKS[7].tvSym,  stkInterval, stkRange);
 
 refreshPrices();
-setInterval(refreshPrices, 60000); // ogni 60s (rispetta limite 800 call/giorno)
+setInterval(refreshPrices, 60000);
 loadNews();
 setInterval(loadNews, 120000);
 </script>
