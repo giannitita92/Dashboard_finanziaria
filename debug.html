@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Debug</title>
+<style>
+body{background:#0d0f12;color:#e8eaf0;font-family:monospace;padding:24px;line-height:1.6}
+h2{color:#4f8ef7;margin-bottom:16px;font-size:16px}
+.btn{background:#4f8ef7;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:13px;margin:4px;font-family:monospace}
+.btn:hover{opacity:.85}
+pre{background:#141720;border:0.5px solid rgba(255,255,255,0.1);border-radius:8px;padding:16px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:12px 0;max-height:300px;overflow-y:auto}
+.ok{color:#22c98a}.err{color:#f05252}.warn{color:#ef9f27}
+.section{margin-bottom:32px;border-bottom:0.5px solid rgba(255,255,255,0.07);padding-bottom:24px}
+label{font-size:12px;color:#8b90a0;display:block;margin-bottom:4px}
+input{background:#141720;border:0.5px solid rgba(255,255,255,0.15);color:#e8eaf0;padding:6px 10px;border-radius:5px;font-family:monospace;font-size:12px;width:100%;max-width:500px;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<h2>🔍 API Debug — Dashboard Finanziaria</h2>
+<p style="font-size:12px;color:#8b90a0;margin-bottom:24px">Questa pagina testa le API direttamente dal browser e mostra la risposta grezza. Condividi i risultati.</p>
+
+<div class="section">
+  <h2>1. Test EODHD — singolo titolo (ENEL.MI)</h2>
+  <button class="btn" onclick="testEOHD_single()">▶ Testa ENEL.MI</button>
+  <pre id="out-single">—</pre>
+</div>
+
+<div class="section">
+  <h2>2. Test EODHD — batch titoli BIT</h2>
+  <button class="btn" onclick="testEOHD_batch()">▶ Testa tutti i titoli BIT</button>
+  <pre id="out-batch">—</pre>
+</div>
+
+<div class="section">
+  <h2>3. Test EODHD — indici</h2>
+  <button class="btn" onclick="testEOHD_indices()">▶ Testa indici</button>
+  <pre id="out-idx">—</pre>
+</div>
+
+<div class="section">
+  <h2>4. Test URL personalizzato</h2>
+  <label>URL da testare:</label>
+  <input id="custom-url" value="https://eodhd.com/api/real-time/ENEL.MI?api_token=69d622b9205744.40064343&fmt=json">
+  <br>
+  <button class="btn" onclick="testCustom()">▶ Testa URL</button>
+  <pre id="out-custom">—</pre>
+</div>
+
+<script>
+const KEY = '69d622b9205744.40064343';
+const BASE = 'https://eodhd.com/api/real-time';
+
+async function fetchAndShow(url, outId) {
+  const out = document.getElementById(outId);
+  out.textContent = 'Chiamata in corso...';
+  out.className = '';
+  try {
+    const r = await fetch(url);
+    const status = r.status;
+    const headers = {};
+    r.headers.forEach((v,k) => headers[k] = v);
+    let body;
+    const text = await r.text();
+    try { body = JSON.parse(text); } catch { body = text; }
+    out.className = r.ok ? 'ok' : 'err';
+    out.textContent = `HTTP ${status}\n\nHeaders: ${JSON.stringify(headers, null, 2)}\n\nBody:\n${JSON.stringify(body, null, 2)}`;
+  } catch(e) {
+    out.className = 'err';
+    out.textContent = `ERRORE FETCH:\n${e.message}\n\nQuesto potrebbe essere un errore CORS — il browser ha bloccato la richiesta prima che arrivasse al server.`;
+  }
+}
+
+function testEOHD_single() {
+  const url = `${BASE}/ENEL.MI?api_token=${KEY}&fmt=json`;
+  fetchAndShow(url, 'out-single');
+}
+
+function testEOHD_batch() {
+  const syms = 'BMPS.MI,ISP.MI,LDO.MI,BAMI.MI,G.MI,UCG.MI,PST.MI,MB.MI';
+  const url = `${BASE}/ENEL.MI?s=${encodeURIComponent(syms)}&api_token=${KEY}&fmt=json`;
+  fetchAndShow(url, 'out-batch');
+}
+
+function testEOHD_indices() {
+  const syms = 'GDAXI.INDX,FCHI.INDX,FTSE.INDX,IBEX.INDX,STOXX50E.INDX,GSPC.INDX,NDX.INDX';
+  const url = `${BASE}/FTSEMIB.INDX?s=${encodeURIComponent(syms)}&api_token=${KEY}&fmt=json`;
+  fetchAndShow(url, 'out-idx');
+}
+
+function testCustom() {
+  const url = document.getElementById('custom-url').value.trim();
+  if (!url) return;
+  fetchAndShow(url, 'out-custom');
+}
+</script>
+</body>
+</html>
