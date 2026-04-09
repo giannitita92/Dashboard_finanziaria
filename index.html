@@ -129,7 +129,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           {"proName":"SP:SPX","title":"S&P 500"},{"proName":"NASDAQ:NDX","title":"Nasdaq 100"},
           {"proName":"TVC:GOLD","title":"Oro"},{"proName":"TVC:USOIL","title":"Petrolio"},
           {"proName":"FX:EURUSD","title":"EUR/USD"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
-          {"proName":"BINANCE:ETHUSDT","title":"Ethereum"}
+          {"proName":"BINANCE:ETHUSDT","title":"Ethereum"},
+          {"proName":"TVC:EURIBOR1M","title":"Euribor 1M"},
+          {"proName":"TVC:EURSW30Y","title":"IRS 30A"}
         ],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"it"}
         </script>
       </div>
@@ -138,7 +140,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="main-layout">
       <div class="sidebar" id="idx-sidebar"><div class="sidebar-title">Indici mondiali</div></div>
       <div class="right-col">
-        <div class="pboxes" id="idx-boxes" style="grid-template-columns:repeat(4,1fr)"></div>
+        <div class="pboxes" id="idx-boxes" style="grid-template-columns:repeat(5,1fr)"></div>
         <div class="chart-panel">
           <div class="chart-topbar">
             <div><div class="chart-name" id="idx-chart-name">FTSE MIB</div><div class="chart-code" id="idx-chart-code">TVC:FTMIB</div></div>
@@ -169,7 +171,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           {"colorTheme":"dark","dateRange":"1D","showChart":false,"locale":"it","isTransparent":true,"showSymbolLogo":true,"width":"100%","height":"320","tabs":[{"title":"Indici","symbols":[
             {"s":"TVC:FTMIB","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},{"s":"EURONEXT:PX1","d":"CAC 40"},
             {"s":"INDEX:UKX","d":"FTSE 100"},{"s":"BME:IBC","d":"IBEX 35"},{"s":"TVC:SX5E","d":"Euro Stoxx 50"},
-            {"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:NDX","d":"Nasdaq 100"}
+            {"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:NDX","d":"Nasdaq 100"},
+            {"s":"TVC:EURIBOR1M","d":"Euribor 1M"},{"s":"TVC:EURSW30Y","d":"IRS EUR 30A"}
           ],"originalTitle":"Indici"}]}
           </script>
         </div>
@@ -257,6 +260,8 @@ const INDICES = [
   {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',       eoSym:'STOXX50E.INDX'},
   {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',         eoSym:'GSPC.INDX'},
   {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',     eoSym:'NDX.INDX'},
+  {flag:'📊', name:'Euribor 1M',     tvSym:'TVC:EURIBOR1M',  eoSym:'EURIBOR1M.INDEX'},
+  {flag:'📊', name:'IRS EUR 30A',    tvSym:'TVC:EURSW30Y',   eoSym:'EURSW30Y.INDEX'},
 ];
 const STOCKS = [
   {flag:'🏦', name:'Monte Paschi',    tvSym:'MIL:BMPS', eoSym:'BMPS.MI'},
