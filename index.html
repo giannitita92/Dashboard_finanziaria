@@ -337,10 +337,9 @@ function buildBoxes(containerId, items, selIdx, onSelect) {
 }
 
 function applyPrices(containerId, items, rows) {
-  const byCode = {};
-  rows.forEach(r => { if (r.code) byCode[r.code] = r; });
+  // rows arriva in ordine — indice i corrisponde a items[i]
   items.forEach((item, i) => {
-    const d = byCode[item.eoSym];
+    const d = rows[i];
     if (!d || d.error) return;
     const price  = parseFloat(d.close);
     const chgAbs = parseFloat(d.change);
