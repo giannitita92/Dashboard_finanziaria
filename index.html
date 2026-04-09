@@ -145,7 +145,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             <div class="btn-groups">
               <div class="range-btns" id="idx-rbns">
                 <span class="range-label">Range:</span>
-                <button class="rbtn active" onclick="setIdxRange(this,'1','')">Oggi</button>
+                <button class="rbtn active" onclick="setIdxRange(this,'5','')">Oggi</button>
                 <button class="rbtn" onclick="setIdxRange(this,'5','5D')">5G</button>
                 <button class="rbtn" onclick="setIdxRange(this,'D','1M')">1M</button>
                 <button class="rbtn" onclick="setIdxRange(this,'D','3M')">3M</button>
@@ -271,7 +271,7 @@ const STOCKS = [
 ];
 
 // ══ STATO ═════════════════════════════════════════════════════════════════
-let idxSel = 0, idxInterval = '1', idxRange = '';
+let idxSel = 0, idxInterval = '5', idxRange = '';
 let stkSel = 7, stkInterval = 'D', stkRange = '1M'; // intervallo e range gestiti dalla toolbar TV
 
 // ══ CLOCK ═════════════════════════════════════════════════════════════════
@@ -388,18 +388,24 @@ function buildChart(containerId, sym, interval, range) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
   wrap.innerHTML = '';
-  const div   = document.createElement('div');
+
+  // Contenitore con ID univoco per evitare che TV riusi il widget precedente
+  const uid = 'tv_' + sym.replace(/[^a-zA-Z0-9]/g,'_') + '_' + Date.now();
+  const div = document.createElement('div');
   div.className = 'tradingview-widget-container';
   div.style.cssText = 'height:100%;width:100%';
+  div.id = uid;
   const inner = document.createElement('div');
   inner.className = 'tradingview-widget-container__widget';
   inner.style.cssText = 'height:100%;width:100%';
   div.appendChild(inner);
   wrap.appendChild(div);
+
   const s = document.createElement('script');
   s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
   s.async = true;
   const cfg = {
+    container_id: uid,
     autosize: true, symbol: sym, interval: interval,
     timezone: 'Europe/Rome', theme: 'dark', style: '1', locale: 'it',
     backgroundColor: '#141720', gridColor: 'rgba(255,255,255,0.04)',
