@@ -130,8 +130,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           {"proName":"TVC:GOLD","title":"Oro"},{"proName":"TVC:USOIL","title":"Petrolio"},
           {"proName":"FX:EURUSD","title":"EUR/USD"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
           {"proName":"BINANCE:ETHUSDT","title":"Ethereum"},
-          {"proName":"TVC:EURIBOR1M","title":"Euribor 1M"},
-          {"proName":"TVC:EURSW30Y","title":"IRS 30A"}
+          {"proName":"FX:EURIBOR3M","title":"Euribor 3M"},
+          {"proName":"FRED:ICERATES1200EUR30Y","title":"IRS 30A"}
         ],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"it"}
         </script>
       </div>
@@ -172,7 +172,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             {"s":"TVC:FTMIB","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},{"s":"EURONEXT:PX1","d":"CAC 40"},
             {"s":"INDEX:UKX","d":"FTSE 100"},{"s":"BME:IBC","d":"IBEX 35"},{"s":"TVC:SX5E","d":"Euro Stoxx 50"},
             {"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:NDX","d":"Nasdaq 100"},
-            {"s":"TVC:EURIBOR1M","d":"Euribor 1M"},{"s":"TVC:EURSW30Y","d":"IRS EUR 30A"}
+            {"s":"FX:EURIBOR3M","d":"Euribor 3M"},{"s":"FRED:ICERATES1200EUR30Y","d":"IRS EUR 30A"}
           ],"originalTitle":"Indici"}]}
           </script>
         </div>
@@ -252,7 +252,7 @@ const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
 
 // ══ DATI ══════════════════════════════════════════════════════════════════
 const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'FTSE:FTSEMIB',   eoSym:'FTSEMIB.INDX'},
+  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'INDEX:FTSEMIB',   eoSym:'FTSEMIB.INDX'},
   {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',       eoSym:'GDAXI.INDX'},
   {flag:'🇫🇷', name:'CAC 40',        tvSym:'EURONEXT:PX1',   eoSym:'FCHI.INDX'},
   {flag:'🇬🇧', name:'FTSE 100',      tvSym:'INDEX:UKX',      eoSym:'FTSE.INDX'},
@@ -260,8 +260,8 @@ const INDICES = [
   {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',       eoSym:'STOXX50E.INDX'},
   {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',         eoSym:'GSPC.INDX'},
   {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',     eoSym:'NDX.INDX'},
-  {flag:'📊', name:'Euribor 1M',     tvSym:'TVC:EURIBOR1M',  eoSym:'EURIBOR1M.INDEX'},
-  {flag:'📊', name:'IRS EUR 30A',    tvSym:'TVC:EURSW30Y',   eoSym:'EURSW30Y.INDEX'},
+  {flag:'📊', name:'Euribor 3M',     tvSym:'FX:EURIBOR3M',  eoSym:'EURIBOR1M.INDEX'},
+  {flag:'📊', name:'IRS EUR 30A',    tvSym:'FRED:ICERATES1200EUR30Y',   eoSym:'EURSW30Y.INDEX'},
 ];
 const STOCKS = [
   {flag:'🏦', name:'Monte Paschi',    tvSym:'MIL:BMPS', eoSym:'BMPS.MI'},
