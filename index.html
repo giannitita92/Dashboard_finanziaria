@@ -219,13 +219,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="chart-panel">
           <div class="chart-topbar">
             <div><div class="chart-name" id="stk-chart-name">Enel</div><div class="chart-code" id="stk-chart-code">MIL:ENEL</div></div>
-            <div class="range-btns" id="stk-rbns">
-              <button class="rbtn active" onclick="setStkRange(this,'1','')">Oggi</button>
-              <button class="rbtn" onclick="setStkRange(this,'5','5D')">5G</button>
-              <button class="rbtn" onclick="setStkRange(this,'D','1M')">1M</button>
-              <button class="rbtn" onclick="setStkRange(this,'D','3M')">3M</button>
-              <button class="rbtn" onclick="setStkRange(this,'W','1Y')">1A</button>
-              <button class="rbtn" onclick="setStkRange(this,'W','5Y')">5A</button>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+              <div class="range-btns" id="stk-ibns">
+                <span style="font-size:10px;color:var(--text3);margin-right:4px;align-self:center">Intervallo:</span>
+                <button class="rbtn" onclick="setStkInterval(this,'30')">30min</button>
+                <button class="rbtn active" onclick="setStkInterval(this,'60')">1h</button>
+                <button class="rbtn" onclick="setStkInterval(this,'240')">4h</button>
+                <button class="rbtn" onclick="setStkInterval(this,'D')">1G</button>
+              </div>
+              <div class="range-btns" id="stk-rbns">
+                <span style="font-size:10px;color:var(--text3);margin-right:4px;align-self:center">Range:</span>
+                <button class="rbtn" onclick="setStkRange(this,'5D')">5G</button>
+                <button class="rbtn active" onclick="setStkRange(this,'1M')">1M</button>
+                <button class="rbtn" onclick="setStkRange(this,'3M')">3M</button>
+                <button class="rbtn" onclick="setStkRange(this,'6M')">6M</button>
+                <button class="rbtn" onclick="setStkRange(this,'1Y')">1A</button>
+                <button class="rbtn" onclick="setStkRange(this,'5Y')">5A</button>
+              </div>
             </div>
           </div>
           <div class="chart-wrap" id="stk-chart-wrap"></div>
@@ -261,7 +271,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 // ══════════════════════════════════════════════════════
 // ← INSERISCI QUI l'URL del tuo server Render dopo il deploy
 // Es: const PROXY_URL = 'https://finanza-proxy.onrender.com';
-const PROXY_URL = 'https://finanza-proxy.onrender.com';
+const PROXY_URL = '';
 // ══════════════════════════════════════════════════════
 
 const INDICES = [
@@ -287,7 +297,7 @@ const STOCKS = [
 ];
 
 let idxSel=0, idxInterval='1', idxRange='';
-let stkSel=7, stkInterval='1', stkRange='';
+let stkSel=7, stkInterval='60', stkRange='1M';
 
 // Mostra banner se proxy non configurato
 if (!PROXY_URL) document.getElementById('setup-banner').classList.add('show');
@@ -417,7 +427,8 @@ function buildChart(containerId,sym,interval,range){
 }
 
 function setIdxRange(btn,interval,range){idxInterval=interval;idxRange=range;document.querySelectorAll('#idx-rbns .rbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildChart('idx-chart-wrap',INDICES[idxSel].tvSym,interval,range);}
-function setStkRange(btn,interval,range){stkInterval=interval;stkRange=range;document.querySelectorAll('#stk-rbns .rbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildChart('stk-chart-wrap',STOCKS[stkSel].tvSym,interval,range);}
+function setStkInterval(btn,interval){stkInterval=interval;document.querySelectorAll('#stk-ibns .rbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildChart('stk-chart-wrap',STOCKS[stkSel].tvSym,stkInterval,stkRange);}
+function setStkRange(btn,range){stkRange=range;document.querySelectorAll('#stk-rbns .rbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildChart('stk-chart-wrap',STOCKS[stkSel].tvSym,stkInterval,stkRange);}
 
 const FKEY='d783tv1r01qsamsis050d783tv1r01qsamsis05g';
 async function loadNews(){
