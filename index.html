@@ -18,14 +18,12 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
 .app{max-width:1400px;margin:0 auto;padding:20px 16px 60px}
-
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:10px}
 .header h1{font-size:18px;font-weight:500;display:flex;align-items:center;gap:8px}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--up);display:inline-block;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .clock{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-top:3px}
 .delay-pill{font-size:10px;font-weight:500;padding:3px 9px;border-radius:4px;background:rgba(239,159,39,0.12);color:#ef9f27;font-family:'DM Mono',monospace;border:.5px solid rgba(239,159,39,0.3)}
-
 .tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--surface);border-radius:var(--rs);padding:3px;width:fit-content;max-width:100%}
 .tab{padding:7px 20px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .15s;white-space:nowrap;user-select:none}
 .tab:hover{color:var(--text)}
@@ -33,11 +31,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .section{display:none}.section.active{display:block}
 .sec-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;margin-top:20px}
 .sec-label:first-child{margin-top:0}
-
 .tape-wrap{border-radius:var(--rs);overflow:hidden;margin-bottom:18px;background:var(--surface);border:.5px solid var(--border)}
-
 .main-layout{display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:start}
-
 .sidebar{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .sidebar-title{font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:10px 13px 8px;border-bottom:.5px solid var(--border)}
 .scard{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:.5px solid var(--border);cursor:pointer;transition:background .12s;position:relative}
@@ -48,9 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .scard-flag{font-size:13px;flex-shrink:0}
 .scard-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .scard-sym{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
-
 .right-col{display:flex;flex-direction:column;gap:10px}
-
 .pboxes{display:grid;gap:7px}
 .pbox{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s}
 .pbox:hover{border-color:var(--border2);background:var(--surface2)}
@@ -69,12 +62,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .col-up{color:var(--up)}.col-down{color:var(--down)}
 .skel{display:inline-block;height:11px;border-radius:3px;background:var(--surface2);animation:sk 1.5s infinite}
 @keyframes sk{0%,100%{opacity:.3}50%{opacity:.85}}
-
 .chart-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .chart-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:.5px solid var(--border);flex-wrap:wrap;gap:8px}
 .chart-name{font-size:14px;font-weight:500;color:var(--text)}
 .chart-code{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px}
-.range-btns{display:flex;gap:3px;flex-wrap:wrap}
+.btn-groups{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.range-btns{display:flex;gap:3px;flex-wrap:wrap;align-items:center}
+.range-label{font-size:10px;color:var(--text3);margin-right:3px;white-space:nowrap}
 .rbtn{font-size:11px;padding:4px 10px;border:.5px solid var(--border);border-radius:5px;cursor:pointer;color:var(--text2);background:none;font-family:'DM Sans',sans-serif;transition:all .12s}
 .rbtn:hover{background:var(--surface2);color:var(--text)}
 .rbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
@@ -82,17 +76,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .chart-wrap .tradingview-widget-container,
 .chart-wrap .tradingview-widget-container__widget{height:100%!important;width:100%!important}
 .chart-footer{font-size:10px;color:var(--text3);padding:5px 14px;display:flex;justify-content:space-between;border-top:.5px solid var(--border);flex-wrap:wrap;gap:4px}
-
-/* Banner proxy non configurato */
-.setup-banner{background:rgba(239,159,39,0.08);border:.5px solid rgba(239,159,39,0.3);border-radius:var(--rs);padding:12px 16px;margin-bottom:16px;font-size:12px;color:#ef9f27;line-height:1.7;display:none}
-.setup-banner.show{display:block}
-.setup-banner strong{color:#f5c96e}
-.setup-banner code{background:rgba(239,159,39,0.15);padding:1px 5px;border-radius:3px;font-family:'DM Mono',monospace;font-size:11px}
-
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px}
 .ov-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);overflow:hidden}
 .ov-label{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:12px 16px 0}
-
 .news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
 .ncard{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rs);padding:14px 16px;transition:border-color .15s}
 .ncard:hover{border-color:var(--border2)}
@@ -102,14 +88,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ntime{font-size:11px;color:var(--text3);margin-top:7px}
 .ncat{display:inline-block;font-size:10px;padding:1px 5px;border-radius:3px;background:var(--accent-bg);color:var(--accent);margin-left:5px}
 .nimg{width:100%;height:130px;object-fit:cover;border-radius:6px;margin-bottom:10px;display:block}
-
 .pf-hint{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:28px 24px;font-size:13px;color:var(--text2);line-height:1.9}
 .pf-hint strong{color:var(--text);font-weight:500}
 .pf-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
-
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-
 @media(max-width:960px){.main-layout{grid-template-columns:1fr}.chart-wrap{height:340px}.ov-grid{grid-template-columns:1fr}}
 @media(max-width:680px){.pboxes{grid-template-columns:1fr 1fr!important}.tabs{overflow-x:auto;width:100%}.tab{padding:7px 11px;font-size:12px}.news-grid{grid-template-columns:1fr}}
 </style>
@@ -122,13 +105,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <h1><span class="dot"></span>Dashboard Finanziaria</h1>
       <div class="clock" id="clock"></div>
     </div>
-    <span class="delay-pill">⏱ dati con ~15 min di ritardo</span>
-  </div>
-
-  <!-- Banner mostrato finché PROXY_URL non è configurato -->
-  <div class="setup-banner" id="setup-banner">
-    <strong>⚙️ Configura il proxy per attivare i prezzi</strong><br>
-    Segui la guida qui sotto per deployare il server su Render, poi incolla l'URL nella variabile <code>PROXY_URL</code> in cima al codice JavaScript di questa pagina (cerca <code>// ← INSERISCI QUI</code>).
+    <span class="delay-pill">⏱ prezzi con ~15 min di ritardo</span>
   </div>
 
   <div class="tabs">
@@ -138,7 +115,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
   </div>
 
-  <!-- INDICI -->
+  <!-- ══ INDICI ═══════════════════════════════════════════════════════════ -->
   <div id="sec-indices" class="section active">
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
@@ -164,17 +141,20 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="chart-panel">
           <div class="chart-topbar">
             <div><div class="chart-name" id="idx-chart-name">FTSE MIB</div><div class="chart-code" id="idx-chart-code">TVC:FTMIB</div></div>
-            <div class="range-btns" id="idx-rbns">
-              <button class="rbtn active" onclick="setIdxRange(this,'1','')">Oggi</button>
-              <button class="rbtn" onclick="setIdxRange(this,'5','5D')">5G</button>
-              <button class="rbtn" onclick="setIdxRange(this,'D','1M')">1M</button>
-              <button class="rbtn" onclick="setIdxRange(this,'D','3M')">3M</button>
-              <button class="rbtn" onclick="setIdxRange(this,'W','1Y')">1A</button>
-              <button class="rbtn" onclick="setIdxRange(this,'W','5Y')">5A</button>
+            <div class="btn-groups">
+              <div class="range-btns" id="idx-rbns">
+                <span class="range-label">Range:</span>
+                <button class="rbtn active" onclick="setIdxRange(this,'1','')">Oggi</button>
+                <button class="rbtn" onclick="setIdxRange(this,'5','5D')">5G</button>
+                <button class="rbtn" onclick="setIdxRange(this,'D','1M')">1M</button>
+                <button class="rbtn" onclick="setIdxRange(this,'D','3M')">3M</button>
+                <button class="rbtn" onclick="setIdxRange(this,'W','1Y')">1A</button>
+                <button class="rbtn" onclick="setIdxRange(this,'W','5Y')">5A</button>
+              </div>
             </div>
           </div>
           <div class="chart-wrap" id="idx-chart-wrap"></div>
-          <div class="chart-footer"><span id="idx-update">—</span><span>Prezzi: EODHD (~15 min ritardo) · Grafici: TradingView</span></div>
+          <div class="chart-footer"><span id="idx-update">—</span><span>Prezzi: Yahoo Finance · Grafici: TradingView</span></div>
         </div>
       </div>
     </div>
@@ -209,7 +189,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
-  <!-- TITOLI BIT -->
+  <!-- ══ TITOLI BIT ════════════════════════════════════════════════════════ -->
   <div id="sec-stocks" class="section">
     <div class="sec-label">Seleziona un titolo</div>
     <div class="main-layout">
@@ -219,29 +199,41 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="chart-panel">
           <div class="chart-topbar">
             <div><div class="chart-name" id="stk-chart-name">Enel</div><div class="chart-code" id="stk-chart-code">MIL:ENEL</div></div>
-            <div class="range-btns" id="stk-rbns">
-              <button class="rbtn active" onclick="setStkRange(this,'1','')">Oggi</button>
-              <button class="rbtn" onclick="setStkRange(this,'5','5D')">5G</button>
-              <button class="rbtn" onclick="setStkRange(this,'D','1M')">1M</button>
-              <button class="rbtn" onclick="setStkRange(this,'D','3M')">3M</button>
-              <button class="rbtn" onclick="setStkRange(this,'W','1Y')">1A</button>
-              <button class="rbtn" onclick="setStkRange(this,'W','5Y')">5A</button>
+            <div class="btn-groups">
+              <!-- Riga 1: intervallo candele -->
+              <div class="range-btns" id="stk-ibns">
+                <span class="range-label">Intervallo:</span>
+                <button class="rbtn" onclick="setStkInterval(this,'30')">30min</button>
+                <button class="rbtn" onclick="setStkInterval(this,'60')">1h</button>
+                <button class="rbtn" onclick="setStkInterval(this,'240')">4h</button>
+                <button class="rbtn active" onclick="setStkInterval(this,'D')">1G</button>
+              </div>
+              <!-- Riga 2: range temporale -->
+              <div class="range-btns" id="stk-rbns">
+                <span class="range-label">Range:</span>
+                <button class="rbtn" onclick="setStkRange(this,'5D')">5G</button>
+                <button class="rbtn active" onclick="setStkRange(this,'1M')">1M</button>
+                <button class="rbtn" onclick="setStkRange(this,'3M')">3M</button>
+                <button class="rbtn" onclick="setStkRange(this,'6M')">6M</button>
+                <button class="rbtn" onclick="setStkRange(this,'1Y')">1A</button>
+                <button class="rbtn" onclick="setStkRange(this,'5Y')">5A</button>
+              </div>
             </div>
           </div>
           <div class="chart-wrap" id="stk-chart-wrap"></div>
-          <div class="chart-footer"><span id="stk-update">—</span><span>Prezzi: EODHD (~15 min ritardo) · Grafici: TradingView</span></div>
+          <div class="chart-footer"><span id="stk-update">—</span><span>Prezzi: Yahoo Finance · Grafici: TradingView</span></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- NOTIZIE -->
+  <!-- ══ NOTIZIE ══════════════════════════════════════════════════════════ -->
   <div id="sec-news" class="section">
     <div class="sec-label">Ultime notizie economico-finanziarie</div>
     <div class="news-grid" id="news-grid"><div style="color:var(--text3);font-size:13px;padding:8px 0">Caricamento...</div></div>
   </div>
 
-  <!-- PORTAFOGLIO -->
+  <!-- ══ PORTAFOGLIO ══════════════════════════════════════════════════════ -->
   <div id="sec-portfolio" class="section">
     <div class="sec-label">Il mio portafoglio</div>
     <div class="pf-hint">
@@ -258,12 +250,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════
-// ← INSERISCI QUI l'URL del tuo server Render dopo il deploy
-// Es: const PROXY_URL = 'https://finanza-proxy.onrender.com';
-const PROXY_URL = '';
-// ══════════════════════════════════════════════════════
+// ══ CONFIGURAZIONE ════════════════════════════════════════════════════════
+const PROXY_URL = 'https://finanza-proxy.onrender.com';
+const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
 
+// ══ DATI ══════════════════════════════════════════════════════════════════
 const INDICES = [
   {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'TVC:FTMIB',      eoSym:'FTSEMIB.INDX'},
   {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',       eoSym:'GDAXI.INDX'},
@@ -286,24 +277,23 @@ const STOCKS = [
   {flag:'🏦', name:'Mediobanca',      tvSym:'MIL:MB',   eoSym:'MB.MI'},
 ];
 
-let idxSel=0, idxInterval='1', idxRange='';
-let stkSel=7, stkInterval='1', stkRange='';
+// ══ STATO ═════════════════════════════════════════════════════════════════
+let idxSel = 0, idxInterval = '1', idxRange = '';
+let stkSel = 7, stkInterval = 'D', stkRange = '1M';
 
-// Mostra banner se proxy non configurato
-if (!PROXY_URL) document.getElementById('setup-banner').classList.add('show');
+// ══ CLOCK ═════════════════════════════════════════════════════════════════
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toLocaleString('it-IT', {
+    weekday:'short', day:'2-digit', month:'short', year:'numeric',
+    hour:'2-digit', minute:'2-digit', second:'2-digit', timeZone:'Europe/Rome'
+  }) + ' CET';
+}, 1000);
 
-setInterval(()=>{
-  document.getElementById('clock').textContent = new Date().toLocaleString('it-IT',{
-    weekday:'short',day:'2-digit',month:'short',year:'numeric',
-    hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'
-  })+' CET';
-},1000);
-
+// ══ FETCH PREZZI ══════════════════════════════════════════════════════════
 async function fetchPrices(items) {
-  if (!PROXY_URL) return [];
   const first = items[0].eoSym;
-  const rest  = items.slice(1).map(i=>i.eoSym).join(',');
-  const url = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
+  const rest  = items.slice(1).map(i => i.eoSym).join(',');
+  const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
   try {
     const r = await fetch(url);
     if (!r.ok) throw new Error(r.status);
@@ -315,15 +305,20 @@ async function fetchPrices(items) {
   }
 }
 
-function fmt(n,d=2){const v=parseFloat(n);return isNaN(v)||v===0?'—':v.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d})}
-function sign(n){return parseFloat(n)>=0?'+':''}
+// ══ FORMAT ════════════════════════════════════════════════════════════════
+function fmt(n, d=2) {
+  const v = parseFloat(n);
+  return isNaN(v) || v === 0 ? '—' : v.toLocaleString('it-IT', {minimumFractionDigits:d, maximumFractionDigits:d});
+}
+function sign(n) { return parseFloat(n) >= 0 ? '+' : ''; }
 
+// ══ BUILD BOXES ═══════════════════════════════════════════════════════════
 function buildBoxes(containerId, items, selIdx, onSelect) {
   const wrap = document.getElementById(containerId);
   wrap.innerHTML = '';
-  items.forEach((item,i)=>{
+  items.forEach((item, i) => {
     const box = document.createElement('div');
-    box.className = 'pbox'+(i===selIdx?' active':'');
+    box.className = 'pbox' + (i === selIdx ? ' active' : '');
     box.id = `pbox-${containerId}-${i}`;
     box.innerHTML = `
       <div class="pbox-left">
@@ -337,115 +332,176 @@ function buildBoxes(containerId, items, selIdx, onSelect) {
           <span class="pbox-chg" id="pchg-${containerId}-${i}"></span>
         </div>
       </div>`;
-    box.onclick=()=>{
-      wrap.querySelectorAll('.pbox').forEach(b=>b.classList.remove('active'));
+    box.onclick = () => {
+      wrap.querySelectorAll('.pbox').forEach(b => b.classList.remove('active'));
       box.classList.add('active');
-      const sb=document.getElementById(containerId.replace('boxes','sidebar'));
-      if(sb)sb.querySelectorAll('.scard').forEach((c,j)=>c.classList.toggle('active',j===i));
-      onSelect(item,i);
+      const sb = document.getElementById(containerId.replace('boxes','sidebar'));
+      if (sb) sb.querySelectorAll('.scard').forEach((c,j) => c.classList.toggle('active', j===i));
+      onSelect(item, i);
     };
     wrap.appendChild(box);
   });
 }
 
 function applyPrices(containerId, items, rows) {
-  const byCode={};
-  rows.forEach(r=>{if(r.code)byCode[r.code]=r;});
-  items.forEach((item,i)=>{
-    const d=byCode[item.eoSym];
-    if(!d)return;
-    const price=parseFloat(d.close);
-    const chgAbs=parseFloat(d.change);
-    const chgPct=parseFloat(d.change_p);
-    const up=chgPct>=0;
-    const priceEl=document.getElementById(`pp-${containerId}-${i}`);
-    const pctEl=document.getElementById(`ppct-${containerId}-${i}`);
-    const chgEl=document.getElementById(`pchg-${containerId}-${i}`);
-    if(priceEl)priceEl.textContent=fmt(price);
-    if(pctEl){pctEl.textContent=`${sign(chgPct)}${fmt(Math.abs(chgPct),2)}%`;pctEl.className=`pbox-pct ${up?'badge-up':'badge-down'}`;}
-    if(chgEl){chgEl.textContent=`${sign(chgAbs)}${fmt(chgAbs,2)}`;chgEl.className=`pbox-chg ${up?'col-up':'col-down'}`;}
+  const byCode = {};
+  rows.forEach(r => { if (r.code) byCode[r.code] = r; });
+  items.forEach((item, i) => {
+    const d = byCode[item.eoSym];
+    if (!d || d.error) return;
+    const price  = parseFloat(d.close);
+    const chgAbs = parseFloat(d.change);
+    const chgPct = parseFloat(d.change_p);
+    const up     = chgPct >= 0;
+    const priceEl = document.getElementById(`pp-${containerId}-${i}`);
+    const pctEl   = document.getElementById(`ppct-${containerId}-${i}`);
+    const chgEl   = document.getElementById(`pchg-${containerId}-${i}`);
+    if (priceEl) priceEl.textContent = fmt(price);
+    if (pctEl)   { pctEl.textContent = `${sign(chgPct)}${fmt(Math.abs(chgPct),2)}%`; pctEl.className = `pbox-pct ${up?'badge-up':'badge-down'}`; }
+    if (chgEl)   { chgEl.textContent = `${sign(chgAbs)}${fmt(chgAbs,2)}`; chgEl.className = `pbox-chg ${up?'col-up':'col-down'}`; }
   });
 }
 
+// ══ REFRESH ═══════════════════════════════════════════════════════════════
 async function refreshPrices() {
-  if (!PROXY_URL) return;
-  const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
+  const now = new Date().toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', second:'2-digit', timeZone:'Europe/Rome'});
   const [idxRows, stkRows] = await Promise.all([fetchPrices(INDICES), fetchPrices(STOCKS)]);
-  if(idxRows.length){applyPrices('idx-boxes',INDICES,idxRows);document.getElementById('idx-update').textContent=`Aggiornato: ${now} (~15 min ritardo)`;}
-  if(stkRows.length){applyPrices('stk-boxes',STOCKS,stkRows);document.getElementById('stk-update').textContent=`Aggiornato: ${now} (~15 min ritardo)`;}
+  if (idxRows.length) { applyPrices('idx-boxes', INDICES, idxRows); document.getElementById('idx-update').textContent = `Aggiornato: ${now} (~15 min ritardo)`; }
+  if (stkRows.length) { applyPrices('stk-boxes', STOCKS,  stkRows); document.getElementById('stk-update').textContent = `Aggiornato: ${now} (~15 min ritardo)`; }
 }
 
-function buildSidebar(sidebarId,boxesId,items,chartId,nameId,codeId,getInt,getRng,setSel,defSel){
-  const sb=document.getElementById(sidebarId);
-  sb.querySelectorAll('.scard').forEach(c=>c.remove());
-  items.forEach((item,i)=>{
-    const card=document.createElement('div');
-    card.className='scard'+(i===defSel?' active':'');
-    card.innerHTML=`<span class="scard-flag">${item.flag||''}</span><div><div class="scard-name">${item.name}</div><div class="scard-sym">${item.tvSym.split(':')[1]}</div></div>`;
-    card.onclick=()=>{
-      sb.querySelectorAll('.scard').forEach(c=>c.classList.remove('active'));
+// ══ SIDEBAR ═══════════════════════════════════════════════════════════════
+function buildSidebar(sidebarId, boxesId, items, chartId, nameId, codeId, getInt, getRng, setSel, defSel) {
+  const sb = document.getElementById(sidebarId);
+  sb.querySelectorAll('.scard').forEach(c => c.remove());
+  items.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'scard' + (i === defSel ? ' active' : '');
+    card.innerHTML = `<span class="scard-flag">${item.flag||''}</span><div><div class="scard-name">${item.name}</div><div class="scard-sym">${item.tvSym.split(':')[1]}</div></div>`;
+    card.onclick = () => {
+      sb.querySelectorAll('.scard').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
-      document.getElementById(boxesId).querySelectorAll('.pbox').forEach((b,j)=>b.classList.toggle('active',j===i));
+      document.getElementById(boxesId).querySelectorAll('.pbox').forEach((b,j) => b.classList.toggle('active', j===i));
       setSel(i);
-      document.getElementById(nameId).textContent=item.name;
-      document.getElementById(codeId).textContent=item.tvSym;
-      buildChart(chartId,item.tvSym,getInt(),getRng());
+      document.getElementById(nameId).textContent = item.name;
+      document.getElementById(codeId).textContent = item.tvSym;
+      buildChart(chartId, item.tvSym, getInt(), getRng());
     };
     sb.appendChild(card);
   });
 }
 
-function buildChart(containerId,sym,interval,range){
-  const wrap=document.getElementById(containerId);
-  if(!wrap)return;
-  wrap.innerHTML='';
-  const div=document.createElement('div');
-  div.className='tradingview-widget-container';
-  div.style.cssText='height:100%;width:100%';
-  const inner=document.createElement('div');
-  inner.className='tradingview-widget-container__widget';
-  inner.style.cssText='height:100%;width:100%';
+// ══ CHART ════════════════════════════════════════════════════════════════
+function buildChart(containerId, sym, interval, range) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const div   = document.createElement('div');
+  div.className = 'tradingview-widget-container';
+  div.style.cssText = 'height:100%;width:100%';
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
   div.appendChild(inner);
   wrap.appendChild(div);
-  const s=document.createElement('script');
-  s.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-  s.async=true;
-  const cfg={autosize:true,symbol:sym,interval:interval,timezone:'Europe/Rome',theme:'dark',style:'1',locale:'it',backgroundColor:'#141720',gridColor:'rgba(255,255,255,0.04)',withdateranges:true,allow_symbol_change:false,save_image:false,hide_top_toolbar:false};
-  if(range)cfg.range=range;
-  s.innerHTML=JSON.stringify(cfg);
+  const s = document.createElement('script');
+  s.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+  s.async = true;
+  const cfg = {
+    autosize: true, symbol: sym, interval: interval,
+    timezone: 'Europe/Rome', theme: 'dark', style: '1', locale: 'it',
+    backgroundColor: '#141720', gridColor: 'rgba(255,255,255,0.04)',
+    withdateranges: true, allow_symbol_change: false,
+    save_image: false, hide_top_toolbar: false,
+  };
+  if (range) cfg.range = range;
+  s.innerHTML = JSON.stringify(cfg);
   div.appendChild(s);
 }
 
-function setIdxRange(btn,interval,range){idxInterval=interval;idxRange=range;document.querySelectorAll('#idx-rbns .rbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildChart('idx-chart-wrap',INDICES[idxSel].tvSym,interval,range);}
-function setStkRange(btn,interval,range){stkInterval=interval;stkRange=range;document.querySelectorAll('#stk-rbns .rbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');buildChart('stk-chart-wrap',STOCKS[stkSel].tvSym,interval,range);}
+// ══ RANGE/INTERVALLO ══════════════════════════════════════════════════════
+function setIdxRange(btn, interval, range) {
+  idxInterval = interval; idxRange = range;
+  document.querySelectorAll('#idx-rbns .rbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildChart('idx-chart-wrap', INDICES[idxSel].tvSym, interval, range);
+}
 
-const FKEY='d783tv1r01qsamsis050d783tv1r01qsamsis05g';
-async function loadNews(){
-  const grid=document.getElementById('news-grid');
-  try{
-    const r=await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FKEY}`);
-    const items=await r.json();
-    if(!items?.length)throw new Error();
-    items.sort((a,b)=>b.datetime-a.datetime);
-    grid.innerHTML=items.slice(0,18).map(n=>`<div class="ncard">${n.image?`<img class="nimg" src="${n.image}" onerror="this.style.display='none'" alt="">`:''}<div class="nsrc">${n.source}<span class="ncat">${n.category}</span></div><a class="ntitle" href="${n.url}" target="_blank" rel="noopener">${n.headline}</a><div class="ntime">${new Date(n.datetime*1000).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>`).join('');
-  }catch{
-    try{const r2=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml')+'&count=18');const d=await r2.json();grid.innerHTML=(d.items||[]).map(i=>`<div class="ncard">${i.thumbnail?`<img class="nimg" src="${i.thumbnail}" onerror="this.style.display='none'" alt="">`:''}  <div class="nsrc">Il Sole 24 Ore</div><a class="ntitle" href="${i.link}" target="_blank" rel="noopener">${i.title}</a><div class="ntime">${new Date(i.pubDate).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>`).join('')||'<p style="color:var(--text3)">Nessuna notizia.</p>';}catch{grid.innerHTML='<p style="color:var(--text3);font-size:13px">Notizie non disponibili.</p>';}
+function setStkInterval(btn, interval) {
+  stkInterval = interval;
+  document.querySelectorAll('#stk-ibns .rbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildChart('stk-chart-wrap', STOCKS[stkSel].tvSym, stkInterval, stkRange);
+}
+
+function setStkRange(btn, range) {
+  stkRange = range;
+  document.querySelectorAll('#stk-rbns .rbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildChart('stk-chart-wrap', STOCKS[stkSel].tvSym, stkInterval, stkRange);
+}
+
+// ══ NEWS ══════════════════════════════════════════════════════════════════
+async function loadNews() {
+  const grid = document.getElementById('news-grid');
+  try {
+    const r = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FKEY}`);
+    const items = await r.json();
+    if (!items?.length) throw new Error();
+    items.sort((a,b) => b.datetime - a.datetime);
+    grid.innerHTML = items.slice(0,18).map(n => `
+      <div class="ncard">
+        ${n.image ? `<img class="nimg" src="${n.image}" onerror="this.style.display='none'" alt="">` : ''}
+        <div class="nsrc">${n.source}<span class="ncat">${n.category}</span></div>
+        <a class="ntitle" href="${n.url}" target="_blank" rel="noopener">${n.headline}</a>
+        <div class="ntime">${new Date(n.datetime*1000).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>`).join('');
+  } catch {
+    try {
+      const r2 = await fetch('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent('https://rss.ilsole24ore.com/rss/finanza.xml') + '&count=18');
+      const d  = await r2.json();
+      grid.innerHTML = (d.items||[]).map(i => `
+        <div class="ncard">
+          ${i.thumbnail ? `<img class="nimg" src="${i.thumbnail}" onerror="this.style.display='none'" alt="">` : ''}
+          <div class="nsrc">Il Sole 24 Ore</div>
+          <a class="ntitle" href="${i.link}" target="_blank" rel="noopener">${i.title}</a>
+          <div class="ntime">${new Date(i.pubDate).toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>`).join('') || '<p style="color:var(--text3)">Nessuna notizia.</p>';
+    } catch {
+      grid.innerHTML = '<p style="color:var(--text3);font-size:13px">Notizie non disponibili.</p>';
+    }
   }
 }
 
-function showTab(name){['indices','stocks','news','portfolio'].forEach((n,i)=>{document.querySelectorAll('.tab')[i].classList.toggle('active',n===name);document.getElementById('sec-'+n).classList.toggle('active',n===name);});}
+// ══ NAV ══════════════════════════════════════════════════════════════════
+function showTab(name) {
+  ['indices','stocks','news','portfolio'].forEach((n,i) => {
+    document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
+    document.getElementById('sec-'+n).classList.toggle('active', n===name);
+  });
+}
 
-// INIT
-buildBoxes('idx-boxes',INDICES,0,(item,i)=>{idxSel=i;document.getElementById('idx-chart-name').textContent=item.name;document.getElementById('idx-chart-code').textContent=item.tvSym;buildChart('idx-chart-wrap',item.tvSym,idxInterval,idxRange);});
-buildBoxes('stk-boxes',STOCKS,7,(item,i)=>{stkSel=i;document.getElementById('stk-chart-name').textContent=item.name;document.getElementById('stk-chart-code').textContent=item.tvSym;buildChart('stk-chart-wrap',item.tvSym,stkInterval,stkRange);});
-buildSidebar('idx-sidebar','idx-boxes',INDICES,'idx-chart-wrap','idx-chart-name','idx-chart-code',()=>idxInterval,()=>idxRange,i=>idxSel=i,0);
-buildSidebar('stk-sidebar','stk-boxes',STOCKS,'stk-chart-wrap','stk-chart-name','stk-chart-code',()=>stkInterval,()=>stkRange,i=>stkSel=i,7);
-buildChart('idx-chart-wrap',INDICES[0].tvSym,idxInterval,idxRange);
-buildChart('stk-chart-wrap',STOCKS[7].tvSym,stkInterval,stkRange);
+// ══ INIT ═════════════════════════════════════════════════════════════════
+buildBoxes('idx-boxes', INDICES, 0, (item,i) => {
+  idxSel = i;
+  document.getElementById('idx-chart-name').textContent = item.name;
+  document.getElementById('idx-chart-code').textContent = item.tvSym;
+  buildChart('idx-chart-wrap', item.tvSym, idxInterval, idxRange);
+});
+buildBoxes('stk-boxes', STOCKS, 7, (item,i) => {
+  stkSel = i;
+  document.getElementById('stk-chart-name').textContent = item.name;
+  document.getElementById('stk-chart-code').textContent = item.tvSym;
+  buildChart('stk-chart-wrap', item.tvSym, stkInterval, stkRange);
+});
+buildSidebar('idx-sidebar','idx-boxes', INDICES,'idx-chart-wrap','idx-chart-name','idx-chart-code', ()=>idxInterval, ()=>idxRange, i=>idxSel=i, 0);
+buildSidebar('stk-sidebar','stk-boxes', STOCKS, 'stk-chart-wrap','stk-chart-name','stk-chart-code', ()=>stkInterval, ()=>stkRange, i=>stkSel=i, 7);
+buildChart('idx-chart-wrap', INDICES[0].tvSym, idxInterval, idxRange);
+buildChart('stk-chart-wrap', STOCKS[7].tvSym,  stkInterval, stkRange);
 refreshPrices();
-setInterval(refreshPrices,60000);
+setInterval(refreshPrices, 60000);
 loadNews();
-setInterval(loadNews,120000);
+setInterval(loadNews, 120000);
 </script>
 </body>
 </html>
