@@ -199,26 +199,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="chart-panel">
           <div class="chart-topbar">
             <div><div class="chart-name" id="stk-chart-name">Enel</div><div class="chart-code" id="stk-chart-code">MIL:ENEL</div></div>
-            <div class="btn-groups">
-              <!-- Riga 1: intervallo candele -->
-              <div class="range-btns" id="stk-ibns">
-                <span class="range-label">Intervallo:</span>
-                <button class="rbtn" onclick="setStkInterval(this,'30')">30min</button>
-                <button class="rbtn" onclick="setStkInterval(this,'60')">1h</button>
-                <button class="rbtn" onclick="setStkInterval(this,'240')">4h</button>
-                <button class="rbtn active" onclick="setStkInterval(this,'D')">1G</button>
-              </div>
-              <!-- Riga 2: range temporale -->
-              <div class="range-btns" id="stk-rbns">
-                <span class="range-label">Range:</span>
-                <button class="rbtn" onclick="setStkRange(this,'5D')">5G</button>
-                <button class="rbtn active" onclick="setStkRange(this,'1M')">1M</button>
-                <button class="rbtn" onclick="setStkRange(this,'3M')">3M</button>
-                <button class="rbtn" onclick="setStkRange(this,'6M')">6M</button>
-                <button class="rbtn" onclick="setStkRange(this,'1Y')">1A</button>
-                <button class="rbtn" onclick="setStkRange(this,'5Y')">5A</button>
-              </div>
-            </div>
+<div style="font-size:11px;color:var(--text3)">Usa la toolbar del grafico per cambiare intervallo</div>
           </div>
           <div class="chart-wrap" id="stk-chart-wrap"></div>
           <div class="chart-footer"><span id="stk-update">—</span><span>Prezzi: Yahoo Finance · Grafici: TradingView</span></div>
@@ -279,7 +260,7 @@ const STOCKS = [
 
 // ══ STATO ═════════════════════════════════════════════════════════════════
 let idxSel = 0, idxInterval = '1', idxRange = '';
-let stkSel = 7, stkInterval = 'D', stkRange = '1M';
+let stkSel = 7, stkInterval = 'D', stkRange = '1M'; // intervallo e range gestiti dalla toolbar TV
 
 // ══ CLOCK ═════════════════════════════════════════════════════════════════
 setInterval(() => {
