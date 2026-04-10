@@ -89,10 +89,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pf-hint{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:28px 24px;font-size:13px;color:var(--text2);line-height:1.9}
 .pf-hint strong{color:var(--text);font-weight:500}
 .pf-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
+.pf-card-metric{background:var(--surface2);border-radius:var(--rs);padding:14px 16px}
+.pf-metric-label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.pf-metric-val{font-size:20px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
+#pf-table tbody tr{border-bottom:.5px solid var(--border);transition:background .1s}
+#pf-table tbody tr:last-child{border-bottom:none}
+#pf-table tbody tr:hover{background:var(--surface2)}
+#pf-table td{padding:9px 14px;color:var(--text);font-family:'DM Mono',monospace;white-space:nowrap}
+#pf-table td:first-child{font-family:'DM Sans',sans-serif;font-weight:500}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 @media(max-width:960px){.chart-wrap{height:340px}.ov-grid{grid-template-columns:1fr}}
-@media(max-width:680px){.pboxes{grid-template-columns:1fr 1fr!important}.tabs{overflow-x:auto;width:100%}.tab{padding:7px 11px;font-size:12px}.news-grid{grid-template-columns:1fr}}
+@media(max-width:680px){.pboxes{grid-template-columns:1fr 1fr!important};#pf-summary{grid-template-columns:1fr 1fr!important}.tabs{overflow-x:auto;width:100%}.tab{padding:7px 11px;font-size:12px}.news-grid{grid-template-columns:1fr}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
@@ -230,16 +238,53 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
   <!-- ══ PORTAFOGLIO ══════════════════════════════════════════════════════ -->
   <div id="sec-portfolio" class="section">
-    <div class="sec-label">Il mio portafoglio</div>
-    <div class="pf-hint">
-      <strong>Sezione pronta — in attesa dei tuoi dati</strong><br><br>
-      Per ogni titolo dimmi:<br>
-      &bull; <strong>Ticker</strong> — es. <code>ENEL</code>, <code>ISP</code>, <code>UCG</code><br>
-      &bull; <strong>Quantità</strong> di azioni<br>
-      &bull; <strong>Prezzo medio di carico</strong> — es. <code>6.20</code> €<br>
-      &bull; <strong>Data di acquisto</strong> (opzionale, per grafico P&amp;L)<br><br>
-      Esempio: <em>"500 ENEL a 6,20€ da gennaio 2024, 200 ISP a 3,80€ da marzo 2024"</em>
+
+    <!-- Riepilogo totale -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="pf-summary">
+      <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="pf-invested">€ 42.188,08</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="pf-value">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L totale</div><div class="pf-metric-val" id="pf-pl">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="pf-plpct">—</div></div>
     </div>
+
+    <!-- Griglia titoli + grafico torta -->
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start">
+
+      <!-- Tabella posizioni -->
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Posizioni</div>
+        <div style="overflow-x:auto">
+          <table id="pf-table" style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="border-bottom:.5px solid var(--border)">
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);white-space:nowrap">Titolo</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Qtà</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Carico</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Prezzo</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Investito</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Valore</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L €</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L %</th>
+              </tr>
+            </thead>
+            <tbody id="pf-tbody">
+              <tr><td colspan="8" style="padding:20px 14px;color:var(--text3);font-size:12px">Caricamento prezzi...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="chart-footer"><span id="pf-update">—</span><span>Prezzi: Yahoo Finance (~15 min ritardo)</span></div>
+      </div>
+
+      <!-- Grafico torta peso % -->
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Composizione portafoglio</div>
+        <div style="position:relative;height:280px;padding:12px">
+          <canvas id="pf-pie"></canvas>
+        </div>
+        <div style="padding:8px 14px 12px;display:flex;flex-wrap:wrap;gap:6px" id="pf-legend"></div>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -458,6 +503,7 @@ function showTab(name) {
     document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
+  if (name === 'portfolio') loadPortfolio();
 }
 
 // ══ GRAFICO TITOLI BIT (Chart.js + Yahoo Finance) ═════════════════════════
@@ -607,6 +653,121 @@ function setStkView(btn, interval, range) {
   document.querySelectorAll('#stk-ibns .rbtn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   loadStkChart(STOCKS[stkSel].eoSym, interval, range);
+}
+
+// ══ PORTAFOGLIO ══════════════════════════════════════════════════════════
+const PORTFOLIO = [
+  {ticker:'BMPS', eoSym:'BMPS.MI', name:'Monte Paschi Siena', qty:1920,  avgPrice:8.1141,  invested:15579.08},
+  {ticker:'ISP',  eoSym:'ISP.MI',  name:'Intesa Sanpaolo',    qty:300,   avgPrice:4.85,    invested:1455.00},
+  {ticker:'LDO',  eoSym:'LDO.MI',  name:'Leonardo',           qty:50,    avgPrice:51.94,   invested:2598.00},
+  {ticker:'BAMI', eoSym:'BAMI.MI', name:'Banco BPM',          qty:200,   avgPrice:12.57,   invested:2515.00},
+  {ticker:'G',    eoSym:'G.MI',    name:'Generali',           qty:75,    avgPrice:34.05,   invested:2554.00},
+  {ticker:'UCG',  eoSym:'UCG.MI',  name:'UniCredit',          qty:35,    avgPrice:71.89,   invested:2516.00},
+  {ticker:'PST',  eoSym:'PST.MI',  name:'Poste Italiane',     qty:115,   avgPrice:22.03,   invested:2534.00},
+  {ticker:'ENEL', eoSym:'ENEL.MI', name:'Enel',               qty:280,   avgPrice:8.99,    invested:2517.00},
+  {ticker:'MB',   eoSym:'MB.MI',   name:'Mediobanca',         qty:513,   avgPrice:19.33,   invested:9920.00},
+];
+
+const PF_COLORS = ['#4f8ef7','#22c98a','#f05252','#ef9f27','#a78bfa','#f472b6','#34d399','#60a5fa','#fb923c'];
+
+let pfPieChart = null;
+
+async function loadPortfolio() {
+  const first = PORTFOLIO[0].eoSym;
+  const rest  = PORTFOLIO.slice(1).map(p => p.eoSym).join(',');
+  const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
+  const now   = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
+
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const rows = await r.json();
+    const data = Array.isArray(rows) ? rows : [rows];
+
+    let totalInvested = 0, totalValue = 0;
+    const tbody = document.getElementById('pf-tbody');
+    tbody.innerHTML = '';
+
+    const pieLabels = [], pieData = [], pieColors = [];
+
+    PORTFOLIO.forEach((pos, i) => {
+      const q     = data[i];
+      const price = q && !q.error ? parseFloat(q.close) : null;
+      const value = price !== null ? price * pos.qty : null;
+      const pl    = value !== null ? value - pos.invested : null;
+      const plPct = pl !== null ? (pl / pos.invested * 100) : null;
+      const up    = pl !== null && pl >= 0;
+
+      totalInvested += pos.invested;
+      if (value !== null) totalValue += value;
+
+      // Riga tabella
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${pos.name}<br><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${pos.ticker}</span></td>
+        <td style="text-align:right">${pos.qty.toLocaleString('it-IT')}</td>
+        <td style="text-align:right">${fmt(pos.avgPrice)} €</td>
+        <td style="text-align:right;color:${price!==null?(up?'var(--up)':'var(--text)'):'var(--text3)'}">${price !== null ? fmt(price)+' €' : '—'}</td>
+        <td style="text-align:right">${fmt(pos.invested)} €</td>
+        <td style="text-align:right">${value !== null ? fmt(value)+' €' : '—'}</td>
+        <td style="text-align:right;color:${pl!==null?(up?'var(--up)':'var(--down)'):'var(--text3)'}">
+          ${pl !== null ? (up?'+':'')+fmt(pl)+' €' : '—'}
+        </td>
+        <td style="text-align:right;font-weight:500;color:${plPct!==null?(up?'var(--up)':'var(--down)'):'var(--text3)'}">
+          ${plPct !== null ? (up?'+':'')+fmt(plPct,2)+'%' : '—'}
+        </td>`;
+      tbody.appendChild(tr);
+
+      // Dati torta (usa valore attuale se disponibile, altrimenti investito)
+      pieLabels.push(pos.ticker);
+      pieData.push(value !== null ? parseFloat(value.toFixed(2)) : pos.invested);
+      pieColors.push(PF_COLORS[i % PF_COLORS.length]);
+    });
+
+    // Riepilogo
+    const totalPl    = totalValue - totalInvested;
+    const totalPlPct = (totalPl / totalInvested * 100);
+    const up = totalPl >= 0;
+    document.getElementById('pf-invested').textContent = '€ ' + fmt(totalInvested);
+    document.getElementById('pf-value').textContent    = totalValue > 0 ? '€ ' + fmt(totalValue) : '—';
+    const plEl = document.getElementById('pf-pl');
+    plEl.textContent = totalValue > 0 ? (up?'+':'')+fmt(totalPl)+' €' : '—';
+    plEl.style.color = totalValue > 0 ? (up ? 'var(--up)' : 'var(--down)') : 'var(--text)';
+    const plPctEl = document.getElementById('pf-plpct');
+    plPctEl.textContent = totalValue > 0 ? (up?'+':'')+fmt(totalPlPct,2)+'%' : '—';
+    plPctEl.style.color = totalValue > 0 ? (up ? 'var(--up)' : 'var(--down)') : 'var(--text)';
+
+    document.getElementById('pf-update').textContent = `Aggiornato: ${now}`;
+
+    // Grafico torta
+    const pieCtx = document.getElementById('pf-pie').getContext('2d');
+    if (pfPieChart) pfPieChart.destroy();
+    pfPieChart = new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: pieLabels,
+        datasets: [{ data: pieData, backgroundColor: pieColors, borderWidth: 1, borderColor: '#141720' }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: {
+          backgroundColor:'#1c2030', bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          callbacks: { label: c => `${c.label}: € ${fmt(c.parsed)} (${fmt(c.parsed/pieData.reduce((a,b)=>a+b,0)*100,1)}%)` }
+        }}
+      }
+    });
+
+    // Legenda custom
+    const legend = document.getElementById('pf-legend');
+    legend.innerHTML = pieLabels.map((l,i) => {
+      const pct = (pieData[i] / pieData.reduce((a,b)=>a+b,0) * 100).toFixed(1);
+      return `<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${pieColors[i]};flex-shrink:0"></span>${l} ${pct}%</span>`;
+    }).join('');
+
+  } catch(e) {
+    document.getElementById('pf-tbody').innerHTML = `<tr><td colspan="8" style="padding:16px 14px;color:var(--down);font-size:12px">Errore caricamento: ${e.message}</td></tr>`;
+    console.error('Portfolio error:', e);
+  }
 }
 
 // ══ INIT ═════════════════════════════════════════════════════════════════
