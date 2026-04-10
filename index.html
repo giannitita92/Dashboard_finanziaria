@@ -342,6 +342,57 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
+    <!-- ══ BOX COSTO REALE BMPS + DIVIDENDI ═════════════════════════════ -->
+    <div class="pf-history-grid" style="margin-top:14px">
+
+      <!-- Box costo reale / P&L netto -->
+      <div class="chart-panel" style="padding:16px">
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:14px">📊 P&amp;L netto effettivo</div>
+        <div style="background:var(--accent-bg);border:.5px solid rgba(79,142,247,0.25);border-radius:var(--rs);padding:10px 12px;margin-bottom:14px;font-size:11px;color:var(--text2);line-height:1.7">
+          <span style="color:var(--accent);font-weight:500">BMPS — Tranche 1 (1418 az.)</span><br>
+          Costo contabile: <span style="font-family:'DM Mono',monospace">€ 11.429,08</span><br>
+          Costo reale pagato: <span style="font-family:'DM Mono',monospace;color:var(--up)">€ 4.400,00</span><br>
+          Vantaggio OPS/az. gratuite: <span style="font-family:'DM Mono',monospace;color:var(--up)">+ € 7.029,08</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Investito contabile</div>
+            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)">€ 42.188,08</div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Costo reale pagato</div>
+            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">€ 35.159,00</div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Dividendi incassati</div>
+            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.391,45</div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">P&amp;L netto su costo reale</div>
+            <div style="font-size:20px;font-weight:500;font-family:'DM Mono',monospace" id="pf-real-pl">—</div>
+            <div style="font-size:12px;font-family:'DM Mono',monospace;margin-top:2px" id="pf-real-plpct"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">P&amp;L netto + dividendi</div>
+            <div style="font-size:20px;font-weight:500;font-family:'DM Mono',monospace" id="pf-real-pl-div">—</div>
+            <div style="font-size:12px;font-family:'DM Mono',monospace;margin-top:2px" id="pf-real-plpct-div"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grafico dividendi a barre -->
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Dividendi incassati</span>
+          <span style="font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.391,45</span>
+        </div>
+        <div style="position:relative;height:260px;padding:16px 12px 10px">
+          <canvas id="pf-div-chart"></canvas>
+        </div>
+        <div class="chart-footer"><span>Totale dividendi incassati da inizio portafoglio</span></div>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -663,6 +714,7 @@ function showTab(name) {
   if (name === 'portfolio') {
     loadPortfolio();
     loadPortfolioHistory();
+    renderDividendsChart();
   }
   if (name === 'noemi') {
     loadNoemi();
@@ -820,6 +872,94 @@ const PF_POSITIONS_FOR_HISTORY = [
   {symbol:'ENEL.MI', qty:280,   avgPrice:8.99,    startDate:'2026-01-26'},
   {symbol:'MB.MI',   qty:513,   avgPrice:19.33,   startDate:'2026-02-18'},
 ];
+
+// Dividendi per titolo
+const DIVIDENDS = [
+  {ticker:'BAMI', name:'Banco BPM',       amount:92.00,    color:'#4f8ef7'},
+  {ticker:'BMPS', name:'Monte Paschi',    amount:1166.35,  color:'#22c98a'},
+  {ticker:'ISP',  name:'Intesa Sanpaolo', amount:107.10,   color:'#ef9f27'},
+  {ticker:'LDO',  name:'Leonardo',        amount:26.00,    color:'#a78bfa'},
+];
+const DIVIDENDS_TOTAL = 1391.45;
+const COSTO_REALE     = 35159.00; // 42188.08 - 7029.08 (vantaggio BMPS T1)
+
+function renderDividendsChart() {
+  const ctx = document.getElementById('pf-div-chart');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: DIVIDENDS.map(d => d.ticker),
+      datasets: [{
+        data:            DIVIDENDS.map(d => d.amount),
+        backgroundColor: DIVIDENDS.map(d => d.color),
+        borderRadius:    6,
+        borderSkipped:   false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor:'#1c2030', titleColor:'rgba(255,255,255,0.5)',
+          bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          callbacks: {
+            title: c => DIVIDENDS[c[0].dataIndex].name,
+            label: c => `Dividendi: + € ${fmt(c.parsed.y)}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color:'#8b90a0', font:{size:12,family:'DM Mono'} },
+          grid:  { display:false }, border:{ display:false }
+        },
+        y: {
+          ticks: { color:'#555c70', font:{size:10,family:'DM Mono'}, callback: v => '€ '+fmt(v,0) },
+          grid:  { color:'rgba(255,255,255,0.04)' }, border:{ display:false }
+        }
+      }
+    }
+  });
+}
+
+function updateRealPL(currentValue) {
+  if (!currentValue || currentValue === 0) return;
+
+  // P&L su costo reale (senza dividendi)
+  const plReal    = currentValue - COSTO_REALE;
+  const plRealPct = (plReal / COSTO_REALE * 100);
+  const upReal    = plReal >= 0;
+
+  const plEl = document.getElementById('pf-real-pl');
+  if (plEl) {
+    plEl.textContent = (upReal?'+':'')+fmt(plReal)+' €';
+    plEl.style.color = upReal ? 'var(--up)' : 'var(--down)';
+  }
+  const pctEl = document.getElementById('pf-real-plpct');
+  if (pctEl) {
+    pctEl.textContent = (upReal?'+':'')+fmt(plRealPct,2)+'% sul costo reale';
+    pctEl.style.color = upReal ? 'var(--up)' : 'var(--down)';
+  }
+
+  // P&L su costo reale + dividendi
+  const plDiv    = plReal + DIVIDENDS_TOTAL;
+  const plDivPct = (plDiv / COSTO_REALE * 100);
+  const upDiv    = plDiv >= 0;
+
+  const plDivEl = document.getElementById('pf-real-pl-div');
+  if (plDivEl) {
+    plDivEl.textContent = (upDiv?'+':'')+fmt(plDiv)+' €';
+    plDivEl.style.color = upDiv ? 'var(--up)' : 'var(--down)';
+  }
+  const pctDivEl = document.getElementById('pf-real-plpct-div');
+  if (pctDivEl) {
+    pctDivEl.textContent = (upDiv?'+':'')+fmt(plDivPct,2)+'% sul costo reale';
+    pctDivEl.style.color = upDiv ? 'var(--up)' : 'var(--down)';
+  }
+}
 
 async function loadPortfolioHistory() {
   const updateEl = document.getElementById('pf-chart-update');
@@ -1028,6 +1168,7 @@ async function loadPortfolio() {
     plPctEl.style.color = totalValue > 0 ? (up ? 'var(--up)' : 'var(--down)') : 'var(--text)';
 
     document.getElementById('pf-update').textContent = `Aggiornato: ${now}`;
+    updateRealPL(totalValue);
 
     // Grafico torta
     const pieCtx = document.getElementById('pf-pie').getContext('2d');
