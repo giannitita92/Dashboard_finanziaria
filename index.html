@@ -100,7 +100,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 @media(max-width:960px){.chart-wrap{height:340px}.ov-grid{grid-template-columns:1fr}}
-@media(max-width:680px){.pboxes{grid-template-columns:1fr 1fr!important};#pf-summary{grid-template-columns:1fr 1fr!important}.tabs{overflow-x:auto;width:100%}.tab{padding:7px 11px;font-size:12px}.news-grid{grid-template-columns:1fr}}
+.pf-main-grid{display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start}
+.pf-history-grid{display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start}
+@media(max-width:700px){
+  .pboxes{grid-template-columns:1fr 1fr!important}
+  .tabs{overflow-x:auto;width:100%}
+  .tab{padding:7px 11px;font-size:12px}
+  .news-grid{grid-template-columns:1fr}
+  #pf-summary{grid-template-columns:1fr 1fr!important}
+  .pf-main-grid{grid-template-columns:1fr!important}
+  .pf-history-grid{grid-template-columns:1fr!important}
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
@@ -240,7 +250,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div id="sec-portfolio" class="section">
 
     <!-- Riepilogo totale -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px" id="pf-summary">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px" id="pf-summary">
       <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="pf-invested">€ 42.188,08</div></div>
       <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="pf-value">—</div></div>
       <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L totale</div><div class="pf-metric-val" id="pf-pl">—</div></div>
@@ -248,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
 
     <!-- Griglia titoli + grafico torta -->
-    <div style="display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start">
+    <div class="pf-main-grid">
 
       <!-- Tabella posizioni -->
       <div class="chart-panel">
@@ -286,7 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
 
     <!-- Grafico P&L nel tempo + stats -->
-    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start">
+    <div class="pf-history-grid" style="margin-top:14px">
 
       <!-- Grafico P&L -->
       <div class="chart-panel">
