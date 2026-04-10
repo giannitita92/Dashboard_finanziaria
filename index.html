@@ -133,6 +133,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab active" onclick="showTab('stocks')">Titoli BIT</div>
     <div class="tab" onclick="showTab('news')">Notizie</div>
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
+    <div class="tab" onclick="showTab('noemi')">Portafoglio Noemi</div>
   </div>
 
   <!-- ══ INDICI ═══════════════════════════════════════════════════════════ -->
@@ -345,6 +346,106 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 </div>
 
+  <!-- ══ PORTAFOGLIO NOEMI ════════════════════════════════════════════════ -->
+  <div id="sec-noemi" class="section">
+
+    <!-- Badge azioni gratuite -->
+    <div style="background:var(--accent-bg);border:.5px solid rgba(79,142,247,0.3);border-radius:var(--rs);padding:10px 16px;margin-bottom:14px;font-size:12px;color:var(--accent)">
+      ℹ️ I prezzi medi includono le azioni gratuite dell'azienda — Tranche 1: 4 az. gratuite su 8 · Tranche 2: 5 az. gratuite su 15
+    </div>
+
+    <!-- Riepilogo totale -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px" id="nm-summary">
+      <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="nm-invested">€ 3.380,00</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="nm-value">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L totale</div><div class="pf-metric-val" id="nm-pl">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="nm-plpct">—</div></div>
+    </div>
+
+    <!-- Tabella posizioni + torta -->
+    <div class="pf-main-grid">
+
+      <!-- Tabella posizioni -->
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Posizioni</div>
+        <div style="overflow-x:auto">
+          <table id="nm-table" style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="border-bottom:.5px solid var(--border)">
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);white-space:nowrap">Tranche</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Qtà</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P.M. effettivo</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Prezzo att.</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Investito</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Valore</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L €</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L %</th>
+              </tr>
+            </thead>
+            <tbody id="nm-tbody">
+              <tr><td colspan="8" style="padding:20px 14px;color:var(--text3);font-size:12px">Caricamento prezzi...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="chart-footer"><span id="nm-update">—</span><span>Prezzi: Yahoo Finance (~15 min ritardo)</span></div>
+      </div>
+
+      <!-- Grafico torta -->
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Composizione per tranche</div>
+        <div style="position:relative;height:260px;padding:12px">
+          <canvas id="nm-pie"></canvas>
+        </div>
+        <div style="padding:8px 14px 12px;display:flex;flex-wrap:wrap;gap:6px" id="nm-legend"></div>
+      </div>
+    </div>
+
+    <!-- Grafico P&L + record -->
+    <div class="pf-history-grid" style="margin-top:14px">
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Andamento P&amp;L nel tempo</span>
+          <div style="display:flex;gap:4px">
+            <button class="rbtn active" id="nm-chart-pl-btn" onclick="setNmChartMode(this,'pl')">P&amp;L €</button>
+            <button class="rbtn" id="nm-chart-pct-btn" onclick="setNmChartMode(this,'pct')">P&amp;L %</button>
+          </div>
+        </div>
+        <div style="position:relative;height:260px;padding:12px 12px 8px">
+          <canvas id="nm-chart"></canvas>
+        </div>
+        <div class="chart-footer"><span id="nm-chart-update">Caricamento storico...</span><span>Dati: Yahoo Finance</span></div>
+      </div>
+
+      <!-- Box record -->
+      <div class="chart-panel" style="padding:16px">
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Record portafoglio (da mar 2024)</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Massimo P&amp;L €</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)" id="nm-max-pl">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="nm-max-pl-date"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Minimo P&amp;L €</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--down)" id="nm-min-pl">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="nm-min-pl-date"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Massimo P&amp;L %</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)" id="nm-max-pct">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="nm-max-pct-date"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Minimo P&amp;L %</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--down)" id="nm-min-pct">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="nm-min-pct-date"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 <script>
 // ══ CONFIGURAZIONE ════════════════════════════════════════════════════════
 const PROXY_URL = 'https://finanza-proxy.onrender.com';
@@ -555,13 +656,17 @@ async function loadNews() {
 
 // ══ NAV ══════════════════════════════════════════════════════════════════
 function showTab(name) {
-  ['indices','stocks','news','portfolio'].forEach((n,i) => {
+  ['indices','stocks','news','portfolio','noemi'].forEach((n,i) => {
     document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
   if (name === 'portfolio') {
     loadPortfolio();
     loadPortfolioHistory();
+  }
+  if (name === 'noemi') {
+    loadNoemi();
+    loadNoemiHistory();
   }
 }
 
@@ -953,6 +1058,187 @@ async function loadPortfolio() {
     document.getElementById('pf-tbody').innerHTML = `<tr><td colspan="8" style="padding:16px 14px;color:var(--down);font-size:12px">Errore caricamento: ${e.message}</td></tr>`;
     console.error('Portfolio error:', e);
   }
+}
+
+// ══ PORTAFOGLIO NOEMI ═══════════════════════════════════════════════════
+const NOEMI_SYMBOL  = '1EL.MI';
+const NOEMI_TV_SYM  = 'MIL:1EL';
+
+const NOEMI_TRANCHES = [
+  {
+    label: 'Tranche 1 — Mar 2024',
+    qty: 8, invested: 680, avgPrice: 85.00,
+    startDate: '2024-03-01',
+    note: '4 az. pagate + 4 gratuite',
+    color: '#4f8ef7'
+  },
+  {
+    label: 'Tranche 2 — Mar 2025',
+    qty: 15, invested: 2700, avgPrice: 180.00,
+    startDate: '2025-03-01',
+    note: '10 az. pagate + 5 gratuite',
+    color: '#22c98a'
+  },
+];
+
+let nmPieChart     = null;
+let nmHistChart    = null;
+let nmChartMode    = 'pl';
+let nmHistoryData  = null;
+
+async function loadNoemi() {
+  const url = `${PROXY_URL}/quote?symbol=${encodeURIComponent(NOEMI_SYMBOL)}`;
+  const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const q = await r.json();
+    const price = q && !q.error ? parseFloat(q.close) : null;
+
+    let totalInvested = 0, totalValue = 0;
+    const tbody = document.getElementById('nm-tbody');
+    tbody.innerHTML = '';
+    const pieData = [], pieLabels = [], pieColors = [];
+
+    NOEMI_TRANCHES.forEach((t, i) => {
+      const value  = price !== null ? price * t.qty : null;
+      const pl     = value !== null ? value - t.invested : null;
+      const plPct  = pl !== null ? (pl / t.invested * 100) : null;
+      const up     = pl !== null && pl >= 0;
+
+      totalInvested += t.invested;
+      if (value !== null) totalValue += value;
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${t.label}<br><span style="font-size:10px;color:var(--text3)">${t.note}</span></td>
+        <td style="text-align:right">${t.qty}</td>
+        <td style="text-align:right">${fmt(t.avgPrice)} €</td>
+        <td style="text-align:right;color:${price!==null?'var(--text)':'var(--text3)'}">${price !== null ? fmt(price)+' €' : '—'}</td>
+        <td style="text-align:right">${fmt(t.invested)} €</td>
+        <td style="text-align:right">${value !== null ? fmt(value)+' €' : '—'}</td>
+        <td style="text-align:right;color:${pl!==null?(up?'var(--up)':'var(--down)'):'var(--text3)'}">
+          ${pl !== null ? (up?'+':'')+fmt(pl)+' €' : '—'}
+        </td>
+        <td style="text-align:right;font-weight:500;color:${plPct!==null?(up?'var(--up)':'var(--down)'):'var(--text3)'}">
+          ${plPct !== null ? (up?'+':'')+fmt(plPct,2)+'%' : '—'}
+        </td>`;
+      tbody.appendChild(tr);
+
+      pieLabels.push(t.label.split(' — ')[1]);
+      pieData.push(value !== null ? parseFloat(value.toFixed(2)) : t.invested);
+      pieColors.push(t.color);
+    });
+
+    // Riepilogo
+    const totalPl    = totalValue - totalInvested;
+    const totalPlPct = totalPl / totalInvested * 100;
+    const up = totalPl >= 0;
+    document.getElementById('nm-value').textContent = totalValue > 0 ? '€ '+fmt(totalValue) : '—';
+    const plEl = document.getElementById('nm-pl');
+    plEl.textContent = totalValue > 0 ? (up?'+':'')+fmt(totalPl)+' €' : '—';
+    plEl.style.color = totalValue > 0 ? (up?'var(--up)':'var(--down)') : 'var(--text)';
+    const pctEl = document.getElementById('nm-plpct');
+    pctEl.textContent = totalValue > 0 ? (up?'+':'')+fmt(totalPlPct,2)+'%' : '—';
+    pctEl.style.color = totalValue > 0 ? (up?'var(--up)':'var(--down)') : 'var(--text)';
+
+    document.getElementById('nm-update').textContent = `Aggiornato: ${now}`;
+
+    // Grafico torta
+    const pieCtx = document.getElementById('nm-pie').getContext('2d');
+    if (nmPieChart) nmPieChart.destroy();
+    nmPieChart = new Chart(pieCtx, {
+      type: 'doughnut',
+      data: { labels: pieLabels, datasets: [{ data: pieData, backgroundColor: pieColors, borderWidth:1, borderColor:'#141720' }] },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: { legend:{display:false}, tooltip:{
+          backgroundColor:'#1c2030', bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          callbacks:{ label: c=>`${c.label}: € ${fmt(c.parsed)} (${fmt(c.parsed/pieData.reduce((a,b)=>a+b,0)*100,1)}%)` }
+        }}
+      }
+    });
+
+    // Legenda
+    const legend = document.getElementById('nm-legend');
+    legend.innerHTML = pieLabels.map((l,i)=>`<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${pieColors[i]};flex-shrink:0"></span>${l} ${fmt(pieData[i]/pieData.reduce((a,b)=>a+b,0)*100,1)}%</span>`).join('');
+
+  } catch(e) {
+    document.getElementById('nm-tbody').innerHTML = `<tr><td colspan="8" style="padding:16px 14px;color:var(--down);font-size:12px">Errore: ${e.message}</td></tr>`;
+  }
+}
+
+async function loadNoemiHistory() {
+  const updateEl = document.getElementById('nm-chart-update');
+  updateEl.textContent = 'Caricamento storico...';
+  try {
+    const positions = JSON.stringify([
+      {symbol: NOEMI_SYMBOL, qty:8,  avgPrice:85.00,  startDate:'2024-03-01'},
+      {symbol: NOEMI_SYMBOL, qty:15, avgPrice:180.00, startDate:'2025-03-01'},
+    ]);
+    const r = await fetch(`${PROXY_URL}/portfolio_history?positions=${encodeURIComponent(positions)}`);
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    nmHistoryData = data;
+    renderNmChart(data);
+    updateEl.textContent = `Storico aggiornato — ${data.series.length} giorni`;
+  } catch(e) {
+    updateEl.textContent = `Errore storico: ${e.message}`;
+  }
+}
+
+function renderNmChart(data) {
+  if (!data?.series?.length) return;
+  const series = data.series;
+  const labels = series.map(s => new Date(s.date).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'2-digit'}));
+  const values = series.map(s => nmChartMode === 'pl' ? s.pl : s.plPct);
+  const last = values[values.length-1];
+  const color = last >= 0 ? '#22c98a' : '#f05252';
+  const bg    = last >= 0 ? 'rgba(34,201,138,0.08)' : 'rgba(240,82,82,0.08)';
+
+  const ctx = document.getElementById('nm-chart');
+  if (!ctx) return;
+  if (nmHistChart) nmHistChart.destroy();
+  nmHistChart = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[{ data:values, borderColor:color, backgroundColor:bg, borderWidth:1.5, fill:true, pointRadius:0, tension:0.1, spanGaps:true }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#1c2030', titleColor:'rgba(255,255,255,0.5)', bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          callbacks:{ label: c => nmChartMode==='pl' ? `P&L: ${c.parsed.y>=0?'+':''}${fmt(c.parsed.y)} €` : `P&L: ${c.parsed.y>=0?'+':''}${fmt(c.parsed.y,2)}%` }
+        }
+      },
+      scales:{
+        x:{ ticks:{color:'#555c70',font:{size:10,family:'DM Mono'},maxTicksLimit:10,maxRotation:0}, grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false} },
+        y:{ ticks:{color:'#555c70',font:{size:10,family:'DM Mono'},maxTicksLimit:7, callback:v=>nmChartMode==='pl'?fmt(v,0)+' €':fmt(v,1)+'%'}, grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false}, position:'right' }
+      }
+    }
+  });
+
+  const stats = data.stats;
+  if (stats) {
+    const fd = d => new Date(d).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+    const el = id => document.getElementById(id);
+    el('nm-max-pl').textContent = (stats.maxPl>=0?'+':'')+fmt(stats.maxPl)+' €';
+    el('nm-max-pl-date').textContent = fd(stats.maxDate);
+    el('nm-min-pl').textContent = (stats.minPl>=0?'+':'')+fmt(stats.minPl)+' €';
+    el('nm-min-pl-date').textContent = fd(stats.minDate);
+    el('nm-max-pct').textContent = (stats.maxPct>=0?'+':'')+fmt(stats.maxPct,2)+'%';
+    el('nm-max-pct-date').textContent = fd(stats.maxDate);
+    el('nm-min-pct').textContent = (stats.minPct>=0?'+':'')+fmt(stats.minPct,2)+'%';
+    el('nm-min-pct-date').textContent = fd(stats.minDate);
+  }
+}
+
+function setNmChartMode(btn, mode) {
+  nmChartMode = mode;
+  document.getElementById('nm-chart-pl-btn').classList.toggle('active', mode==='pl');
+  document.getElementById('nm-chart-pct-btn').classList.toggle('active', mode==='pct');
+  if (nmHistoryData) renderNmChart(nmHistoryData);
 }
 
 // ══ INIT ═════════════════════════════════════════════════════════════════
