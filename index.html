@@ -119,14 +119,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="showTab('indices')">Indici</div>
-    <div class="tab" onclick="showTab('stocks')">Titoli BIT</div>
+    <div class="tab" onclick="showTab('indices')">Indici</div>
+    <div class="tab active" onclick="showTab('stocks')">Titoli BIT</div>
     <div class="tab" onclick="showTab('news')">Notizie</div>
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
   </div>
 
   <!-- ══ INDICI ═══════════════════════════════════════════════════════════ -->
-  <div id="sec-indices" class="section active">
+  <div id="sec-indices" class="section">
     <div class="tape-wrap">
       <div class="tradingview-widget-container">
         <div class="tradingview-widget-container__widget"></div>
@@ -199,7 +199,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 
   <!-- ══ TITOLI BIT ════════════════════════════════════════════════════════ -->
-  <div id="sec-stocks" class="section">
+  <div id="sec-stocks" class="section active">
     <div style="display:flex;flex-direction:column;gap:10px">
         <div class="pboxes" id="stk-boxes" style="grid-template-columns:repeat(3,1fr)"></div>
         <div class="chart-panel">
@@ -282,6 +282,52 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <canvas id="pf-pie"></canvas>
         </div>
         <div style="padding:8px 14px 12px;display:flex;flex-wrap:wrap;gap:6px" id="pf-legend"></div>
+      </div>
+    </div>
+
+    <!-- Grafico P&L nel tempo + stats -->
+    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 280px;gap:14px;align-items:start">
+
+      <!-- Grafico P&L -->
+      <div class="chart-panel">
+        <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Andamento P&amp;L nel tempo</span>
+          <div style="display:flex;gap:4px">
+            <button class="rbtn active" id="pf-chart-pl-btn" onclick="setPfChartMode(this,'pl')">P&amp;L €</button>
+            <button class="rbtn" id="pf-chart-pct-btn" onclick="setPfChartMode(this,'pct')">P&amp;L %</button>
+          </div>
+        </div>
+        <div style="position:relative;height:260px;padding:12px 12px 8px">
+          <canvas id="pf-chart"></canvas>
+        </div>
+        <div class="chart-footer"><span id="pf-chart-update">Caricamento storico...</span><span>Dati: Yahoo Finance</span></div>
+      </div>
+
+      <!-- Box min/max -->
+      <div class="chart-panel" style="padding:16px">
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Record portafoglio (da ago 2025)</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Massimo P&amp;L €</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)" id="pf-max-pl">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="pf-max-pl-date"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Minimo P&amp;L €</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--down)" id="pf-min-pl">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="pf-min-pl-date"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Massimo P&amp;L %</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)" id="pf-max-pct">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="pf-max-pct-date"></div>
+          </div>
+          <div style="border-top:.5px solid var(--border);padding-top:10px">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Minimo P&amp;L %</div>
+            <div style="font-size:18px;font-weight:500;font-family:'DM Mono',monospace;color:var(--down)" id="pf-min-pct">—</div>
+            <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace" id="pf-min-pct-date"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -503,7 +549,10 @@ function showTab(name) {
     document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
-  if (name === 'portfolio') loadPortfolio();
+  if (name === 'portfolio') {
+    loadPortfolio();
+    loadPortfolioHistory();
+  }
 }
 
 // ══ GRAFICO TITOLI BIT (Chart.js + Yahoo Finance) ═════════════════════════
@@ -638,6 +687,132 @@ async function loadStkChart(eoSym, interval, range) {
     document.getElementById('stk-update').textContent = `Errore caricamento: ${e.message}`;
     console.error('Chart error:', e);
   }
+}
+
+// ══ PORTAFOGLIO STORICO ══════════════════════════════════════════════════
+let pfHistoryChart = null;
+let pfChartMode = 'pl';
+let pfHistoryData = null;
+
+const PF_POSITIONS_FOR_HISTORY = [
+  {symbol:'BMPS.MI', qty:1920,  avgPrice:8.1141,  startDate:'2025-08-26'},
+  {symbol:'ISP.MI',  qty:300,   avgPrice:4.85,    startDate:'2025-05-05'},
+  {symbol:'LDO.MI',  qty:50,    avgPrice:51.94,   startDate:'2025-05-21'},
+  {symbol:'BAMI.MI', qty:200,   avgPrice:12.57,   startDate:'2025-09-25'},
+  {symbol:'G.MI',    qty:75,    avgPrice:34.05,   startDate:'2026-01-26'},
+  {symbol:'UCG.MI',  qty:35,    avgPrice:71.89,   startDate:'2026-01-26'},
+  {symbol:'PST.MI',  qty:115,   avgPrice:22.03,   startDate:'2026-01-26'},
+  {symbol:'ENEL.MI', qty:280,   avgPrice:8.99,    startDate:'2026-01-26'},
+  {symbol:'MB.MI',   qty:513,   avgPrice:19.33,   startDate:'2026-02-18'},
+];
+
+async function loadPortfolioHistory() {
+  const updateEl = document.getElementById('pf-chart-update');
+  updateEl.textContent = 'Caricamento storico...';
+  try {
+    const positions = JSON.stringify(PF_POSITIONS_FOR_HISTORY);
+    const url = `${PROXY_URL}/portfolio_history?positions=${encodeURIComponent(positions)}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    pfHistoryData = data;
+    renderPfChart(data);
+    updateEl.textContent = `Storico aggiornato — ${data.series.length} giorni`;
+  } catch(e) {
+    updateEl.textContent = `Errore storico: ${e.message}`;
+    console.error('Portfolio history error:', e);
+  }
+}
+
+function renderPfChart(data) {
+  if (!data || !data.series || !data.series.length) return;
+
+  const series = data.series;
+  const labels = series.map(s => {
+    const d = new Date(s.date);
+    return d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'2-digit'});
+  });
+  const values = series.map(s => pfChartMode === 'pl' ? s.pl : s.plPct);
+
+  const lastVal = values[values.length - 1];
+  const isUp    = lastVal >= 0;
+  const color   = isUp ? '#22c98a' : '#f05252';
+  const bgCol   = isUp ? 'rgba(34,201,138,0.08)' : 'rgba(240,82,82,0.08)';
+
+  const ctx = document.getElementById('pf-chart');
+  if (!ctx) return;
+  if (pfHistoryChart) pfHistoryChart.destroy();
+
+  pfHistoryChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        data: values,
+        borderColor: color,
+        backgroundColor: bgCol,
+        borderWidth: 1.5,
+        fill: true,
+        pointRadius: 0,
+        tension: 0.1,
+        spanGaps: true,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor:'#1c2030', titleColor:'rgba(255,255,255,0.5)',
+          bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          callbacks: {
+            label: c => pfChartMode === 'pl'
+              ? `P&L: ${c.parsed.y >= 0 ? '+' : ''}${fmt(c.parsed.y)} €`
+              : `P&L: ${c.parsed.y >= 0 ? '+' : ''}${fmt(c.parsed.y,2)}%`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color:'#555c70', font:{size:10,family:'DM Mono'}, maxTicksLimit:10, maxRotation:0 },
+          grid:  { color:'rgba(255,255,255,0.04)' }, border:{ display:false }
+        },
+        y: {
+          ticks: {
+            color:'#555c70', font:{size:10,family:'DM Mono'}, maxTicksLimit:7,
+            callback: v => pfChartMode === 'pl' ? fmt(v,0)+' €' : fmt(v,1)+'%'
+          },
+          grid:  { color:'rgba(255,255,255,0.04)' }, border:{ display:false }, position:'right'
+        }
+      }
+    }
+  });
+
+  // Popola min/max
+  const stats = data.stats;
+  if (stats) {
+    const fmtDate = d => new Date(d).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+    const el = id => document.getElementById(id);
+
+    if (el('pf-max-pl')) {
+      el('pf-max-pl').textContent = (stats.maxPl >= 0 ? '+' : '') + fmt(stats.maxPl) + ' €';
+      el('pf-max-pl-date').textContent = fmtDate(stats.maxDate);
+      el('pf-min-pl').textContent = (stats.minPl >= 0 ? '+' : '') + fmt(stats.minPl) + ' €';
+      el('pf-min-pl-date').textContent = fmtDate(stats.minDate);
+      el('pf-max-pct').textContent = (stats.maxPct >= 0 ? '+' : '') + fmt(stats.maxPct,2) + '%';
+      el('pf-max-pct-date').textContent = fmtDate(stats.maxDate);
+      el('pf-min-pct').textContent = (stats.minPct >= 0 ? '+' : '') + fmt(stats.minPct,2) + '%';
+      el('pf-min-pct-date').textContent = fmtDate(stats.minDate);
+    }
+  }
+}
+
+function setPfChartMode(btn, mode) {
+  pfChartMode = mode;
+  document.getElementById('pf-chart-pl-btn').classList.toggle('active', mode === 'pl');
+  document.getElementById('pf-chart-pct-btn').classList.toggle('active', mode === 'pct');
+  if (pfHistoryData) renderPfChart(pfHistoryData);
 }
 
 function setStkChartType(btn, type) {
