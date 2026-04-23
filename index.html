@@ -365,7 +365,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           </div>
           <div style="border-top:.5px solid var(--border);padding-top:10px">
             <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Dividendi incassati</div>
-            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.391,45</div>
+            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.882,87</div>
           </div>
           <div style="border-top:.5px solid var(--border);padding-top:10px">
             <div style="font-size:10px;color:var(--text3);margin-bottom:3px">P&amp;L netto su costo reale</div>
@@ -384,7 +384,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="chart-panel">
         <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
           <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Dividendi incassati</span>
-          <span style="font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.391,45</span>
+          <span style="font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.882,87</span>
         </div>
         <div style="position:relative;height:260px;padding:16px 12px 10px">
           <canvas id="pf-div-chart"></canvas>
@@ -875,12 +875,14 @@ const PF_POSITIONS_FOR_HISTORY = [
 
 // Dividendi per titolo
 const DIVIDENDS = [
-  {ticker:'BAMI', name:'Banco BPM',       amount:92.00,    color:'#4f8ef7'},
+  {ticker:'BAMI', name:'Banco BPM',       amount:200.00,   color:'#4f8ef7'},
   {ticker:'BMPS', name:'Monte Paschi',    amount:1166.35,  color:'#22c98a'},
   {ticker:'ISP',  name:'Intesa Sanpaolo', amount:107.10,   color:'#ef9f27'},
   {ticker:'LDO',  name:'Leonardo',        amount:26.00,    color:'#a78bfa'},
+  {ticker:'MB',   name:'Mediobanca',      amount:323.19,   color:'#f472b6'},
+  {ticker:'UCG',  name:'UniCredit',       amount:60.23,    color:'#fb923c'},
 ];
-const DIVIDENDS_TOTAL = 1391.45;
+const DIVIDENDS_TOTAL = 1882.87;
 const COSTO_REALE     = 35159.00; // 42188.08 - 7029.08 (vantaggio BMPS T1)
 
 function renderDividendsChart() {
