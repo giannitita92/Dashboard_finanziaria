@@ -504,14 +504,14 @@ const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
 
 // ══ DATI ══════════════════════════════════════════════════════════════════
 const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'INDEX:FTSEMIB',   eoSym:'FTSEMIB.INDX'},
-  {flag:'🇩🇪', name:'DAX',           tvSym:'XETR:DAX',       eoSym:'GDAXI.INDX'},
-  {flag:'🇫🇷', name:'CAC 40',        tvSym:'EURONEXT:PX1',   eoSym:'FCHI.INDX'},
-  {flag:'🇬🇧', name:'FTSE 100',      tvSym:'INDEX:UKX',      eoSym:'FTSE.INDX'},
-  {flag:'🇪🇸', name:'IBEX 35',       tvSym:'BME:IBC',        eoSym:'IBEX.INDX'},
-  {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'TVC:SX5E',       eoSym:'STOXX50E.INDX'},
-  {flag:'🇺🇸', name:'S&P 500',       tvSym:'SP:SPX',         eoSym:'GSPC.INDX'},
-  {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'NASDAQ:NDX',     eoSym:'NDX.INDX'},
+  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'SPREADEX:FTSE_MIB',   eoSym:'FTSEMIB.INDX'},
+  {flag:'🇩🇪', name:'DAX',           tvSym:'FOREXCOM:GER40',       eoSym:'GDAXI.INDX'},
+  {flag:'🇫🇷', name:'CAC 40',        tvSym:'FOREXCOM:FRA40',   eoSym:'FCHI.INDX'},
+  {flag:'🇬🇧', name:'FTSE 100',      tvSym:'FOREXCOM:UK100',      eoSym:'FTSE.INDX'},
+  {flag:'🇪🇸', name:'IBEX 35',       tvSym:'FOREXCOM:ESP35',        eoSym:'IBEX.INDX'},
+  {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'FOREXCOM:EU50',       eoSym:'STOXX50E.INDX'},
+  {flag:'🇺🇸', name:'S&P 500',       tvSym:'FOREXCOM:SPX500',         eoSym:'GSPC.INDX'},
+  {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'FOREXCOM:NAS100',     eoSym:'NDX.INDX'},
   {flag:'📊', name:'Euribor 3M',     tvSym:'FX:EURIBOR3M',  eoSym:'EURIBOR1M.INDEX'},
   {flag:'📊', name:'IRS EUR 30A',    tvSym:'FRED:ICERATES1200EUR30Y',   eoSym:'EURSW30Y.INDEX'},
 ];
@@ -711,6 +711,10 @@ function showTab(name) {
     document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
+  if (name === 'indices') {
+    // Ricostruisce il grafico TV quando la tab diventa visibile
+    setTimeout(() => buildChart('idx-chart-wrap', INDICES[idxSel].tvSym, idxInterval, idxRange), 50);
+  }
   if (name === 'portfolio') {
     loadPortfolio();
     loadPortfolioHistory();
@@ -1397,7 +1401,7 @@ buildBoxes('stk-boxes', STOCKS, 7, (item,i) => {
   document.getElementById('stk-chart-code').textContent = item.tvSym;
   loadStkChart(item.eoSym, stkCurrentInterval, stkCurrentRange);
 });
-buildChart('idx-chart-wrap', INDICES[0].tvSym, idxInterval, idxRange);
+// Il grafico indici viene costruito al click della tab (sezione nascosta all'avvio)
 loadStkChart(STOCKS[7].eoSym, stkCurrentInterval, stkCurrentRange);
 refreshPrices();
 setInterval(refreshPrices, 60000);
