@@ -143,15 +143,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="tradingview-widget-container__widget"></div>
         <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
         {"symbols":[
-          {"proName":"TVC:FTMIB","title":"FTSE MIB"},{"proName":"XETR:DAX","title":"DAX"},
+          {"proName":"FOREXCOM:ITA40","title":"FTSE MIB"},{"proName":"XETR:DAX","title":"DAX"},
           {"proName":"EURONEXT:PX1","title":"CAC 40"},{"proName":"INDEX:UKX","title":"FTSE 100"},
           {"proName":"BME:IBC","title":"IBEX 35"},{"proName":"TVC:SX5E","title":"Euro Stoxx 50"},
           {"proName":"SP:SPX","title":"S&P 500"},{"proName":"NASDAQ:NDX","title":"Nasdaq 100"},
           {"proName":"TVC:GOLD","title":"Oro"},{"proName":"TVC:USOIL","title":"Petrolio"},
           {"proName":"FX:EURUSD","title":"EUR/USD"},{"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
           {"proName":"BINANCE:ETHUSDT","title":"Ethereum"},
-          {"proName":"ECONOMICS:EUINTR","title":"Tasso BCE"},
-          {"proName":"ECONOMICS:EUIRLT","title":"Tasso LT EU"}
+          {"proName":"ECONOMICS:ECBDFR","title":"Tasso BCE"},
+          {"proName":"ECONOMICS:ITGBOND","title":"Tasso LT EU"}
         ],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"it"}
         </script>
       </div>
@@ -185,10 +185,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="tradingview-widget-container__widget" style="height:320px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
           {"colorTheme":"dark","dateRange":"1D","showChart":false,"locale":"it","isTransparent":true,"showSymbolLogo":true,"width":"100%","height":"320","tabs":[{"title":"Indici","symbols":[
-            {"s":"TVC:FTMIB","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},{"s":"EURONEXT:PX1","d":"CAC 40"},
+            {"s":"FOREXCOM:ITA40","d":"FTSE MIB"},{"s":"XETR:DAX","d":"DAX"},{"s":"EURONEXT:PX1","d":"CAC 40"},
             {"s":"INDEX:UKX","d":"FTSE 100"},{"s":"BME:IBC","d":"IBEX 35"},{"s":"TVC:SX5E","d":"Euro Stoxx 50"},
             {"s":"SP:SPX","d":"S&P 500"},{"s":"NASDAQ:NDX","d":"Nasdaq 100"},
-            {"s":"ECONOMICS:EUINTR","d":"Tasso BCE"},{"s":"ECONOMICS:EUIRLT","d":"Tasso LT EU"}
+            {"s":"ECONOMICS:ECBDFR","d":"Tasso BCE"},{"s":"ECONOMICS:ITGBOND","d":"Tasso LT EU"}
           ],"originalTitle":"Indici"}]}
           </script>
         </div>
@@ -365,7 +365,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           </div>
           <div style="border-top:.5px solid var(--border);padding-top:10px">
             <div style="font-size:10px;color:var(--text3);margin-bottom:3px">Dividendi incassati</div>
-            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.882,87</div>
+            <div style="font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 3.397,01</div>
           </div>
           <div style="border-top:.5px solid var(--border);padding-top:10px">
             <div style="font-size:10px;color:var(--text3);margin-bottom:3px">P&amp;L netto su costo reale</div>
@@ -384,7 +384,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="chart-panel">
         <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
           <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Dividendi incassati</span>
-          <span style="font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 1.882,87</span>
+          <span style="font-size:13px;font-weight:500;font-family:'DM Mono',monospace;color:var(--up)">+ € 3.397,01</span>
         </div>
         <div style="position:relative;height:260px;padding:16px 12px 10px">
           <canvas id="pf-div-chart"></canvas>
@@ -504,7 +504,7 @@ const FKEY = 'd783tv1r01qsamsis050d783tv1r01qsamsis05g';
 
 // ══ DATI ══════════════════════════════════════════════════════════════════
 const INDICES = [
-  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'SPREADEX:FTSE_MIB',   eoSym:'FTSEMIB.INDX'},
+  {flag:'🇮🇹', name:'FTSE MIB',      tvSym:'FOREXCOM:ITA40',   eoSym:'FTSEMIB.INDX'},
   {flag:'🇩🇪', name:'DAX',           tvSym:'FOREXCOM:GER40',       eoSym:'GDAXI.INDX'},
   {flag:'🇫🇷', name:'CAC 40',        tvSym:'FOREXCOM:FRA40',   eoSym:'FCHI.INDX'},
   {flag:'🇬🇧', name:'FTSE 100',      tvSym:'FOREXCOM:UK100',      eoSym:'FTSE.INDX'},
@@ -512,8 +512,8 @@ const INDICES = [
   {flag:'🇪🇺', name:'Euro Stoxx 50', tvSym:'FOREXCOM:EU50',       eoSym:'STOXX50E.INDX'},
   {flag:'🇺🇸', name:'S&P 500',       tvSym:'FOREXCOM:SPX500',         eoSym:'GSPC.INDX'},
   {flag:'🇺🇸', name:'Nasdaq 100',    tvSym:'FOREXCOM:NAS100',     eoSym:'NDX.INDX'},
-  {flag:'📊', name:'Tasso BCE',     tvSym:'ECONOMICS:EUINTR',  eoSym:'EURIBOR1M.INDEX'},
-  {flag:'📊', name:'Tasso LT EU',    tvSym:'ECONOMICS:EUIRLT',   eoSym:'EURSW30Y.INDEX'},
+  {flag:'📊', name:'Tasso BCE',     tvSym:'ECONOMICS:ECBDFR',  eoSym:'EURIBOR1M.INDEX'},
+  {flag:'📊', name:'BTP 10 anni',    tvSym:'ECONOMICS:ITGBOND',   eoSym:'EURSW30Y.INDEX'},
 ];
 const STOCKS = [
   {flag:'🏦', name:'Monte Paschi',    tvSym:'MIL:BMPS', eoSym:'BMPS.MI'},
@@ -879,14 +879,15 @@ const PF_POSITIONS_FOR_HISTORY = [
 
 // Dividendi per titolo
 const DIVIDENDS = [
-  {ticker:'BAMI', name:'Banco BPM',       amount:200.00,   color:'#4f8ef7'},
-  {ticker:'BMPS', name:'Monte Paschi',    amount:1166.35,  color:'#22c98a'},
-  {ticker:'ISP',  name:'Intesa Sanpaolo', amount:107.10,   color:'#ef9f27'},
-  {ticker:'LDO',  name:'Leonardo',        amount:26.00,    color:'#a78bfa'},
+  {ticker:'BMPS', name:'Monte Paschi',    amount:2500.49,  color:'#22c98a'},
   {ticker:'MB',   name:'Mediobanca',      amount:323.19,   color:'#f472b6'},
+  {ticker:'BAMI', name:'Banco BPM',       amount:200.00,   color:'#4f8ef7'},
+  {ticker:'ISP',  name:'Intesa Sanpaolo', amount:164.10,   color:'#ef9f27'},
+  {ticker:'G',    name:'Generali',        amount:123.00,   color:'#a78bfa'},
   {ticker:'UCG',  name:'UniCredit',       amount:60.23,    color:'#fb923c'},
+  {ticker:'LDO',  name:'Leonardo',        amount:26.00,    color:'#34d399'},
 ];
-const DIVIDENDS_TOTAL = 1882.87;
+const DIVIDENDS_TOTAL = 3397.01;
 const COSTO_REALE     = 35159.00; // 42188.08 - 7029.08 (vantaggio BMPS T1)
 
 function renderDividendsChart() {
