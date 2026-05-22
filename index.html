@@ -256,6 +256,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="pf-value">—</div></div>
       <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L totale</div><div class="pf-metric-val" id="pf-pl">—</div></div>
       <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="pf-plpct">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L + dividendi</div><div class="pf-metric-val" id="pf-pl-div">—</div><div style="font-size:11px;font-family:'DM Mono',monospace;margin-top:3px" id="pf-pl-div-pct"></div></div>
     </div>
 
     <!-- Griglia titoli + grafico torta -->
@@ -276,6 +277,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
                 <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Valore</th>
                 <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L €</th>
                 <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L %</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Dividendi</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3);white-space:nowrap">P&amp;L tot %</th>
               </tr>
             </thead>
             <tbody id="pf-tbody">
@@ -431,6 +434,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
                 <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Valore</th>
                 <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L €</th>
                 <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L %</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Dividendi</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3);white-space:nowrap">P&amp;L tot %</th>
               </tr>
             </thead>
             <tbody id="nm-tbody">
@@ -1109,6 +1114,12 @@ const PF_COLORS = ['#4f8ef7','#22c98a','#f05252','#ef9f27','#a78bfa','#f472b6','
 
 let pfPieChart = null;
 
+// Dividendi per ticker (da DIVIDENDS array)
+function getDivByTicker(ticker) {
+  const d = DIVIDENDS.find(d => d.ticker === ticker);
+  return d ? d.amount : 0;
+}
+
 async function loadPortfolio() {
   const first = PORTFOLIO[0].eoSym;
   const rest  = PORTFOLIO.slice(1).map(p => p.eoSym).join(',');
@@ -1139,6 +1150,12 @@ async function loadPortfolio() {
       if (value !== null) totalValue += value;
 
       // Riga tabella
+      // Dividendi per questo titolo
+      const divAmount  = getDivByTicker(pos.ticker);
+      const plTot      = pl !== null ? pl + divAmount : null;
+      const plTotPct   = plTot !== null ? (plTot / pos.invested * 100) : null;
+      const upTot      = plTot !== null && plTot >= 0;
+
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${pos.name}<br><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${pos.ticker}</span></td>
@@ -1152,6 +1169,12 @@ async function loadPortfolio() {
         </td>
         <td style="text-align:right;font-weight:500;color:${plPct!==null?(up?'var(--up)':'var(--down)'):'var(--text3)'}">
           ${plPct !== null ? (up?'+':'')+fmt(plPct,2)+'%' : '—'}
+        </td>
+        <td style="text-align:right;color:var(--up)">
+          ${divAmount > 0 ? '+ '+fmt(divAmount)+' €' : '—'}
+        </td>
+        <td style="text-align:right;font-weight:500;color:${plTotPct!==null?(upTot?'var(--up)':'var(--down)'):'var(--text3)'}">
+          ${plTotPct !== null ? (upTot?'+':'')+fmt(plTotPct,2)+'%' : '—'}
         </td>`;
       tbody.appendChild(tr);
 
@@ -1176,6 +1199,23 @@ async function loadPortfolio() {
 
     document.getElementById('pf-update').textContent = `Aggiornato: ${now}`;
     updateRealPL(totalValue);
+
+    // Box P&L + dividendi nelle card riepilogo
+    if (totalValue > 0) {
+      const plPlusDivEur = (totalValue - totalInvested) + DIVIDENDS_TOTAL;
+      const plPlusDivPct = (plPlusDivEur / totalInvested * 100);
+      const upD = plPlusDivEur >= 0;
+      const plDivEl = document.getElementById('pf-pl-div');
+      if (plDivEl) {
+        plDivEl.textContent = (upD?'+':'')+fmt(plPlusDivEur)+' €';
+        plDivEl.style.color = upD ? 'var(--up)' : 'var(--down)';
+      }
+      const plDivPctEl = document.getElementById('pf-pl-div-pct');
+      if (plDivPctEl) {
+        plDivPctEl.textContent = (upD?'+':'')+fmt(plPlusDivPct,2)+'%';
+        plDivPctEl.style.color = upD ? 'var(--up)' : 'var(--down)';
+      }
+    }
 
     // Grafico torta
     const pieCtx = document.getElementById('pf-pie').getContext('2d');
