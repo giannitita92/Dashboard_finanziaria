@@ -345,6 +345,27 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
+    <!-- ══ GRAFICO P&L SETTIMANALE ══════════════════════════════════════ -->
+    <div class="chart-panel" style="margin-top:14px">
+      <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">P&amp;L settimana per settimana</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <div style="display:flex;gap:3px">
+            <button class="rbtn active" id="pf-wk-period-wk-btn" onclick="setPfWeekPeriod(this,'week')">Settimana</button>
+            <button class="rbtn" id="pf-wk-period-mo-btn" onclick="setPfWeekPeriod(this,'month')">Mese</button>
+          </div>
+          <div style="display:flex;gap:3px">
+            <button class="rbtn active" id="pf-wk-pl-btn" onclick="setPfWeekMode(this,'pl')">P&amp;L €</button>
+            <button class="rbtn" id="pf-wk-pct-btn" onclick="setPfWeekMode(this,'pct')">P&amp;L %</button>
+          </div>
+        </div>
+      </div>
+      <div style="position:relative;height:280px;padding:14px 12px 10px">
+        <canvas id="pf-weekly-chart"></canvas>
+      </div>
+      <div class="chart-footer"><span id="pf-weekly-update">In attesa dei dati storici...</span><span>Variazione P&amp;L settimana su settimana</span></div>
+    </div>
+
     <!-- ══ BOX COSTO REALE BMPS + DIVIDENDI ═════════════════════════════ -->
     <div class="pf-history-grid" style="margin-top:14px">
 
@@ -984,6 +1005,7 @@ async function loadPortfolioHistory() {
     const data = await r.json();
     pfHistoryData = data;
     renderPfChart(data);
+    buildWeeklyChart(data.series);
     updateEl.textContent = `Storico aggiornato — ${data.series.length} giorni`;
   } catch(e) {
     updateEl.textContent = `Errore storico: ${e.message}`;
@@ -1246,6 +1268,136 @@ async function loadPortfolio() {
     document.getElementById('pf-tbody').innerHTML = `<tr><td colspan="8" style="padding:16px 14px;color:var(--down);font-size:12px">Errore caricamento: ${e.message}</td></tr>`;
     console.error('Portfolio error:', e);
   }
+}
+
+// ══ GRAFICO P&L SETTIMANALE ═════════════════════════════════════════════
+let pfWeeklyChart  = null;
+let pfWeeklyMode   = 'pl';
+let pfWeeklyPeriod = 'week';
+
+function groupByPeriod(historySeries, period) {
+  const byPeriod = {};
+  historySeries.forEach(s => {
+    const d = new Date(s.date);
+    let key;
+    if (period === 'week') {
+      const day = d.getUTCDay() || 7;
+      const monday = new Date(d);
+      monday.setUTCDate(d.getUTCDate() - day + 1);
+      key = monday.toISOString().slice(0,10);
+    } else {
+      // Mese: chiave YYYY-MM
+      key = s.date.slice(0,7);
+    }
+    byPeriod[key] = s; // rimane l'ultimo giorno del periodo
+  });
+  return byPeriod;
+}
+
+function buildWeeklyChart(historySeries) {
+  if (!historySeries || !historySeries.length) return;
+
+  const byPeriod = groupByPeriod(historySeries, pfWeeklyPeriod);
+  const periods  = Object.keys(byPeriod).sort();
+
+  const labels = [];
+  const values = [];
+  const colors = [];
+
+  periods.forEach((pk, i) => {
+    const curr    = byPeriod[pk];
+    const prev    = i > 0 ? byPeriod[periods[i-1]] : null;
+    const currVal = pfWeeklyMode === 'pl' ? curr.pl    : curr.plPct;
+    const prevVal = prev ? (pfWeeklyMode === 'pl' ? prev.pl : prev.plPct) : 0;
+    const delta   = currVal - prevVal;
+
+    let label;
+    if (pfWeeklyPeriod === 'week') {
+      const dt = new Date(pk);
+      label = dt.toLocaleDateString('it-IT', {day:'2-digit', month:'short', timeZone:'UTC'});
+    } else {
+      // Mese: "ago 25"
+      const [y, m] = pk.split('-');
+      const dt = new Date(parseInt(y), parseInt(m)-1, 1);
+      label = dt.toLocaleDateString('it-IT', {month:'short', year:'2-digit'});
+    }
+
+    labels.push(label);
+    values.push(parseFloat(delta.toFixed(4)));
+    colors.push(delta >= 0 ? 'rgba(34,201,138,0.75)' : 'rgba(240,82,82,0.75)');
+  });
+
+  const canvas = document.getElementById('pf-weekly-chart');
+  if (!canvas) return;
+  if (pfWeeklyChart) pfWeeklyChart.destroy();
+
+  pfWeeklyChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data:            values,
+        backgroundColor: colors,
+        borderColor:     colors.map(c => c.replace('0.75','1')),
+        borderWidth:     1,
+        borderRadius:    4,
+        borderSkipped:   false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor:'#1c2030', titleColor:'rgba(255,255,255,0.5)',
+          bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          callbacks: {
+            title: c => pfWeeklyPeriod === 'week' ? `Settimana del ${labels[c[0].dataIndex]}` : `Mese di ${labels[c[0].dataIndex]}`,
+            label: c => {
+              const v = c.parsed.y;
+              const prefix = v >= 0 ? '+' : '';
+              return pfWeeklyMode === 'pl'
+                ? `Variazione: ${prefix}${fmt(v)} €`
+                : `Variazione: ${prefix}${fmt(v,2)}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color:'#555c70', font:{size:10,family:'DM Mono'}, maxTicksLimit:16, maxRotation:45 },
+          grid:  { display:false }, border:{ display:false }
+        },
+        y: {
+          ticks: {
+            color:'#555c70', font:{size:10,family:'DM Mono'}, maxTicksLimit:7,
+            callback: v => pfWeeklyMode === 'pl' ? fmt(v,0)+' €' : fmt(v,2)+'%'
+          },
+          grid:  { color:'rgba(255,255,255,0.04)' },
+          border:{ display:false },
+          position: 'right'
+        }
+      }
+    }
+  });
+
+  const periodLabel = pfWeeklyPeriod === 'week' ? `${periods.length} settimane` : `${periods.length} mesi`;
+  document.getElementById('pf-weekly-update').textContent =
+    `${periodLabel} · barre verdi = periodi positivi · barre rosse = periodi negativi`;
+}
+
+function setPfWeekMode(btn, mode) {
+  pfWeeklyMode = mode;
+  document.getElementById('pf-wk-pl-btn').classList.toggle('active', mode === 'pl');
+  document.getElementById('pf-wk-pct-btn').classList.toggle('active', mode === 'pct');
+  if (pfHistoryData?.series) buildWeeklyChart(pfHistoryData.series);
+}
+
+function setPfWeekPeriod(btn, period) {
+  pfWeeklyPeriod = period;
+  document.getElementById('pf-wk-period-wk-btn').classList.toggle('active', period === 'week');
+  document.getElementById('pf-wk-period-mo-btn').classList.toggle('active', period === 'month');
+  if (pfHistoryData?.series) buildWeeklyChart(pfHistoryData.series);
 }
 
 // ══ PORTAFOGLIO NOEMI ═══════════════════════════════════════════════════
