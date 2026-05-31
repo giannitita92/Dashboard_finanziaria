@@ -198,6 +198,43 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
+    <!-- ══ GRAFICO SENTIMENT vs FTSE MIB ═══════════════════════════════ -->
+    <div class="chart-panel" style="margin-bottom:18px">
+      <div style="padding:12px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Sentiment mattutino vs FTSE MIB</span>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">Confronto tra sentiment pre-market e variazione % apertura→chiusura FTSE MIB</div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="rbtn active" id="svmib-30-btn" onclick="setSVMIBRange(this,30)">30G</button>
+          <button class="rbtn" id="svmib-60-btn" onclick="setSVMIBRange(this,60)">60G</button>
+        </div>
+      </div>
+      <div style="position:relative;height:320px;padding:14px 12px 8px">
+        <canvas id="sentiment-vs-mib"></canvas>
+      </div>
+      <!-- Legenda -->
+      <div style="padding:8px 14px;border-top:.5px solid var(--border);display:flex;gap:16px;flex-wrap:wrap">
+        <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px">
+          <span style="width:24px;height:3px;background:#4f8ef7;display:inline-block;border-radius:2px"></span>
+          Sentiment mattutino (scala -6/+6)
+        </span>
+        <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px">
+          <span style="width:12px;height:12px;background:rgba(34,201,138,0.6);display:inline-block;border-radius:2px"></span>
+          Giornata FTSE MIB positiva (%)
+        </span>
+        <span style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px">
+          <span style="width:12px;height:12px;background:rgba(240,82,82,0.6);display:inline-block;border-radius:2px"></span>
+          Giornata FTSE MIB negativa (%)
+        </span>
+        <span style="font-size:11px;color:var(--accent);margin-left:auto" id="svmib-correlation"></span>
+      </div>
+      <div class="chart-footer">
+        <span id="svmib-update">Caricamento dati FTSE MIB...</span>
+        <span>Sentiment storico: salvato ogni mattina · FTSE MIB: Yahoo Finance</span>
+      </div>
+    </div>
+
     <!-- ══ PRE-MARKET ════════════════════════════════════════════════════ -->
     <div class="sec-label" style="margin-top:0">Pre-market · Indicatori chiave</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;margin-bottom:18px">
@@ -902,6 +939,7 @@ function showTab(name) {
   if (name === 'indices') {
     setTimeout(() => buildChart('idx-chart-wrap', INDICES[idxSel].tvSym, idxInterval, idxRange), 50);
     loadSentiment();
+    loadSVMIBData();
   }
   if (name === 'portfolio') {
     loadPortfolio();
@@ -1555,6 +1593,9 @@ async function loadSentiment() {
       timeEl.textContent = `Ultimo aggiornamento: ${now} CET`;
     }
 
+    // Salva sentiment mattutino su JSONBin (solo 7:00-9:30)
+    saveMorningSentiment(clampedScore);
+
     // Renderizza impatto settori con gli stessi dati
     try { renderSectors(bySymbol); } catch(se) { console.warn('Sectors error:', se); }
 
@@ -1567,6 +1608,218 @@ async function loadSentiment() {
       el.textContent = 'Errore caricamento dati';
     }
   }
+}
+
+// ══ SENTIMENT vs FTSE MIB ═══════════════════════════════════════════════
+// JSONBin config — verrà completata con API key
+const JSONBIN_KEY  = '$2a$10$NLKP6xTdyIuG7e3djQfCneweU/YCD6JE1KWjCpVlSwz3/tJf7x7B6';
+const JSONBIN_BIN  = '6a1cb68421f9ee59d2a29039';
+const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+
+let svmibChart   = null;
+let svmibDays    = 30;
+let svmibMibData = []; // dati OHLC FTSE MIB
+let svmibSentData= []; // dati sentiment storici
+
+// ── Salva sentiment mattutino su JSONBin ─────────────────────────────────
+async function saveMorningSentiment(score) {
+  if (!JSONBIN_KEY || !JSONBIN_BIN) return;
+  const today = new Date().toISOString().slice(0,10);
+  const hour  = new Date().getHours();
+  // Salva solo tra le 7:00 e le 9:30 (pre-market)
+  if (hour < 7 || hour > 9) return;
+
+  try {
+    // Leggi dati esistenti
+    const r = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const existing = await r.json();
+    const records  = existing.record?.sentiment || [];
+
+    // Aggiungi solo se non esiste già per oggi
+    if (records.find(s => s.date === today)) return;
+
+    records.push({ date: today, score, savedAt: new Date().toISOString() });
+    // Mantieni solo ultimi 90 giorni
+    const trimmed = records.slice(-90);
+
+    await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN}`, {
+      method:  'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body:    JSON.stringify({ sentiment: trimmed })
+    });
+    console.log('Sentiment salvato:', today, score);
+  } catch(e) {
+    console.warn('JSONBin save error:', e);
+  }
+}
+
+// ── Carica sentiment storico da JSONBin ──────────────────────────────────
+async function loadSentimentHistory() {
+  if (!JSONBIN_KEY || !JSONBIN_BIN) return [];
+  try {
+    const r = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await r.json();
+    return data.record?.sentiment || [];
+  } catch(e) {
+    console.warn('JSONBin load error:', e);
+    return [];
+  }
+}
+
+// ── Calcola correlazione Pearson ─────────────────────────────────────────
+function pearsonCorr(x, y) {
+  const n  = x.length;
+  if (n < 3) return null;
+  const mx = x.reduce((a,b) => a+b,0)/n;
+  const my = y.reduce((a,b) => a+b,0)/n;
+  const num = x.reduce((s,xi,i) => s + (xi-mx)*(y[i]-my), 0);
+  const den = Math.sqrt(x.reduce((s,xi) => s+(xi-mx)**2,0) * y.reduce((s,yi) => s+(yi-my)**2,0));
+  return den ? parseFloat((num/den).toFixed(3)) : null;
+}
+
+// ── Costruisce il grafico ────────────────────────────────────────────────
+function buildSVMIBChart() {
+  const canvas = document.getElementById('sentiment-vs-mib');
+  if (!canvas) return;
+
+  // Limita ai giorni selezionati
+  const mibSlice  = svmibMibData.slice(-svmibDays);
+  const mibByDate = {};
+  mibSlice.forEach(d => { mibByDate[d.date] = d; });
+
+  // Unisci con sentiment — usa solo giorni in comune
+  const sentByDate = {};
+  svmibSentData.forEach(s => { sentByDate[s.date] = s.score; });
+
+  // Date in comune
+  const dates = mibSlice.map(d => d.date);
+
+  const labels     = dates.map(d => new Date(d).toLocaleDateString('it-IT',{day:'2-digit',month:'short'}));
+  const mibChanges = dates.map(d => mibByDate[d]?.change_pct ?? null);
+  const sentScores = dates.map(d => sentByDate[d] ?? null);
+
+  // Colori barre FTSE MIB
+  const barColors = mibChanges.map(v => v === null ? 'transparent' :
+    v >= 0 ? 'rgba(34,201,138,0.65)' : 'rgba(240,82,82,0.65)');
+
+  // Correlazione
+  const paired = dates.filter(d => sentByDate[d] !== undefined && mibByDate[d] !== undefined);
+  if (paired.length >= 3) {
+    const xs = paired.map(d => sentByDate[d]);
+    const ys = paired.map(d => mibByDate[d].change_pct);
+    const corr = pearsonCorr(xs, ys);
+    const corrEl = document.getElementById('svmib-correlation');
+    if (corrEl && corr !== null) {
+      const label = corr > 0.4 ? 'correlazione positiva' : corr < -0.4 ? 'correlazione negativa' : 'correlazione debole';
+      corrEl.textContent = `Correlazione: ${corr > 0 ? '+' : ''}${corr} (${label})`;
+    }
+  }
+
+  if (svmibChart) svmibChart.destroy();
+
+  svmibChart = new Chart(canvas, {
+    data: {
+      labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'FTSE MIB variazione %',
+          data: mibChanges,
+          backgroundColor: barColors,
+          borderColor: barColors.map(c => c.replace('0.65','1')),
+          borderWidth: 1,
+          borderRadius: 3,
+          yAxisID: 'y-mib',
+          order: 2,
+        },
+        {
+          type: 'line',
+          label: 'Sentiment mattutino',
+          data: sentScores,
+          borderColor: '#4f8ef7',
+          backgroundColor: 'rgba(79,142,247,0.08)',
+          borderWidth: 2,
+          pointRadius: sentScores.map(s => s !== null ? 4 : 0),
+          pointBackgroundColor: '#4f8ef7',
+          tension: 0.3,
+          spanGaps: false,
+          yAxisID: 'y-sent',
+          order: 1,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1c2030', titleColor: 'rgba(255,255,255,0.5)',
+          bodyColor: '#e8eaf0', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+          callbacks: {
+            label: c => {
+              if (c.datasetIndex === 0)
+                return c.parsed.y !== null ? `FTSE MIB: ${c.parsed.y >= 0 ? '+' : ''}${fmt(c.parsed.y,2)}%` : 'FTSE MIB: n/d';
+              return c.parsed.y !== null ? `Sentiment: ${c.parsed.y >= 0 ? '+' : ''}${c.parsed.y}/6` : 'Sentiment: non registrato';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color:'#555c70', font:{size:10,family:'DM Mono'}, maxTicksLimit:15, maxRotation:45 },
+          grid:  { display: false }, border: { display: false }
+        },
+        'y-mib': {
+          position: 'right',
+          ticks: { color:'#555c70', font:{size:10,family:'DM Mono'}, callback: v => fmt(v,1)+'%' },
+          grid:  { color:'rgba(255,255,255,0.04)' }, border: { display:false },
+          title: { display:true, text:'FTSE MIB %', color:'var(--text3)', font:{size:10} }
+        },
+        'y-sent': {
+          position: 'left',
+          min: -6, max: 6,
+          ticks: {
+            color:'#4f8ef7', font:{size:10,family:'DM Mono'},
+            callback: v => (v > 0 ? '+' : '') + v
+          },
+          grid:  { color:'rgba(79,142,247,0.06)' }, border: { display:false },
+          title: { display:true, text:'Sentiment', color:'#4f8ef7', font:{size:10} }
+        }
+      }
+    }
+  });
+
+  const updEl = document.getElementById('svmib-update');
+  if (updEl) updEl.textContent = `${mibSlice.length} giorni FTSE MIB · ${paired.length} giorni con sentiment registrato`;
+}
+
+async function loadSVMIBData() {
+  try {
+    const [mibRes, sentHistory] = await Promise.all([
+      fetch(`${PROXY_URL}/ftsemib_ohlc`),
+      loadSentimentHistory()
+    ]);
+    if (!mibRes.ok) throw new Error(mibRes.status);
+    svmibMibData  = await mibRes.json();
+    svmibSentData = sentHistory;
+    buildSVMIBChart();
+  } catch(e) {
+    console.error('SVMIB error:', e);
+    const el = document.getElementById('svmib-update');
+    if (el) el.textContent = `Errore: ${e.message}`;
+  }
+}
+
+function setSVMIBRange(btn, days) {
+  svmibDays = days;
+  document.getElementById('svmib-30-btn').classList.toggle('active', days === 30);
+  document.getElementById('svmib-60-btn').classList.toggle('active', days === 60);
+  buildSVMIBChart();
 }
 
 // ══ GRAFICO TITOLI BIT (Chart.js + Yahoo Finance) ═════════════════════════
@@ -2417,6 +2670,7 @@ refreshPrices();
 setInterval(refreshPrices, 60000);
 loadSentiment();
 setInterval(loadSentiment, 60000);
+loadSVMIBData();
 loadNews();
 setInterval(loadNews, 120000);
 </script>
