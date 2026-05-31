@@ -213,13 +213,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         </div>
       </div>
 
-      <!-- Spread BTP-Bund -->
+      <!-- Spread BTP-Bund + BTP 10Y -->
       <div class="chart-panel">
-        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Spread BTP-Bund · segnale di rischio Italia</div>
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">BTP 10 anni · rendimento Italia</div>
         <div class="tradingview-widget-container" style="height:180px">
           <div class="tradingview-widget-container__widget" style="height:180px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-          {"symbol":"TVC:BTPBUND","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          {"symbol":"ECONOMICS:ITGBOND","width":"100%","height":"180","locale":"it","dateRange":"3M","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
           </script>
         </div>
       </div>
@@ -1468,20 +1468,31 @@ function renderSectors(data) {
 }
 
 async function loadSentiment() {
-  const symbols = ['FTSEMIB.FUT','VIX.INDEX','NIKKEI.INDEX','EURUSD.FX','IT10Y.INDEX','DE10Y.INDEX'];
+  const symbols = ['FTSEMIB.FUT','VIX.INDEX','NIKKEI.INDEX','EURUSD.FX'];
   const first = symbols[0];
   const rest  = symbols.slice(1).join(',');
   const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
 
   try {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(r.status);
-    const rows = await r.json();
+    // Fetch prezzi + bond yields in parallelo
+    const [pricesRes, bondsRes] = await Promise.all([
+      fetch(url),
+      fetch(`${PROXY_URL}/bond_yields`)
+    ]);
+    if (!pricesRes.ok) throw new Error(pricesRes.status);
+    const rows = await pricesRes.json();
     const data = Array.isArray(rows) ? rows : [rows];
 
     // Mappa per simbolo
     const bySymbol = {};
     symbols.forEach((s, i) => { bySymbol[s] = data[i]; });
+
+    // Aggiungi bond yields
+    if (bondsRes.ok) {
+      const bonds = await bondsRes.json();
+      if (bonds.IT10Y) bySymbol['IT10Y.INDEX'] = bonds.IT10Y;
+      if (bonds.DE10Y) bySymbol['DE10Y.INDEX'] = bonds.DE10Y;
+    }
 
     let totalScore = 0;
     const signalsEl = document.getElementById('sent-signals');
