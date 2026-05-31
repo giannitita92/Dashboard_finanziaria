@@ -135,6 +135,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
     <div class="tab" onclick="showTab('noemi')">Portafoglio Noemi</div>
     <div class="tab" onclick="showTab('calendar')">Calendario</div>
+    <div class="tab" onclick="showTab('watchlist')">Watchlist</div>
   </div>
 
   <!-- ══ INDICI ═══════════════════════════════════════════════════════════ -->
@@ -722,6 +723,50 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
   </div>
 
+  <!-- ══ WATCHLIST ══════════════════════════════════════════════════════ -->
+  <div id="sec-watchlist" class="section">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px">Titoli Borsa Italiana sotto osservazione · prezzi aggiornati ogni 60 secondi</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="rbtn active" id="wl-filter-all" onclick="filterWatchlist(this,'all')">Tutti</button>
+        <button class="rbtn" id="wl-filter-buy" onclick="filterWatchlist(this,'buy')">🟢 Interessanti</button>
+        <button class="rbtn" id="wl-filter-watch" onclick="filterWatchlist(this,'watch')">🟡 Da seguire</button>
+        <button class="rbtn" id="wl-filter-avoid" onclick="filterWatchlist(this,'avoid')">🔴 Evitare</button>
+      </div>
+    </div>
+
+    <!-- Griglia card titoli -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px" id="wl-grid">
+      <div style="color:var(--text3);font-size:13px;padding:8px">Caricamento...</div>
+    </div>
+
+    <!-- Grafico dettaglio titolo selezionato -->
+    <div id="wl-detail" style="display:none;margin-top:16px">
+      <div class="chart-panel">
+        <div style="padding:10px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="chart-name" id="wl-chart-name">—</div>
+            <div class="chart-code" id="wl-chart-code">—</div>
+          </div>
+          <div class="range-btns">
+            <button class="rbtn active" onclick="setWLRange(this,'30m','5d')">30min</button>
+            <button class="rbtn" onclick="setWLRange(this,'60m','1mo')">1h</button>
+            <button class="rbtn" onclick="setWLRange(this,'1d','3mo')">3M</button>
+            <button class="rbtn" onclick="setWLRange(this,'1d','1y')">1A</button>
+          </div>
+        </div>
+        <div style="position:relative;height:380px;padding:12px">
+          <canvas id="wl-canvas"></canvas>
+        </div>
+        <div class="chart-footer"><span id="wl-chart-update">—</span><span>Dati: Yahoo Finance via proxy</span></div>
+      </div>
+    </div>
+
+  </div>
+
 <script>
 // ══ CONFIGURAZIONE ════════════════════════════════════════════════════════
 const PROXY_URL = 'https://finanza-proxy.onrender.com';
@@ -932,7 +977,7 @@ async function loadNews() {
 
 // ══ NAV ══════════════════════════════════════════════════════════════════
 function showTab(name) {
-  ['indices','stocks','news','portfolio','noemi','calendar'].forEach((n,i) => {
+  ['indices','stocks','news','portfolio','noemi','calendar','watchlist'].forEach((n,i) => {
     document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
@@ -952,6 +997,9 @@ function showTab(name) {
   }
   if (name === 'calendar') {
     loadCalendar();
+  }
+  if (name === 'watchlist') {
+    loadWatchlistPrices();
   }
 }
 
@@ -1783,6 +1831,368 @@ function setSVMIBRange(btn, days) {
   document.getElementById('svmib-30-btn').classList.toggle('active', days === 30);
   document.getElementById('svmib-60-btn').classList.toggle('active', days === 60);
   buildSVMIBChart();
+}
+
+// ══ WATCHLIST ════════════════════════════════════════════════════════════
+const WATCHLIST = [
+  // 🏎️ Lusso & Consumer
+  { ticker:'RACE', name:'Ferrari',          eoSym:'RACE.MI', tvSym:'MIL:RACE',
+    sector:'Lusso', rating:'buy',
+    why:'Leader mondiale nel lusso sportivo, margini eccezionali, backlog ordini pluriennale. Poco ciclica.',
+    risk:'Valutazione molto elevata (P/E >50). Rischio rallentamento ordini in caso di recessione globale.',
+    target: 450 },
+
+  // 🏦 Finanza
+  { ticker:'FBK', name:'FinecoBank',        eoSym:'FBK.MI', tvSym:'MIL:FBK',
+    sector:'Banche', rating:'buy',
+    why:'Modello digitale con costi bassissimi, raccolta in crescita costante, dividendo solido.',
+    risk:'Sensibile ai tagli dei tassi BCE che comprimono i margini sul risparmio gestito.',
+    target: 18 },
+
+  // ⚡ Energie rinnovabili
+  { ticker:'ERG', name:'ERG',               eoSym:'ERG.MI', tvSym:'MIL:ERG',
+    sector:'Energia rinnovabile', rating:'watch',
+    why:'Pura renewable (eolico/solare), beneficia da transizione energetica e incentivi EU.',
+    risk:'Dipendente da sussidi governativi. Debito in crescita per nuovi investimenti.',
+    target: 20 },
+
+  // 🏗️ Infrastrutture
+  { ticker:'ATL', name:'Atlantia',          eoSym:'ATL.MI', tvSym:'MIL:ATL',
+    sector:'Infrastrutture', rating:'watch',
+    why:'Leader europeo nelle concessioni autostradali e aeroportuali. Cash flow prevedibile.',
+    risk:'Rischio regolatorio e politico sulle concessioni italiane.',
+    target: 24 },
+
+  // 💊 Farmaceutico
+  { ticker:'REC', name:'Recordati',         eoSym:'REC.MI', tvSym:'MIL:REC',
+    sector:'Farmaceutico', rating:'buy',
+    why:'Specialty pharma con nicchie difendibili, crescita organica e acquisizioni disciplinate.',
+    risk:'Concentrazione su malattie rare. Rischio scadenze brevetti.',
+    target: 58 },
+
+  // 🖥️ Tecnologia
+  { ticker:'REPLY', name:'Reply',           eoSym:'REY.MI', tvSym:'MIL:REY',
+    sector:'Tecnologia', rating:'watch',
+    why:'IT consulting in forte crescita, esposizione a AI e cloud. Gestione familiare solida.',
+    risk:'Valutazione elevata. Dipendenza da mercato del lavoro specializzato.',
+    target: 130 },
+
+  // 🏭 Industria
+  { ticker:'TRN', name:'Terna',             eoSym:'TRN.MI', tvSym:'MIL:TRN',
+    sector:'Utility/Rete', rating:'buy',
+    why:'Monopolio naturale sulla rete elettrica italiana. Dividendo stabile e prevedibile.',
+    risk:'Sensibile ai tassi (alto debito). Crescita limitata dalla natura regolata.',
+    target: 8 },
+
+  // 🛢️ Energia tradizionale
+  { ticker:'ENI', name:'ENI',               eoSym:'ENI.MI', tvSym:'MIL:ENI',
+    sector:'Energia', rating:'watch',
+    why:'Dividendo generoso, transizione verso rinnovabili in corso. Ottima diversificazione geografica.',
+    risk:'Forte dipendenza dal prezzo del petrolio. Rischio stranded assets.',
+    target: 14 },
+
+  // 🏦 Asset management
+  { ticker:'BMED', name:'Banca Mediolanum', eoSym:'BMED.MI', tvSym:'MIL:BMED',
+    sector:'Asset Management', rating:'watch',
+    why:'Modello banker-consulente unico in Italia. Raccolta netta costantemente positiva.',
+    risk:'Sensibile ai mercati finanziari (patrimonio gestito). Concorrenza crescente.',
+    target: 11 },
+
+  // 🚗 Automotive
+  { ticker:'STLA', name:'Stellantis',       eoSym:'STLAM.MI', tvSym:'MIL:STLAM',
+    sector:'Automotive', rating:'avoid',
+    why:'Valutazione storicamente bassa, portafoglio brand diversificato.',
+    risk:'Transizione EV difficile, pressione competitiva cinese, perdita quota mercato USA.',
+    target: 12 },
+];
+
+const WL_RATING = {
+  buy:   { label:'🟢 Interessante', bg:'rgba(34,201,138,0.08)',  border:'rgba(34,201,138,0.25)', color:'var(--up)' },
+  watch: { label:'🟡 Da seguire',   bg:'rgba(239,159,39,0.08)',  border:'rgba(239,159,39,0.25)', color:'#ef9f27' },
+  avoid: { label:'🔴 Evitare',      bg:'rgba(240,82,82,0.08)',   border:'rgba(240,82,82,0.25)',  color:'var(--down)' },
+};
+
+let wlFilter      = 'all';
+let wlPrices      = {};
+let wlChart       = null;
+let wlCurrentSym  = null;
+let wlInterval    = '30m';
+let wlRange       = '5d';
+
+// ── Fetch prezzi watchlist ────────────────────────────────────────────────
+async function loadWatchlistPrices() {
+  const items = WATCHLIST.map(w => ({ eoSym: w.eoSym }));
+  const first = items[0].eoSym;
+  const rest  = items.slice(1).map(i => i.eoSym).join(',');
+  const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const rows = await r.json();
+    const data = Array.isArray(rows) ? rows : [rows];
+    WATCHLIST.forEach((w, i) => {
+      if (data[i] && !data[i].error) wlPrices[w.eoSym] = data[i];
+    });
+    renderWatchlist();
+  } catch(e) {
+    console.error('Watchlist prices error:', e);
+  }
+}
+
+// ── Calcola score attrattività ────────────────────────────────────────────
+function calcScore(w, priceData) {
+  if (!priceData) return { score: 0, details: [] };
+  const price  = parseFloat(priceData.close);
+  const chgPct = parseFloat(priceData.change_p);
+  let score = 0, details = [];
+
+  // 1. Rating manuale (peso maggiore)
+  if (w.rating === 'buy')   { score += 3; details.push({ t:'Rating: Interessante', c:'var(--up)' }); }
+  if (w.rating === 'watch') { score += 1; details.push({ t:'Rating: Da seguire',   c:'#ef9f27' }); }
+  if (w.rating === 'avoid') { score -= 2; details.push({ t:'Rating: Evitare',      c:'var(--down)' }); }
+
+  // 2. Distanza dal target
+  if (w.target) {
+    const dist = ((w.target - price) / price * 100);
+    if (dist > 15)       { score += 2; details.push({ t:`Upside al target: +${fmt(dist,1)}%`, c:'var(--up)' }); }
+    else if (dist > 5)   { score += 1; details.push({ t:`Upside al target: +${fmt(dist,1)}%`, c:'var(--up)' }); }
+    else if (dist < -5)  { score -= 1; details.push({ t:`Sotto il target di ${fmt(dist,1)}%`, c:'var(--down)' }); }
+    else                 {             details.push({ t:`Vicino al target (${fmt(dist,1)}%)`, c:'var(--text3)' }); }
+  }
+
+  // 3. Momentum recente
+  if (chgPct > 1)        { score += 1; details.push({ t:'Momentum positivo oggi', c:'var(--up)' }); }
+  else if (chgPct < -1)  { score -= 1; details.push({ t:'Pressione ribassista oggi', c:'var(--down)' }); }
+
+  return { score: Math.max(-5, Math.min(5, score)), details };
+}
+
+// ── Render card ───────────────────────────────────────────────────────────
+function renderWatchlist() {
+  const grid = document.getElementById('wl-grid');
+  if (!grid) return;
+
+  const filtered = wlFilter === 'all'
+    ? WATCHLIST
+    : WATCHLIST.filter(w => w.rating === wlFilter);
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:8px">Nessun titolo in questa categoria.</div>';
+    return;
+  }
+
+  // Ordina per score decrescente
+  const sorted = [...filtered].sort((a,b) => {
+    const sa = calcScore(a, wlPrices[a.eoSym]).score;
+    const sb = calcScore(b, wlPrices[b.eoSym]).score;
+    return sb - sa;
+  });
+
+  grid.innerHTML = sorted.map(w => {
+    const pd      = wlPrices[w.eoSym];
+    const price   = pd ? parseFloat(pd.close) : null;
+    const chgPct  = pd ? parseFloat(pd.change_p) : null;
+    const chgAbs  = pd ? parseFloat(pd.change) : null;
+    const up      = chgPct !== null && chgPct >= 0;
+    const rating  = WL_RATING[w.rating];
+    const { score, details } = calcScore(w, pd);
+    const upside  = price && w.target ? ((w.target - price) / price * 100) : null;
+
+    // Barra score -5..+5
+    const scoreW   = ((score + 5) / 10 * 100).toFixed(0);
+    const scoreCol = score >= 2 ? 'var(--up)' : score <= -1 ? 'var(--down)' : '#ef9f27';
+
+    return `
+      <div onclick="openWLDetail('${w.eoSym}','${w.tvSym}','${w.name}','${w.ticker}')"
+           style="background:var(--surface);border:.5px solid ${rating.border};border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:all .15s"
+           onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface)'">
+
+        <!-- Header -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+          <div>
+            <div style="font-size:15px;font-weight:500;color:var(--text)">${w.name}</div>
+            <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:1px">${w.ticker} · ${w.sector}</div>
+          </div>
+          <span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px;background:${rating.bg};color:${rating.color};white-space:nowrap">${rating.label}</span>
+        </div>
+
+        <!-- Prezzi -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div>
+            <div style="font-size:20px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)">
+              ${price !== null ? fmt(price)+' €' : '<span style="color:var(--text3)">—</span>'}
+            </div>
+            <div style="font-size:11px;font-family:'DM Mono',monospace;color:${up?'var(--up)':'var(--down)'}">
+              ${chgPct !== null ? `${up?'+':''}${fmt(chgPct,2)}% (${up?'+':''}${fmt(chgAbs,2)} €)` : '—'}
+            </div>
+          </div>
+          ${w.target ? `
+          <div style="text-align:right">
+            <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Target</div>
+            <div style="font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:var(--accent)">${fmt(w.target)} €</div>
+            ${upside !== null ? `<div style="font-size:11px;color:${upside>=0?'var(--up)':'var(--down)'}">${upside>=0?'+':''}${fmt(upside,1)}% upside</div>` : ''}
+          </div>` : ''}
+        </div>
+
+        <!-- Score bar -->
+        <div style="margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:3px">
+            <span>Score attrattività</span>
+            <span style="color:${scoreCol};font-weight:500">${score > 0 ? '+' : ''}${score}/5</span>
+          </div>
+          <div style="background:var(--surface2);border-radius:4px;height:5px;overflow:hidden">
+            <div style="height:100%;width:${scoreW}%;background:${scoreCol};border-radius:4px;transition:width .4s"></div>
+          </div>
+        </div>
+
+        <!-- Punti chiave -->
+        <div style="font-size:11px;color:var(--up);margin-bottom:4px">✓ ${w.why.slice(0,80)}${w.why.length>80?'…':''}</div>
+        <div style="font-size:11px;color:var(--down)">⚠ ${w.risk.slice(0,80)}${w.risk.length>80?'…':''}</div>
+
+        <!-- Score details -->
+        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">
+          ${details.map(d => `<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:var(--surface2);color:${d.c}">${d.t}</span>`).join('')}
+        </div>
+
+        <div style="margin-top:8px;font-size:10px;color:var(--text3)">▶ Clicca per aprire il grafico</div>
+      </div>`;
+  }).join('');
+}
+
+// ── Dettaglio grafico ─────────────────────────────────────────────────────
+async function openWLDetail(eoSym, tvSym, name, ticker) {
+  wlCurrentSym = eoSym;
+  document.getElementById('wl-chart-name').textContent = name;
+  document.getElementById('wl-chart-code').textContent = ticker + ' · ' + tvSym;
+  document.getElementById('wl-detail').style.display = 'block';
+  document.getElementById('wl-detail').scrollIntoView({ behavior:'smooth', block:'start' });
+  await buildWLChart(eoSym, wlInterval, wlRange);
+}
+
+async function buildWLChart(eoSym, interval, range) {
+  const url = `${PROXY_URL}/history?symbol=${encodeURIComponent(eoSym)}&interval=${interval}&range=${range}`;
+  const now  = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Rome'});
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    if (!data.candles?.length) throw new Error('no data');
+
+    const canvas = document.getElementById('wl-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (wlChart) wlChart.destroy();
+
+    const candles = data.candles;
+    const closes  = candles.map(c => c.c);
+    const prev    = data.prev || closes[0];
+    const last    = closes[closes.length-1];
+    const isUp    = last >= prev;
+    const color   = isUp ? '#22c98a' : '#f05252';
+
+    // Calcola MA20 e MA50
+    function ma(arr, period) {
+      return arr.map((_, i) => {
+        if (i < period-1) return null;
+        return arr.slice(i-period+1, i+1).reduce((a,b)=>a+b,0)/period;
+      });
+    }
+    const ma20 = ma(closes, 20);
+    const ma50 = ma(closes, 50);
+
+    // Calcola RSI14
+    function rsi(arr, period=14) {
+      const result = new Array(arr.length).fill(null);
+      for (let i = period; i < arr.length; i++) {
+        const gains = [], losses = [];
+        for (let j = i-period+1; j <= i; j++) {
+          const d = arr[j] - arr[j-1];
+          if (d > 0) gains.push(d); else losses.push(Math.abs(d));
+        }
+        const ag = gains.reduce((a,b)=>a+b,0)/period;
+        const al = losses.reduce((a,b)=>a+b,0)/period;
+        result[i] = al === 0 ? 100 : parseFloat((100 - 100/(1+ag/al)).toFixed(2));
+      }
+      return result;
+    }
+    const rsiVals = rsi(closes);
+    const lastRSI = rsiVals.filter(v=>v!==null).pop();
+
+    const isShort = ['30m','60m'].includes(interval);
+    const labels  = candles.map(c => {
+      const dt = new Date(c.t*1000);
+      return isShort
+        ? dt.toLocaleString('it-IT',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Rome'})
+        : dt.toLocaleDateString('it-IT',{day:'2-digit',month:'short',timeZone:'Europe/Rome'});
+    });
+
+    wlChart = new Chart(ctx, {
+      data: {
+        labels,
+        datasets: [
+          { type:'line', label:'Prezzo',  data:closes, borderColor:color, backgroundColor:color.replace(')',',0.08)').replace('rgb','rgba'), borderWidth:1.5, fill:true, pointRadius:0, tension:0.1, yAxisID:'y', order:1 },
+          { type:'line', label:'MA20',    data:ma20,   borderColor:'#ef9f27', borderWidth:1.2, borderDash:[3,3], pointRadius:0, tension:0, spanGaps:true, yAxisID:'y', order:2 },
+          { type:'line', label:'MA50',    data:ma50,   borderColor:'#a78bfa', borderWidth:1.2, borderDash:[5,5], pointRadius:0, tension:0, spanGaps:true, yAxisID:'y', order:3 },
+          { type:'line', label:'RSI',     data:rsiVals,borderColor:'#60a5fa', borderWidth:1.2, pointRadius:0, tension:0.2, spanGaps:true, yAxisID:'y-rsi', order:4 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        interaction:{ mode:'index', intersect:false },
+        plugins:{
+          legend:{ display:true, position:'top', labels:{ color:'var(--text2)', font:{size:10,family:'DM Mono'}, boxWidth:20, padding:12 } },
+          tooltip:{
+            backgroundColor:'#1c2030', titleColor:'rgba(255,255,255,0.5)',
+            bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+          }
+        },
+        scales:{
+          x:{ ticks:{color:'#555c70',font:{size:10,family:'DM Mono'},maxTicksLimit:10,maxRotation:0}, grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false} },
+          y:{ position:'right', ticks:{color:'#555c70',font:{size:10,family:'DM Mono'},callback:v=>fmt(v)+'€'}, grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false} },
+          'y-rsi':{ position:'left', min:0, max:100,
+            ticks:{color:'#60a5fa',font:{size:10,family:'DM Mono'},callback:v=>v},
+            grid:{color:'rgba(96,165,250,0.05)'}, border:{display:false},
+            title:{display:true,text:'RSI 14',color:'#60a5fa',font:{size:10}}
+          }
+        }
+      }
+    });
+
+    // RSI badge
+    let rsiLabel = '', rsiColor = 'var(--text3)';
+    if (lastRSI !== undefined) {
+      if (lastRSI < 30)      { rsiLabel = `RSI ${lastRSI} — ipervenduto (potenziale rimbalzo)`; rsiColor='var(--up)'; }
+      else if (lastRSI > 70) { rsiLabel = `RSI ${lastRSI} — ipercomprato (attenzione)`; rsiColor='var(--down)'; }
+      else                   { rsiLabel = `RSI ${lastRSI} — zona neutra`; rsiColor='var(--text3)'; }
+    }
+    // MA badge
+    const maLabel = ma20[ma20.length-1] && closes[closes.length-1] > ma20[ma20.length-1]
+      ? '📈 Prezzo sopra MA20'
+      : '📉 Prezzo sotto MA20';
+
+    document.getElementById('wl-chart-update').innerHTML =
+      `<span style="color:${rsiColor}">${rsiLabel}</span> &nbsp;·&nbsp; ${maLabel} &nbsp;·&nbsp; Aggiornato: ${now}`;
+
+  } catch(e) {
+    console.error('WL chart error:', e);
+    document.getElementById('wl-chart-update').textContent = `Errore: ${e.message}`;
+  }
+}
+
+function setWLRange(btn, interval, range) {
+  wlInterval = interval; wlRange = range;
+  document.querySelectorAll('#wl-detail .range-btns .rbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if (wlCurrentSym) buildWLChart(wlCurrentSym, interval, range);
+}
+
+function filterWatchlist(btn, filter) {
+  wlFilter = filter;
+  ['all','buy','watch','avoid'].forEach(f => {
+    const el = document.getElementById(`wl-filter-${f}`);
+    if (el) el.classList.toggle('active', f === filter);
+  });
+  renderWatchlist();
 }
 
 // ══ GRAFICO TITOLI BIT (Chart.js + Yahoo Finance) ═════════════════════════
