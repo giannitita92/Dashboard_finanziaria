@@ -188,6 +188,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
       <!-- Griglia segnali -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px" id="sent-signals"></div>
+
+      <!-- Impatto settori -->
+      <div style="margin-top:16px;border-top:.5px solid var(--border);padding-top:14px">
+        <div style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Impatto potenziale sui settori · Borsa Italiana</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px" id="sent-sectors"></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px">⚠️ Indicazioni qualitative basate su correlazioni storiche — non costituiscono consiglio finanziario</div>
+      </div>
     </div>
 
     <!-- ══ PRE-MARKET ════════════════════════════════════════════════════ -->
@@ -942,6 +949,179 @@ const SENT_LABELS = {
    '6': { text: 'Molto positivo',   color: '#22c98a' },
 };
 
+// Logica impatto settori
+const SECTORS = [
+  {
+    name: 'Banche',
+    icon: '🏦',
+    tickers: ['BMPS','ISP','UCG','BAMI','MB'],
+    desc: 'Spread BTP-Bund, tassi BTP 10Y, VIX',
+    fn: (signals, data) => {
+      const vix     = parseFloat(data['VIX.INDEX']?.close || 20);
+      const btpChg  = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+      const it10y   = parseFloat(data['IT10Y.INDEX']?.close || 3.5);
+      const de10y   = parseFloat(data['DE10Y.INDEX']?.close || 2.5);
+      const spread  = (it10y - de10y) * 100; // in bp
+
+      let score = 0, reasons = [];
+
+      // Spread alto penalizza le banche italiane
+      if (spread > 160)      { score -= 2; reasons.push('Spread BTP-Bund elevato (>160bp) ⚠️'); }
+      else if (spread < 110) { score += 1; reasons.push('Spread contenuto (<110bp) ✓'); }
+
+      // BTP rendimento in salita = pressione sulle banche
+      if (btpChg > 1)        { score -= 1; reasons.push('Rendimento BTP in salita'); }
+      else if (btpChg < -1)  { score += 1; reasons.push('Rendimento BTP in calo ✓'); }
+
+      // VIX alto = risk-off, banche soffrono
+      if (vix > 25)          { score -= 1; reasons.push('VIX elevato (risk-off)'); }
+      else if (vix < 16)     { score += 1; reasons.push('VIX basso (risk-on) ✓'); }
+
+      return { score, reasons };
+    }
+  },
+  {
+    name: 'Energia',
+    icon: '⚡',
+    tickers: ['ENEL'],
+    desc: 'EUR/USD, tassi, VIX',
+    fn: (signals, data) => {
+      const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
+      const eurUsd = parseFloat(data['EURUSD.FX']?.change_p || 0);
+      const btpChg = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+
+      let score = 0, reasons = [];
+
+      // Utility (ENEL) difensiva — tiene bene in volatilità
+      if (vix > 22)         { score += 1; reasons.push('Alta volatilità → flussi su difensivi ✓'); }
+      else if (vix < 16)    { score -= 1; reasons.push('Bassa volatilità → rotazione verso ciclici'); }
+
+      // Tassi alti penalizzano le utility (alto debito)
+      if (btpChg > 1)       { score -= 1; reasons.push('Tassi in salita → costo debito aumenta'); }
+      else if (btpChg < -1) { score += 1; reasons.push('Tassi in calo → beneficio per utility ✓'); }
+
+      // Euro forte lieve negativo (costi in €, ricavi parzialmente in altre valute)
+      if (eurUsd > 0.4)     { score -= 0; } // neutro
+
+      return { score, reasons };
+    }
+  },
+  {
+    name: 'Difesa & Aerospazio',
+    icon: '✈️',
+    tickers: ['LDO'],
+    desc: 'VIX, EUR/USD, sentiment globale',
+    fn: (signals, data) => {
+      const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
+      const vixChg = parseFloat(data['VIX.INDEX']?.change_p || 0);
+      const mibChg = parseFloat(data['FTSEMIB.FUT']?.change_p || 0);
+      const eurUsd = parseFloat(data['EURUSD.FX']?.change_p || 0);
+
+      let score = 0, reasons = [];
+
+      // Difesa tende a reggere in mercati incerti
+      if (vix > 22)         { score += 1; reasons.push('Incertezza → settore difesa/sicurezza ✓'); }
+
+      // Leonardo esporta → euro debole favorevole
+      if (eurUsd < -0.3)    { score += 1; reasons.push('Euro debole → export favorevole ✓'); }
+      else if (eurUsd > 0.4){ score -= 1; reasons.push('Euro forte → export meno competitivo'); }
+
+      // Mercato generale positivo aiuta
+      if (mibChg > 0.5)     { score += 1; reasons.push('Futures positivi → trascinamento ✓'); }
+      else if (mibChg < -0.5){ score -= 1; reasons.push('Futures negativi → pressione ribassista'); }
+
+      return { score, reasons };
+    }
+  },
+  {
+    name: 'Assicurazioni',
+    icon: '🛡️',
+    tickers: ['G'],
+    desc: 'Tassi BTP, spread, VIX',
+    fn: (signals, data) => {
+      const btpChg = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+      const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
+      const it10y  = parseFloat(data['IT10Y.INDEX']?.close || 3.5);
+      const de10y  = parseFloat(data['DE10Y.INDEX']?.close || 2.5);
+      const spread = (it10y - de10y) * 100;
+
+      let score = 0, reasons = [];
+
+      // Assicurazioni beneficiano da tassi più alti (rendimenti su riserve)
+      if (btpChg > 0.5)     { score += 1; reasons.push('Tassi in salita → rendimento riserve ✓'); }
+      else if (btpChg < -1) { score -= 1; reasons.push('Tassi in calo → pressione su riserve'); }
+
+      // Spread alto = rischio paese, negativo per Generali (portafoglio BTP)
+      if (spread > 160)     { score -= 1; reasons.push('Spread elevato → portafoglio BTP a rischio'); }
+      else if (spread < 110){ score += 1; reasons.push('Spread contenuto → portafoglio stabile ✓'); }
+
+      // VIX basso = risk-on, bene per assicurazioni
+      if (vix < 16)         { score += 1; reasons.push('Bassa volatilità → risk-on ✓'); }
+      else if (vix > 25)    { score -= 1; reasons.push('Alta volatilità → cautela'); }
+
+      return { score, reasons };
+    }
+  },
+  {
+    name: 'Servizi postali & Fintech',
+    icon: '📮',
+    tickers: ['PST'],
+    desc: 'Tassi, VIX, sentiment generale',
+    fn: (signals, data) => {
+      const btpChg = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+      const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
+      const mibChg = parseFloat(data['FTSEMIB.FUT']?.change_p || 0);
+
+      let score = 0, reasons = [];
+
+      // Poste beneficia da tassi alti (raccolta postale)
+      if (btpChg > 0.5)     { score += 1; reasons.push('Tassi in salita → raccolta postale ✓'); }
+      else if (btpChg < -1) { score -= 1; reasons.push('Tassi in calo → pressione sui margini'); }
+
+      // Difensivo — tiene in volatilità
+      if (vix > 22)         { score += 1; reasons.push('Alta volatilità → titolo difensivo ✓'); }
+
+      if (mibChg > 0.5)     { score += 1; reasons.push('Futures positivi → trascinamento ✓'); }
+      else if (mibChg < -0.5){ score -= 1; reasons.push('Futures negativi → pressione'); }
+
+      return { score, reasons };
+    }
+  },
+];
+
+function renderSectors(data) {
+  const el = document.getElementById('sent-sectors');
+  if (!el) return;
+  el.innerHTML = '';
+
+  SECTORS.forEach(sector => {
+    const { score, reasons } = sector.fn(null, data);
+    const clamp = Math.max(-3, Math.min(3, score));
+
+    let bgColor, textColor, label, icon;
+    if      (clamp >= 2)  { bgColor='var(--up-bg)';   textColor='var(--up)';   label='Potenzialmente positivo'; icon='▲'; }
+    else if (clamp === 1) { bgColor='var(--up-bg)';   textColor='var(--up)';   label='Leggermente positivo';    icon='▲'; }
+    else if (clamp === 0) { bgColor='var(--surface2)'; textColor='var(--text2)'; label='Neutro';                icon='◆'; }
+    else if (clamp === -1){ bgColor='var(--down-bg)'; textColor='var(--down)'; label='Leggermente negativo';   icon='▼'; }
+    else                  { bgColor='var(--down-bg)'; textColor='var(--down)'; label='Potenzialmente negativo';icon='▼'; }
+
+    const reasonsHtml = reasons.slice(0,3).map(r =>
+      `<div style="font-size:10px;color:var(--text3);margin-top:2px">· ${r}</div>`
+    ).join('');
+
+    el.innerHTML += `
+      <div style="background:${bgColor};border-radius:var(--rs);padding:11px 13px;border:.5px solid rgba(255,255,255,0.07)">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+          <span style="font-size:16px">${sector.icon}</span>
+          <span style="font-size:13px;font-weight:500;color:var(--text)">${sector.name}</span>
+        </div>
+        <div style="font-size:12px;font-weight:500;color:${textColor};margin-bottom:4px">${icon} ${label}</div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Titoli: ${sector.tickers.join(', ')}</div>
+        ${reasonsHtml}
+      </div>`;
+  });
+}
+
 async function loadSentiment() {
   const symbols = ['FTSEMIB.FUT','VIX.INDEX','NIKKEI.INDEX','EURUSD.FX','IT10Y.INDEX','DE10Y.INDEX'];
   const first = symbols[0];
@@ -1030,6 +1210,9 @@ async function loadSentiment() {
       const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
       timeEl.textContent = `Ultimo aggiornamento: ${now} CET`;
     }
+
+    // Renderizza impatto settori con gli stessi dati
+    renderSectors(bySymbol);
 
   } catch(e) {
     console.error('Sentiment error:', e);
