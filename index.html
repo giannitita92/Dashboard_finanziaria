@@ -1126,7 +1126,7 @@ async function loadCalendar() {
   // Fetcha da Finnhub
   const from = fmtCalDate(monday);
   const to   = fmtCalDate(friday);
-  const url  = `https://finnhub.io/api/v1/calendar/economic?from=${from}&to=${to}&token=${FKEY}`;
+  const url  = `${PROXY_URL}/economic_calendar`;
 
   try {
     const r = await fetch(url);
