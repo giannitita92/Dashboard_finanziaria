@@ -1254,26 +1254,23 @@ const SENTIMENT_SIGNALS = [
     }
   },
   {
-    id: 'sig-btp10y', label: 'BTP 10 anni (rendimento)',
-    symbol: 'IT10Y.INDEX', desc: 'rendimento in calo = positivo per azioni',
+    id: 'sig-dax', label: 'DAX (Germania)',
+    symbol: 'DAX.INDEX', desc: '>+0.3% positivo · <-0.3% negativo · proxy rischio europeo',
     fn: d => {
       const pct = parseFloat(d.change_p);
-      if (pct < -0.5) return { score: 1,  tag: '▲ Rendimento in calo', color: 'var(--up)' };
-      if (pct > 0.5)  return { score: -1, tag: '▼ Rendimento in salita', color: 'var(--down)' };
-      return                 { score: 0,  tag: '◆ Stabile',              color: 'var(--text3)' };
+      if (pct > 0.3)  return { score: 1,  tag: '▲ Europa positiva', color: 'var(--up)' };
+      if (pct < -0.3) return { score: -1, tag: '▼ Europa negativa', color: 'var(--down)' };
+      return                 { score: 0,  tag: '◆ Neutro',          color: 'var(--text3)' };
     }
   },
   {
-    id: 'sig-spread', label: 'Spread BTP-Bund',
-    symbol: 'IT10Y.INDEX', desc: 'calcolato da IT10Y - DE10Y',
-    isSpread: true,
-    fn: (it, de) => {
-      const spread    = parseFloat(it.close) - parseFloat(de.close);
-      const spreadChg = parseFloat(it.change_p) - parseFloat(de.change_p);
-      const tag = `Spread: ${fmt(spread*100, 0)} bp`;
-      if (spreadChg < -1) return { score: 1,  tag: `▲ ${tag} · in calo`,   color: 'var(--up)' };
-      if (spreadChg > 1)  return { score: -1, tag: `▼ ${tag} · in salita`, color: 'var(--down)' };
-      return                     { score: 0,  tag: `◆ ${tag} · stabile`,   color: 'var(--text3)' };
+    id: 'sig-sp500', label: 'S&P 500 (USA)',
+    symbol: 'SP500.INDEX', desc: '>+0.3% positivo · <-0.3% negativo · proxy rischio globale',
+    fn: d => {
+      const pct = parseFloat(d.change_p);
+      if (pct > 0.3)  return { score: 1,  tag: '▲ Wall Street positiva', color: 'var(--up)' };
+      if (pct < -0.3) return { score: -1, tag: '▼ Wall Street negativa',  color: 'var(--down)' };
+      return                 { score: 0,  tag: '◆ Neutro',                color: 'var(--text3)' };
     }
   },
 ];
@@ -1303,9 +1300,9 @@ const SECTORS = [
     desc: 'Spread BTP-Bund, tassi BTP 10Y, VIX',
     fn: (signals, data) => {
       const vix     = parseFloat(data['VIX.INDEX']?.close || 20);
-      const btpChg  = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
-      const it10y   = parseFloat(data['IT10Y.INDEX']?.close || 3.5);
-      const de10y   = parseFloat(data['DE10Y.INDEX']?.close || 2.5);
+      const btpChg  = parseFloat(data['DAX.INDEX']?.change_p || 0);
+      const it10y   = parseFloat(data['DAX.INDEX']?.close || 3.5);
+      const de10y   = parseFloat(data['SP500.INDEX']?.close || 2.5);
       const spread  = (it10y - de10y) * 100; // in bp
 
       let score = 0, reasons = [];
@@ -1333,7 +1330,7 @@ const SECTORS = [
     fn: (signals, data) => {
       const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
       const eurUsd = parseFloat(data['EURUSD.FX']?.change_p || 0);
-      const btpChg = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+      const daxChg  = parseFloat(data['DAX.INDEX']?.change_p || 0);
 
       let score = 0, reasons = [];
 
@@ -1384,10 +1381,10 @@ const SECTORS = [
     tickers: ['G'],
     desc: 'Tassi BTP, spread, VIX',
     fn: (signals, data) => {
-      const btpChg = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+      const daxChg  = parseFloat(data['DAX.INDEX']?.change_p || 0);
       const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
-      const it10y  = parseFloat(data['IT10Y.INDEX']?.close || 3.5);
-      const de10y  = parseFloat(data['DE10Y.INDEX']?.close || 2.5);
+      const it10y  = 3.5; // valore fisso di fallback
+      const de10y  = 2.5; // valore fisso di fallback
       const spread = (it10y - de10y) * 100;
 
       let score = 0, reasons = [];
@@ -1413,7 +1410,7 @@ const SECTORS = [
     tickers: ['PST'],
     desc: 'Tassi, VIX, sentiment generale',
     fn: (signals, data) => {
-      const btpChg = parseFloat(data['IT10Y.INDEX']?.change_p || 0);
+      const daxChg  = parseFloat(data['DAX.INDEX']?.change_p || 0);
       const vix    = parseFloat(data['VIX.INDEX']?.close || 20);
       const mibChg = parseFloat(data['FTSEMIB.FUT']?.change_p || 0);
 
@@ -1468,17 +1465,13 @@ function renderSectors(data) {
 }
 
 async function loadSentiment() {
-  const symbols = ['FTSEMIB.FUT','VIX.INDEX','NIKKEI.INDEX','EURUSD.FX'];
+  const symbols = ['FTSEMIB.FUT','VIX.INDEX','NIKKEI.INDEX','EURUSD.FX','DAX.INDEX','SP500.INDEX'];
   const first = symbols[0];
   const rest  = symbols.slice(1).join(',');
   const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
 
   try {
-    // Fetch prezzi + bond yields in parallelo
-    const [pricesRes, bondsRes] = await Promise.all([
-      fetch(url),
-      fetch(`${PROXY_URL}/bond_yields`)
-    ]);
+    const pricesRes = await fetch(url);
     if (!pricesRes.ok) throw new Error(pricesRes.status);
     const rows = await pricesRes.json();
     const data = Array.isArray(rows) ? rows : [rows];
@@ -1487,12 +1480,7 @@ async function loadSentiment() {
     const bySymbol = {};
     symbols.forEach((s, i) => { bySymbol[s] = data[i]; });
 
-    // Aggiungi bond yields
-    if (bondsRes.ok) {
-      const bonds = await bondsRes.json();
-      if (bonds.IT10Y) bySymbol['IT10Y.INDEX'] = bonds.IT10Y;
-      if (bonds.DE10Y) bySymbol['DE10Y.INDEX'] = bonds.DE10Y;
-    }
+
 
     let totalScore = 0;
     const signalsEl = document.getElementById('sent-signals');
