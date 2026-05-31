@@ -248,7 +248,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
       <!-- EUR/USD -->
       <div class="chart-panel">
-        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">EUR/USD · forza dell'euro</div>
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">EUR/USD · forza dell’euro</div>
         <div class="tradingview-widget-container" style="height:180px">
           <div class="tradingview-widget-container__widget" style="height:180px"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
@@ -540,7 +540,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
     <!-- Badge azioni gratuite -->
     <div style="background:var(--accent-bg);border:.5px solid rgba(79,142,247,0.3);border-radius:var(--rs);padding:10px 16px;margin-bottom:14px;font-size:12px;color:var(--accent)">
-      ℹ️ I prezzi medi includono le azioni gratuite dell'azienda — Tranche 1: 4 az. gratuite su 8 · Tranche 2: 5 az. gratuite su 15
+      ℹ️ I prezzi medi includono le azioni gratuite dell’azienda — Tranche 1: 4 az. gratuite su 8 · Tranche 2: 5 az. gratuite su 15
     </div>
 
     <!-- Riepilogo totale -->
@@ -970,7 +970,7 @@ const EVENT_KNOWLEDGE = [
         sectors: [
           { name:'🏦 Banche',         impact:'misto',    reason:'Tassi attesi più alti (+), ma rallentamento economia (-)' },
           { name:'⚡ Energia/Utility', impact:'negativo', reason:'Tassi attesi più alti penalizzano le utility' },
-          { name:'✈️ Difesa',         impact:'positivo', reason:'I budget difesa vengono spesso indicizzati all'inflazione' },
+          { name:'✈️ Difesa',         impact:'positivo', reason:'I budget difesa vengono spesso indicizzati all’inflazione' },
           { name:'🛡️ Assicurazioni',  impact:'negativo', reason:'Costo dei sinistri aumenta' },
         ]
       },
@@ -980,7 +980,7 @@ const EVENT_KNOWLEDGE = [
         sectors: [
           { name:'🏦 Banche',         impact:'negativo', reason:'Tassi attesi più bassi comprimono i margini' },
           { name:'⚡ Energia/Utility', impact:'positivo', reason:'Tassi attesi più bassi favoriscono le utility' },
-          { name:'✈️ Difesa',         impact:'neutro',   reason:'Poco correlata all'inflazione di breve' },
+          { name:'✈️ Difesa',         impact:'neutro',   reason:'Poco correlata all’inflazione di breve' },
           { name:'🛡️ Assicurazioni',  impact:'positivo', reason:'Costo sinistri stabile o in calo' },
         ]
       }
@@ -1096,9 +1096,6 @@ function getEventKnowledge(eventName) {
 
 const CAL_IMPORTANCE = { '1':'🔴 Alta', '0':'🟡 Media', '-1':'⚪ Bassa' };
 const CAL_IMPORTANCE_COLOR = { '1':'var(--down)', '0':'#ef9f27', '-1':'var(--text3)' };
-const CAL_IMPORTANCE = { '1':'🔴 Alta', '0':'🟡 Media', '-1':'⚪ Bassa' };
-const CAL_IMPORTANCE_COLOR = { '1':'var(--down)', '0':'#ef9f27', '-1':'var(--text3)' };
-
 function padDate(n) { return String(n).padStart(2,'0'); }
 function fmtCalDate(d) {
   return `${d.getFullYear()}-${padDate(d.getMonth()+1)}-${padDate(d.getDate())}`;
@@ -1182,7 +1179,7 @@ async function loadCalendar() {
             </div>`).join('');
           knowHtml = `
             <div style="margin-top:6px;padding:8px 10px;background:var(--accent-bg);border:.5px solid rgba(79,142,247,0.2);border-radius:6px">
-              <div style="font-size:11px;font-weight:500;color:var(--accent);margin-bottom:4px">${know.icon} ${know.title} — Guida all'impatto</div>
+              <div style="font-size:11px;font-weight:500;color:var(--accent);margin-bottom:4px">${know.icon} ${know.title} — Guida all’impatto</div>
               ${scenHtml}
             </div>`;
         }
@@ -2106,7 +2103,7 @@ function groupByPeriod(historySeries, period) {
       // Mese: chiave YYYY-MM
       key = s.date.slice(0,7);
     }
-    byPeriod[key] = s; // rimane l'ultimo giorno del periodo
+    byPeriod[key] = s; // rimane l’ultimo giorno del periodo
   });
   return byPeriod;
 }
@@ -2411,7 +2408,7 @@ buildBoxes('stk-boxes', STOCKS, 7, (item,i) => {
   document.getElementById('stk-chart-code').textContent = item.tvSym;
   loadStkChart(item.eoSym, stkCurrentInterval, stkCurrentRange);
 });
-// Il grafico indici viene costruito al click della tab (sezione nascosta all'avvio)
+// Il grafico indici viene costruito al click della tab (sezione nascosta all’avvio)
 loadStkChart(STOCKS[7].eoSym, stkCurrentInterval, stkCurrentRange);
 refreshPrices();
 setInterval(refreshPrices, 60000);
