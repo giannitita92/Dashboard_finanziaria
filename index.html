@@ -134,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="tab" onclick="showTab('news')">Notizie</div>
     <div class="tab" onclick="showTab('portfolio')">Portafoglio</div>
     <div class="tab" onclick="showTab('noemi')">Portafoglio Noemi</div>
+    <div class="tab" onclick="showTab('calendar')">Calendario</div>
   </div>
 
   <!-- ══ INDICI ═══════════════════════════════════════════════════════════ -->
@@ -636,6 +637,54 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
   </div>
 
+  <!-- ══ CALENDARIO ECONOMICO ═════════════════════════════════════════════ -->
+  <div id="sec-calendar" class="section">
+
+    <!-- Highlight: oggi, domani, settimana -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px" class="pf-main-grid">
+
+      <!-- Domani -->
+      <div class="chart-panel" style="padding:0;overflow:hidden">
+        <div style="padding:10px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">📅 Domani</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text2)" id="cal-tomorrow-date"></span>
+        </div>
+        <div id="cal-tomorrow" style="padding:10px 14px;min-height:80px;font-size:13px;color:var(--text3)">Caricamento...</div>
+      </div>
+
+      <!-- Questa settimana -->
+      <div class="chart-panel" style="padding:0;overflow:hidden">
+        <div style="padding:10px 14px;border-bottom:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">📆 Questa settimana</span>
+          <span style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text2)" id="cal-week-range"></span>
+        </div>
+        <div id="cal-week" style="padding:10px 14px;min-height:80px;font-size:13px;color:var(--text3)">Caricamento...</div>
+      </div>
+    </div>
+
+    <!-- Widget TradingView calendario completo -->
+    <div class="chart-panel" style="overflow:hidden">
+      <div style="padding:10px 14px;border-bottom:.5px solid var(--border)">
+        <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Calendario economico completo</span>
+        <span style="font-size:10px;color:var(--text3);margin-left:8px">· Filtrato su EUR, USD, GBP · Importanza media e alta</span>
+      </div>
+      <div class="tradingview-widget-container" style="height:600px">
+        <div class="tradingview-widget-container__widget" style="height:600px"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+        {
+          "colorTheme": "dark",
+          "isTransparent": true,
+          "width": "100%",
+          "height": "600",
+          "locale": "it",
+          "importanceFilter": "0,1",
+          "countryFilter": "eu,us,gb,it,de,fr,jp,cn"
+        }
+        </script>
+      </div>
+    </div>
+  </div>
+
 <script>
 // ══ CONFIGURAZIONE ════════════════════════════════════════════════════════
 const PROXY_URL = 'https://finanza-proxy.onrender.com';
@@ -846,7 +895,7 @@ async function loadNews() {
 
 // ══ NAV ══════════════════════════════════════════════════════════════════
 function showTab(name) {
-  ['indices','stocks','news','portfolio','noemi'].forEach((n,i) => {
+  ['indices','stocks','news','portfolio','noemi','calendar'].forEach((n,i) => {
     document.querySelectorAll('.tab')[i].classList.toggle('active', n===name);
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
@@ -862,6 +911,305 @@ function showTab(name) {
   if (name === 'noemi') {
     loadNoemi();
     loadNoemiHistory();
+  }
+  if (name === 'calendar') {
+    loadCalendar();
+  }
+}
+
+// ══ CALENDARIO ECONOMICO ════════════════════════════════════════════════
+
+// Database eventi con impatto sui mercati e sui settori
+const EVENT_KNOWLEDGE = [
+  {
+    keywords: ['bce','ecb','interest rate','rate decision','deposit facility','tassi bce'],
+    title: 'Decisione sui tassi BCE',
+    icon: '🏛️',
+    scenarios: [
+      {
+        condition: 'Aumento tassi (rialzo)',
+        marketImpact: 'Negativo per azioni in generale, soprattutto growth e utility',
+        sectors: [
+          { name:'🏦 Banche',        impact:'positivo',  reason:'Margini di interesse più alti → redditività in aumento' },
+          { name:'⚡ Energia/Utility', impact:'negativo', reason:'Alto debito → costo finanziario cresce, dividendi meno attrattivi' },
+          { name:'🛡️ Assicurazioni', impact:'misto',     reason:'Rendimenti riserve salgono (+), ma portafoglio obbligazionario si svaluta (-)' },
+          { name:'✈️ Difesa',        impact:'neutro',    reason:'Poco influenzata dai tassi, dipende dai budget governativi' },
+          { name:'📮 Poste/Fintech', impact:'positivo',  reason:'Raccolta postale più remunerativa con tassi alti' },
+        ]
+      },
+      {
+        condition: 'Taglio tassi (ribasso)',
+        marketImpact: 'Positivo per azioni growth, immobiliare, utility. Negativo per banche.',
+        sectors: [
+          { name:'🏦 Banche',         impact:'negativo', reason:'Compressione margini di interesse → redditività in calo' },
+          { name:'⚡ Energia/Utility', impact:'positivo', reason:'Costo del debito scende, dividendi più attrattivi vs obbligazioni' },
+          { name:'🛡️ Assicurazioni',  impact:'misto',    reason:'Portafoglio obbligazionario si rivaluta (+), ma rendimenti futuri riserve scendono (-)' },
+          { name:'✈️ Difesa',         impact:'neutro',   reason:'Settore poco sensibile ai tassi' },
+          { name:'📮 Poste/Fintech',  impact:'negativo', reason:'Raccolta postale meno remunerativa' },
+        ]
+      },
+      {
+        condition: 'Tassi invariati (pausa)',
+        marketImpact: 'Neutro/positivo se atteso, negativo se deluso il mercato. Conta il "forward guidance".',
+        sectors: [
+          { name:'🏦 Banche',         impact:'neutro',   reason:'Status quo mantenuto, attenzione al tono del comunicato' },
+          { name:'⚡ Energia/Utility', impact:'neutro',  reason:'Situazione invariata' },
+          { name:'🛡️ Assicurazioni',  impact:'neutro',  reason:'Situazione invariata' },
+        ]
+      }
+    ]
+  },
+  {
+    keywords: ['inflation','cpi','hicp','inflazione','prezzi al consumo','consumer price'],
+    title: 'Dati Inflazione (CPI/HICP)',
+    icon: '📈',
+    scenarios: [
+      {
+        condition: 'Inflazione più alta del previsto',
+        marketImpact: 'Negativo per azioni — aumenta probabilità di rialzo tassi BCE/Fed',
+        sectors: [
+          { name:'🏦 Banche',         impact:'misto',    reason:'Tassi attesi più alti (+), ma rallentamento economia (-)' },
+          { name:'⚡ Energia/Utility', impact:'negativo', reason:'Tassi attesi più alti penalizzano le utility' },
+          { name:'✈️ Difesa',         impact:'positivo', reason:'I budget difesa vengono spesso indicizzati all'inflazione' },
+          { name:'🛡️ Assicurazioni',  impact:'negativo', reason:'Costo dei sinistri aumenta' },
+        ]
+      },
+      {
+        condition: 'Inflazione più bassa del previsto',
+        marketImpact: 'Positivo per azioni — aumenta probabilità di taglio tassi',
+        sectors: [
+          { name:'🏦 Banche',         impact:'negativo', reason:'Tassi attesi più bassi comprimono i margini' },
+          { name:'⚡ Energia/Utility', impact:'positivo', reason:'Tassi attesi più bassi favoriscono le utility' },
+          { name:'✈️ Difesa',         impact:'neutro',   reason:'Poco correlata all'inflazione di breve' },
+          { name:'🛡️ Assicurazioni',  impact:'positivo', reason:'Costo sinistri stabile o in calo' },
+        ]
+      }
+    ]
+  },
+  {
+    keywords: ['gdp','pil','gross domestic','prodotto interno'],
+    title: 'PIL (GDP)',
+    icon: '📊',
+    scenarios: [
+      {
+        condition: 'PIL sopra le attese',
+        marketImpact: 'Positivo per azioni cicliche — economia in salute',
+        sectors: [
+          { name:'🏦 Banche',         impact:'positivo', reason:'Più prestiti, meno NPL, economia in crescita' },
+          { name:'⚡ Energia',         impact:'positivo', reason:'Maggiore domanda energetica industriale' },
+          { name:'✈️ Difesa',         impact:'positivo', reason:'Budget statali più robusti' },
+          { name:'🛡️ Assicurazioni',  impact:'positivo', reason:'Più premi, meno sinistri da difficoltà economiche' },
+        ]
+      },
+      {
+        condition: 'PIL sotto le attese o recessione',
+        marketImpact: 'Negativo per ciclici, positivo per difensivi (utility, pharma)',
+        sectors: [
+          { name:'🏦 Banche',         impact:'negativo', reason:'Aumento NPL, meno prestiti, sofferenze bancarie' },
+          { name:'⚡ Energia/Utility', impact:'misto',   reason:'Utility difensiva regge (+), ma domanda industriale cala (-)' },
+          { name:'✈️ Difesa',         impact:'negativo', reason:'Possibili tagli ai budget governativi' },
+          { name:'📮 Poste/Fintech',  impact:'negativo', reason:'Calo transazioni e spedizioni' },
+        ]
+      }
+    ]
+  },
+  {
+    keywords: ['unemployment','disoccupazione','nonfarm','non-farm','payroll','occupazione','jobs'],
+    title: 'Dati Occupazione',
+    icon: '👥',
+    scenarios: [
+      {
+        condition: 'Disoccupazione in calo / occupazione forte',
+        marketImpact: 'Misto — buono per economia ma può aumentare pressioni inflazionistiche',
+        sectors: [
+          { name:'🏦 Banche',   impact:'positivo', reason:'Più famiglie solvibili, meno morosità sui mutui' },
+          { name:'📮 Poste',    impact:'positivo', reason:'Più e-commerce e spedizioni con occupazione alta' },
+        ]
+      },
+      {
+        condition: 'Disoccupazione in salita / occupazione debole',
+        marketImpact: 'Negativo per ciclici — segnale di rallentamento economico',
+        sectors: [
+          { name:'🏦 Banche',         impact:'negativo', reason:'Aumento morosità, meno prestiti al consumo' },
+          { name:'⚡ Energia/Utility', impact:'positivo', reason:'Utility difensiva, flussi verso safe haven' },
+        ]
+      }
+    ]
+  },
+  {
+    keywords: ['pmi','purchasing managers','manifatturiero','manufacturing','services','servizi'],
+    title: 'PMI (Indici manifatturiero/servizi)',
+    icon: '🏭',
+    scenarios: [
+      {
+        condition: 'PMI sopra 50 (espansione)',
+        marketImpact: 'Positivo per ciclici — settore in espansione',
+        sectors: [
+          { name:'🏦 Banche',   impact:'positivo', reason:'Più credito alle imprese in espansione' },
+          { name:'✈️ Difesa',   impact:'positivo', reason:'Ordini industriali in crescita' },
+          { name:'⚡ Energia',  impact:'positivo', reason:'Domanda industriale di energia in crescita' },
+        ]
+      },
+      {
+        condition: 'PMI sotto 50 (contrazione)',
+        marketImpact: 'Negativo per ciclici — segnale di rallentamento',
+        sectors: [
+          { name:'🏦 Banche',         impact:'negativo', reason:'Meno credito alle imprese, rischio NPL' },
+          { name:'⚡ Energia/Utility', impact:'misto',   reason:'Utility difensiva regge, ma cala domanda industriale' },
+        ]
+      }
+    ]
+  },
+  {
+    keywords: ['fed','federal reserve','fomc','powell'],
+    title: 'Fed / FOMC (Federal Reserve USA)',
+    icon: '🦅',
+    scenarios: [
+      {
+        condition: 'Tono hawkish (tassi alti più a lungo)',
+        marketImpact: 'Negativo per mercati europei — dollaro forte, risk-off globale',
+        sectors: [
+          { name:'🏦 Banche EU',       impact:'misto',    reason:'Tassi alti USA esportano pressione in Europa' },
+          { name:'✈️ Difesa',          impact:'positivo', reason:'Dollar forte favorisce export difesa (contratti in USD)' },
+          { name:'⚡ Energia/Utility', impact:'negativo', reason:'Risk-off penalizza le utility europee' },
+        ]
+      },
+      {
+        condition: 'Tono dovish (taglio tassi in arrivo)',
+        marketImpact: 'Positivo per azioni globali — risk-on, liquidità abbondante',
+        sectors: [
+          { name:'🏦 Banche EU',        impact:'positivo', reason:'Risk-on, flussi verso azionario EU' },
+          { name:'⚡ Energia/Utility',  impact:'positivo', reason:'Multipli si espandono con tassi attesi più bassi' },
+          { name:'🛡️ Assicurazioni',   impact:'positivo', reason:'Mercati azionari salgono → portafoglio si rivaluta' },
+        ]
+      }
+    ]
+  },
+];
+
+// Trova il knowledge per un evento
+function getEventKnowledge(eventName) {
+  if (!eventName) return null;
+  const lower = eventName.toLowerCase();
+  return EVENT_KNOWLEDGE.find(k => k.keywords.some(kw => lower.includes(kw))) || null;
+}
+
+const CAL_IMPORTANCE = { '1':'🔴 Alta', '0':'🟡 Media', '-1':'⚪ Bassa' };
+const CAL_IMPORTANCE_COLOR = { '1':'var(--down)', '0':'#ef9f27', '-1':'var(--text3)' };
+const CAL_IMPORTANCE = { '1':'🔴 Alta', '0':'🟡 Media', '-1':'⚪ Bassa' };
+const CAL_IMPORTANCE_COLOR = { '1':'var(--down)', '0':'#ef9f27', '-1':'var(--text3)' };
+
+function padDate(n) { return String(n).padStart(2,'0'); }
+function fmtCalDate(d) {
+  return `${d.getFullYear()}-${padDate(d.getMonth()+1)}-${padDate(d.getDate())}`;
+}
+function fmtCalLabel(d) {
+  return new Date(d).toLocaleDateString('it-IT',{weekday:'short',day:'2-digit',month:'short'});
+}
+
+// Usa Finnhub per dati calendario economico
+async function loadCalendar() {
+  const now      = new Date();
+  const tomorrow = new Date(now); tomorrow.setDate(now.getDate()+1);
+
+  // Range settimana corrente (lun-ven)
+  const day = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+  const friday = new Date(monday);
+  friday.setDate(monday.getDate() + 4);
+
+  // Aggiorna label date
+  const tomorrowEl = document.getElementById('cal-tomorrow-date');
+  const weekEl     = document.getElementById('cal-week-range');
+  if (tomorrowEl) tomorrowEl.textContent = fmtCalLabel(tomorrow);
+  if (weekEl) weekEl.textContent =
+    `${fmtCalLabel(monday)} – ${fmtCalLabel(friday)}`;
+
+  // Fetcha da Finnhub
+  const from = fmtCalDate(monday);
+  const to   = fmtCalDate(friday);
+  const url  = `https://finnhub.io/api/v1/calendar/economic?from=${from}&to=${to}&token=${FKEY}`;
+
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const data = await r.json();
+    const events = (data.economicCalendar || [])
+      .filter(e => e.impact === 'high' || e.impact === 'medium')
+      .sort((a,b) => new Date(a.time||a.date) - new Date(b.time||b.date));
+
+    const tomorrowStr = fmtCalDate(tomorrow);
+    const todayStr    = fmtCalDate(now);
+
+    // Filtra eventi domani
+    const tomorrowEvents = events.filter(e => (e.date||'').startsWith(tomorrowStr));
+    // Filtra eventi settimana (escludi oggi e domani per brevità)
+    const weekEvents = events.filter(e => {
+      const d = e.date||'';
+      return d >= fmtCalDate(monday) && d <= fmtCalDate(friday);
+    });
+
+    function renderEvents(list, containerId) {
+      const el = document.getElementById(containerId);
+      if (!el) return;
+      if (!list.length) {
+        el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:4px 0">Nessun evento rilevante</div>';
+        return;
+      }
+      el.innerHTML = list.map(e => {
+        const imp      = e.impact === 'high' ? '🔴' : '🟡';
+        const date     = e.date ? fmtCalLabel(e.date) : '';
+        const time     = e.time ? e.time.slice(11,16) : '';
+        const country  = e.country ? `<span style="background:var(--surface2);padding:1px 5px;border-radius:3px;font-size:10px;margin-left:4px">${e.country.toUpperCase()}</span>` : '';
+        const actual   = e.actual   != null ? `<span style="color:var(--up)"> A:${e.actual}</span>` : '';
+        const forecast = e.estimate != null ? `<span style="color:var(--text3)"> P:${e.estimate}</span>` : '';
+        const prev     = e.prev     != null ? `<span style="color:var(--text3)"> Prec:${e.prev}</span>` : '';
+
+        // Cerca knowledge per questo evento
+        const know = getEventKnowledge(e.event || e.name || '');
+        let knowHtml = '';
+        if (know) {
+          const scenHtml = know.scenarios.map(s => `
+            <div style="margin-top:6px;padding:6px 8px;background:var(--surface);border-radius:5px;border:.5px solid var(--border)">
+              <div style="font-size:10px;font-weight:500;color:var(--text2);margin-bottom:3px">📌 ${s.condition}</div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:4px">${s.marketImpact}</div>
+              ${s.sectors.map(sec => {
+                const c = sec.impact==='positivo' ? 'var(--up)' : sec.impact==='negativo' ? 'var(--down)' : 'var(--text3)';
+                const arrow = sec.impact==='positivo' ? '▲' : sec.impact==='negativo' ? '▼' : '◆';
+                return `<div style="font-size:10px;margin-top:2px"><span style="color:${c}">${arrow} ${sec.name}</span> <span style="color:var(--text3)">— ${sec.reason}</span></div>`;
+              }).join('')}
+            </div>`).join('');
+          knowHtml = `
+            <div style="margin-top:6px;padding:8px 10px;background:var(--accent-bg);border:.5px solid rgba(79,142,247,0.2);border-radius:6px">
+              <div style="font-size:11px;font-weight:500;color:var(--accent);margin-bottom:4px">${know.icon} ${know.title} — Guida all'impatto</div>
+              ${scenHtml}
+            </div>`;
+        }
+
+        return `
+          <div style="padding:8px 0;border-bottom:.5px solid var(--border)">
+            <div style="display:flex;gap:8px;align-items:flex-start">
+              <span style="font-size:14px;flex-shrink:0;margin-top:1px">${imp}</span>
+              <div style="min-width:0;width:100%">
+                <div style="font-size:12px;font-weight:500;color:var(--text)">${e.event||e.name||'—'}${country}</div>
+                <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px">${date} ${time}${actual}${forecast}${prev}</div>
+                ${knowHtml}
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    renderEvents(tomorrowEvents, 'cal-tomorrow');
+    renderEvents(weekEvents,     'cal-week');
+
+  } catch(e) {
+    console.error('Calendar error:', e);
+    ['cal-tomorrow','cal-week'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div style="color:var(--text3);font-size:12px">Dati non disponibili — consulta il widget sotto</div>';
+    });
   }
 }
 
