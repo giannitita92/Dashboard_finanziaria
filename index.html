@@ -156,6 +156,112 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         </script>
       </div>
     </div>
+    <!-- ══ SENTIMENT SCORE ══════════════════════════════════════════════ -->
+    <div class="sec-label" style="margin-top:0">Sentiment pre-market</div>
+    <div class="chart-panel" style="margin-bottom:18px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500;letter-spacing:.06em;text-transform:uppercase">Indice di sentiment</div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:36px;font-weight:500;font-family:'DM Mono',monospace" id="sent-score">—</div>
+            <div>
+              <div style="font-size:16px;font-weight:500" id="sent-label">Caricamento...</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:2px" id="sent-sub"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Barra visuale -6 → +6 -->
+        <div style="flex:1;min-width:200px;max-width:400px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px">
+            <span>-6 Molto negativo</span><span>0 Neutro</span><span>+6 Molto positivo</span>
+          </div>
+          <div style="background:var(--surface2);border-radius:6px;height:14px;position:relative;overflow:hidden">
+            <div id="sent-bar" style="position:absolute;height:100%;border-radius:6px;transition:all .5s;width:50%;left:0;background:var(--text3)"></div>
+            <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,0.2)"></div>
+          </div>
+          <div style="text-align:center;font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace" id="sent-time">—</div>
+        </div>
+      </div>
+      <!-- Disclaimer -->
+      <div style="background:rgba(239,159,39,0.07);border:.5px solid rgba(239,159,39,0.2);border-radius:6px;padding:7px 12px;font-size:11px;color:#ef9f27;margin-bottom:14px">
+        ⚠️ Indice indicativo basato su 6 segnali tecnici — non costituisce previsione né consiglio finanziario
+      </div>
+      <!-- Griglia segnali -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px" id="sent-signals"></div>
+    </div>
+
+    <!-- ══ PRE-MARKET ════════════════════════════════════════════════════ -->
+    <div class="sec-label" style="margin-top:0">Pre-market · Indicatori chiave</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;margin-bottom:18px">
+
+      <!-- Futures FTSE MIB -->
+      <div class="chart-panel">
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Futures FTSE MIB</div>
+        <div class="tradingview-widget-container" style="height:180px">
+          <div class="tradingview-widget-container__widget" style="height:180px"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"EUREX:STXE1!","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          </script>
+        </div>
+      </div>
+
+      <!-- Spread BTP-Bund -->
+      <div class="chart-panel">
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Spread BTP-Bund · segnale di rischio Italia</div>
+        <div class="tradingview-widget-container" style="height:180px">
+          <div class="tradingview-widget-container__widget" style="height:180px"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"TVC:BTPBUND","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          </script>
+        </div>
+      </div>
+
+      <!-- VIX -->
+      <div class="chart-panel">
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">VIX · volatilità S&amp;P 500</div>
+        <div class="tradingview-widget-container" style="height:180px">
+          <div class="tradingview-widget-container__widget" style="height:180px"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"TVC:VIX","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          </script>
+        </div>
+      </div>
+
+      <!-- VSTOXX -->
+      <div class="chart-panel">
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">VSTOXX · volatilità Euro Stoxx 50</div>
+        <div class="tradingview-widget-container" style="height:180px">
+          <div class="tradingview-widget-container__widget" style="height:180px"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"EUREX:FVS1!","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          </script>
+        </div>
+      </div>
+
+      <!-- EUR/USD -->
+      <div class="chart-panel">
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">EUR/USD · forza dell'euro</div>
+        <div class="tradingview-widget-container" style="height:180px">
+          <div class="tradingview-widget-container__widget" style="height:180px"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"FX:EURUSD","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          </script>
+        </div>
+      </div>
+
+      <!-- Nikkei -->
+      <div class="chart-panel">
+        <div style="padding:8px 14px;border-bottom:.5px solid var(--border);font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Nikkei 225 · Asia (chiusura)</div>
+        <div class="tradingview-widget-container" style="height:180px">
+          <div class="tradingview-widget-container__widget" style="height:180px"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+          {"symbol":"FOREXCOM:JPN225","width":"100%","height":"180","locale":"it","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":true,"largeChartUrl":""}
+          </script>
+        </div>
+      </div>
+
+    </div>
+
     <div style="display:flex;flex-direction:column;gap:10px">
         <div class="pboxes" id="idx-boxes" style="grid-template-columns:repeat(5,1fr)"></div>
         <div class="chart-panel">
@@ -738,8 +844,8 @@ function showTab(name) {
     document.getElementById('sec-'+n).classList.toggle('active', n===name);
   });
   if (name === 'indices') {
-    // Ricostruisce il grafico TV quando la tab diventa visibile
     setTimeout(() => buildChart('idx-chart-wrap', INDICES[idxSel].tvSym, idxInterval, idxRange), 50);
+    loadSentiment();
   }
   if (name === 'portfolio') {
     loadPortfolio();
@@ -749,6 +855,186 @@ function showTab(name) {
   if (name === 'noemi') {
     loadNoemi();
     loadNoemiHistory();
+  }
+}
+
+// ══ SENTIMENT PRE-MARKET ════════════════════════════════════════════════
+const SENTIMENT_SIGNALS = [
+  {
+    id: 'sig-ftsemib', label: 'Futures FTSE MIB',
+    symbol: 'FTSEMIB.FUT', desc: '>+0.3% positivo · <-0.3% negativo',
+    fn: d => {
+      const pct = parseFloat(d.change_p);
+      if (pct > 0.3)  return { score: 1,  tag: '▲ Positivo',  color: 'var(--up)' };
+      if (pct < -0.3) return { score: -1, tag: '▼ Negativo',  color: 'var(--down)' };
+      return                 { score: 0,  tag: '◆ Neutro',    color: 'var(--text3)' };
+    }
+  },
+  {
+    id: 'sig-vix', label: 'VIX (volatilità USA)',
+    symbol: 'VIX.INDEX', desc: '<18 positivo · >25 negativo',
+    fn: d => {
+      const price = parseFloat(d.close);
+      const pct   = parseFloat(d.change_p);
+      if (price < 18 || pct < -3) return { score: 1,  tag: '▲ Bassa volatilità', color: 'var(--up)' };
+      if (price > 25 || pct > 5)  return { score: -1, tag: '▼ Alta volatilità',  color: 'var(--down)' };
+      return                              { score: 0,  tag: '◆ Neutro',           color: 'var(--text3)' };
+    }
+  },
+  {
+    id: 'sig-nikkei', label: 'Nikkei 225 (Asia)',
+    symbol: 'NIKKEI.INDEX', desc: '>+0.3% positivo · <-0.3% negativo',
+    fn: d => {
+      const pct = parseFloat(d.change_p);
+      if (pct > 0.3)  return { score: 1,  tag: '▲ Asia positiva', color: 'var(--up)' };
+      if (pct < -0.3) return { score: -1, tag: '▼ Asia negativa', color: 'var(--down)' };
+      return                 { score: 0,  tag: '◆ Neutro',        color: 'var(--text3)' };
+    }
+  },
+  {
+    id: 'sig-eurusd', label: 'EUR/USD',
+    symbol: 'EURUSD.FX', desc: 'stabile ±0.3% neutro · >+0.5% o <-0.5% negativo',
+    fn: d => {
+      const pct = Math.abs(parseFloat(d.change_p));
+      if (pct > 0.5) return { score: -1, tag: '▼ Forte movimento', color: 'var(--down)' };
+      if (pct < 0.2) return { score: 1,  tag: '▲ Stabile',         color: 'var(--up)' };
+      return                { score: 0,  tag: '◆ Neutro',           color: 'var(--text3)' };
+    }
+  },
+  {
+    id: 'sig-btp10y', label: 'BTP 10 anni (rendimento)',
+    symbol: 'IT10Y.INDEX', desc: 'rendimento in calo = positivo per azioni',
+    fn: d => {
+      const pct = parseFloat(d.change_p);
+      if (pct < -0.5) return { score: 1,  tag: '▲ Rendimento in calo', color: 'var(--up)' };
+      if (pct > 0.5)  return { score: -1, tag: '▼ Rendimento in salita', color: 'var(--down)' };
+      return                 { score: 0,  tag: '◆ Stabile',              color: 'var(--text3)' };
+    }
+  },
+  {
+    id: 'sig-spread', label: 'Spread BTP-Bund',
+    symbol: 'IT10Y.INDEX', desc: 'calcolato da IT10Y - DE10Y',
+    isSpread: true,
+    fn: (it, de) => {
+      const spread    = parseFloat(it.close) - parseFloat(de.close);
+      const spreadChg = parseFloat(it.change_p) - parseFloat(de.change_p);
+      const tag = `Spread: ${fmt(spread*100, 0)} bp`;
+      if (spreadChg < -1) return { score: 1,  tag: `▲ ${tag} · in calo`,   color: 'var(--up)' };
+      if (spreadChg > 1)  return { score: -1, tag: `▼ ${tag} · in salita`, color: 'var(--down)' };
+      return                     { score: 0,  tag: `◆ ${tag} · stabile`,   color: 'var(--text3)' };
+    }
+  },
+];
+
+const SENT_LABELS = {
+  '-6': { text: 'Molto negativo',   color: '#f05252' },
+  '-5': { text: 'Molto negativo',   color: '#f05252' },
+  '-4': { text: 'Negativo',         color: '#f07050' },
+  '-3': { text: 'Abbastanza negativo', color: '#ef9f27' },
+  '-2': { text: 'Leggermente negativo', color: '#ef9f27' },
+  '-1': { text: 'Leggermente negativo', color: '#efb827' },
+   '0': { text: 'Neutro',           color: 'var(--text3)' },
+   '1': { text: 'Leggermente positivo', color: '#7ec98a' },
+   '2': { text: 'Leggermente positivo', color: '#4fc98a' },
+   '3': { text: 'Abbastanza positivo', color: '#22c98a' },
+   '4': { text: 'Positivo',         color: '#22c98a' },
+   '5': { text: 'Molto positivo',   color: '#22c98a' },
+   '6': { text: 'Molto positivo',   color: '#22c98a' },
+};
+
+async function loadSentiment() {
+  const symbols = ['FTSEMIB.FUT','VIX.INDEX','NIKKEI.INDEX','EURUSD.FX','IT10Y.INDEX','DE10Y.INDEX'];
+  const first = symbols[0];
+  const rest  = symbols.slice(1).join(',');
+  const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
+
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const rows = await r.json();
+    const data = Array.isArray(rows) ? rows : [rows];
+
+    // Mappa per simbolo
+    const bySymbol = {};
+    symbols.forEach((s, i) => { bySymbol[s] = data[i]; });
+
+    let totalScore = 0;
+    const signalsEl = document.getElementById('sent-signals');
+    signalsEl.innerHTML = '';
+
+    SENTIMENT_SIGNALS.forEach(sig => {
+      let result;
+      if (sig.isSpread) {
+        const it = bySymbol['IT10Y.INDEX'];
+        const de = bySymbol['DE10Y.INDEX'];
+        result = (it && de && !it.error && !de.error)
+          ? sig.fn(it, de)
+          : { score: 0, tag: '— Dati non disponibili', color: 'var(--text3)' };
+      } else {
+        const d = bySymbol[sig.symbol];
+        result = (d && !d.error)
+          ? sig.fn(d)
+          : { score: 0, tag: '— Dati non disponibili', color: 'var(--text3)' };
+      }
+
+      totalScore += result.score;
+
+      // Card segnale
+      const d = bySymbol[sig.symbol] || {};
+      const price = d.close ? fmt(parseFloat(d.close)) : '—';
+      const pct   = d.change_p ? `${parseFloat(d.change_p)>=0?'+':''}${fmt(Math.abs(parseFloat(d.change_p)),2)}%` : '—';
+
+      signalsEl.innerHTML += `
+        <div style="background:var(--surface2);border-radius:var(--rs);padding:10px 12px;border:.5px solid var(--border)">
+          <div style="font-size:11px;font-weight:500;color:var(--text2);margin-bottom:4px">${sig.label}</div>
+          <div style="font-size:12px;font-weight:500;color:${result.color};margin-bottom:3px">${result.tag}</div>
+          <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${price} · ${pct}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">${sig.desc}</div>
+        </div>`;
+    });
+
+    // Aggiorna score totale
+    const clampedScore = Math.max(-6, Math.min(6, totalScore));
+    const label = SENT_LABELS[String(clampedScore)];
+    const sign  = clampedScore > 0 ? '+' : '';
+
+    const scoreEl = document.getElementById('sent-score');
+    const labelEl = document.getElementById('sent-label');
+    const subEl   = document.getElementById('sent-sub');
+    const barEl   = document.getElementById('sent-bar');
+    const timeEl  = document.getElementById('sent-time');
+
+    if (scoreEl) {
+      scoreEl.textContent = sign + clampedScore;
+      scoreEl.style.color = label.color;
+    }
+    if (labelEl) {
+      labelEl.textContent = label.text;
+      labelEl.style.color = label.color;
+    }
+    if (subEl) {
+      const positive = SENTIMENT_SIGNALS.filter((_,i) => {
+        const s = SENTIMENT_SIGNALS[i];
+        return false; // calcolato dopo
+      }).length;
+      subEl.textContent = `Basato su ${SENTIMENT_SIGNALS.length} indicatori · aggiornato ogni 60 secondi`;
+    }
+    if (barEl) {
+      // Posiziona barra: -6=0% / 0=50% / +6=100%
+      const pct = ((clampedScore + 6) / 12) * 100;
+      barEl.style.width  = Math.abs(clampedScore / 6 * 50) + '%';
+      barEl.style.left   = clampedScore >= 0 ? '50%' : (50 + clampedScore/6*50) + '%';
+      barEl.style.background = label.color;
+    }
+    if (timeEl) {
+      const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
+      timeEl.textContent = `Ultimo aggiornamento: ${now} CET`;
+    }
+
+  } catch(e) {
+    console.error('Sentiment error:', e);
+    const el = document.getElementById('sent-label');
+    if (el) el.textContent = 'Errore caricamento dati';
   }
 }
 
@@ -1598,6 +1884,8 @@ buildBoxes('stk-boxes', STOCKS, 7, (item,i) => {
 loadStkChart(STOCKS[7].eoSym, stkCurrentInterval, stkCurrentRange);
 refreshPrices();
 setInterval(refreshPrices, 60000);
+loadSentiment();
+setInterval(loadSentiment, 60000);
 loadNews();
 setInterval(loadNews, 120000);
 </script>
