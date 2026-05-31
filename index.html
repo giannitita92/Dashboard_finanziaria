@@ -1556,12 +1556,16 @@ async function loadSentiment() {
     }
 
     // Renderizza impatto settori con gli stessi dati
-    renderSectors(bySymbol);
+    try { renderSectors(bySymbol); } catch(se) { console.warn('Sectors error:', se); }
 
   } catch(e) {
     console.error('Sentiment error:', e);
+    // Mostra errore solo se il label non è già stato aggiornato con dati reali
     const el = document.getElementById('sent-label');
-    if (el) el.textContent = 'Errore caricamento dati';
+    const scoreEl = document.getElementById('sent-score');
+    if (el && scoreEl && scoreEl.textContent === '—') {
+      el.textContent = 'Errore caricamento dati';
+    }
   }
 }
 
