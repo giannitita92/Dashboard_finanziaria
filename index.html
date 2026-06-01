@@ -569,6 +569,145 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
+    <!-- ══ POSIZIONI CHIUSE ════════════════════════════════════════════ -->
+    <div style="margin-top:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div class="sec-label" style="margin:0">Posizioni chiuse &amp; vendite parziali</div>
+        <button onclick="toggleCloseForm()" id="btn-open-form"
+          style="background:var(--accent);color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif">
+          + Registra operazione
+        </button>
+      </div>
+
+      <!-- Form inserimento -->
+      <div id="close-form" style="display:none;background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px">📝 Registra vendita / chiusura parziale</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Titolo *</div>
+            <select id="cf-ticker" style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+              <option value="">Seleziona...</option>
+              <option value="BMPS">BMPS · Monte Paschi</option>
+              <option value="ISP">ISP · Intesa Sanpaolo</option>
+              <option value="LDO">LDO · Leonardo</option>
+              <option value="BAMI">BAMI · Banco BPM</option>
+              <option value="G">G · Generali</option>
+              <option value="UCG">UCG · UniCredit</option>
+              <option value="PST">PST · Poste Italiane</option>
+              <option value="ENEL">ENEL · Enel</option>
+              <option value="MB">MB · Mediobanca</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Tipo *</div>
+            <select id="cf-type" style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+              <option value="partial">Vendita parziale</option>
+              <option value="full">Chiusura completa</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Quantità *</div>
+            <input type="number" id="cf-qty" placeholder="es. 100" min="1" oninput="updateCFPreview()"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Prezzo carico (€) *</div>
+            <input type="number" id="cf-buy-price" placeholder="es. 8.11" step="0.0001" oninput="updateCFPreview()"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Prezzo vendita (€) *</div>
+            <input type="number" id="cf-sell-price" placeholder="es. 9.50" step="0.0001" oninput="updateCFPreview()"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Data vendita *</div>
+            <input type="date" id="cf-sell-date"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Data acquisto</div>
+            <input type="date" id="cf-buy-date"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Dividendi ricevuti (€)</div>
+            <input type="number" id="cf-dividends" placeholder="0.00" step="0.01" value="0" oninput="updateCFPreview()"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace">
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Note</div>
+            <input type="text" id="cf-notes" placeholder="es. presa profitto"
+              style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+          </div>
+        </div>
+        <!-- Anteprima P&L -->
+        <div id="cf-preview" style="background:var(--surface);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text3)">
+          Inserisci i dati per vedere l'anteprima P&amp;L
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="saveClosedPosition()"
+            style="background:var(--up);color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif">
+            💾 Salva operazione
+          </button>
+          <button onclick="toggleCloseForm()"
+            style="background:var(--surface);color:var(--text2);border:.5px solid var(--border2);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">
+            Annulla
+          </button>
+        </div>
+      </div>
+
+      <!-- Card riepilogo -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px" id="closed-summary"></div>
+
+      <!-- Tabella -->
+      <div class="chart-panel" style="margin-bottom:14px">
+        <div style="padding:10px 14px;border-bottom:.5px solid var(--border);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">Storico operazioni</div>
+        <div style="overflow-x:auto">
+          <table id="closed-table" style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="border-bottom:.5px solid var(--border)">
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3);white-space:nowrap">Titolo</th>
+                <th style="padding:8px 14px;text-align:center;font-size:11px;font-weight:500;color:var(--text3)">Tipo</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Qtà</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Carico</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Vendita</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Investito</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Incassato</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L €</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L %</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Dividendi</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">P&amp;L tot</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Data</th>
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3)">Note</th>
+                <th style="padding:8px 14px;text-align:center;font-size:11px;font-weight:500;color:var(--text3)">Del</th>
+              </tr>
+            </thead>
+            <tbody id="closed-tbody">
+              <tr><td colspan="14" style="padding:20px 14px;color:var(--text3);font-size:12px;text-align:center">Nessuna operazione registrata</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="chart-footer"><span id="closed-update">—</span></div>
+      </div>
+
+      <!-- Grafici P&L realizzato -->
+      <div class="pf-history-grid">
+        <div class="chart-panel">
+          <div style="padding:10px 14px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">P&amp;L per operazione</span>
+          </div>
+          <div style="position:relative;height:220px;padding:12px"><canvas id="closed-bar-chart"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <div style="padding:10px 14px;border-bottom:.5px solid var(--border)">
+            <span style="font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">P&amp;L cumulativo realizzato</span>
+          </div>
+          <div style="position:relative;height:220px;padding:12px"><canvas id="closed-line-chart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
 </div>
@@ -990,6 +1129,7 @@ function showTab(name) {
     loadPortfolio();
     loadPortfolioHistory();
     renderDividendsChart();
+    loadClosedPositions();
   }
   if (name === 'noemi') {
     loadNoemi();
@@ -2841,6 +2981,291 @@ function setPfWeekPeriod(btn, period) {
   document.getElementById('pf-wk-period-wk-btn').classList.toggle('active', period === 'week');
   document.getElementById('pf-wk-period-mo-btn').classList.toggle('active', period === 'month');
   if (pfHistoryData?.series) buildWeeklyChart(pfHistoryData.series);
+}
+
+// ══ POSIZIONI CHIUSE ════════════════════════════════════════════════════
+let closedPositions = [];
+let closedBarChart  = null;
+let closedLineChart = null;
+
+// JSONBin key/bin (già configurati)
+const CP_BIN_KEY = JSONBIN_KEY;
+const CP_BIN_ID  = JSONBIN_BIN;
+
+// ── Load da JSONBin ───────────────────────────────────────────────────────
+async function loadClosedPositions() {
+  if (!CP_BIN_KEY || !CP_BIN_ID) { renderClosed(); return; }
+  try {
+    const r = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': CP_BIN_KEY }
+    });
+    const data = await r.json();
+    closedPositions = data.record?.closed_positions || [];
+    renderClosed();
+  } catch(e) {
+    console.error('Load closed error:', e);
+    renderClosed();
+  }
+}
+
+// ── Save su JSONBin ───────────────────────────────────────────────────────
+async function saveAllClosed() {
+  if (!CP_BIN_KEY || !CP_BIN_ID) return;
+  try {
+    // Leggi dati esistenti per non sovrascrivere il sentiment
+    const r = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': CP_BIN_KEY }
+    });
+    const existing = await r.json();
+    const record   = existing.record || {};
+    record.closed_positions = closedPositions;
+
+    await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}`, {
+      method:  'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': CP_BIN_KEY },
+      body:    JSON.stringify(record)
+    });
+    console.log('Closed positions saved:', closedPositions.length);
+  } catch(e) {
+    console.error('Save closed error:', e);
+    alert('Errore nel salvataggio. Riprova.');
+  }
+}
+
+// ── Form toggle ───────────────────────────────────────────────────────────
+function toggleCloseForm() {
+  const form = document.getElementById('close-form');
+  if (!form) return;
+  const visible = form.style.display !== 'none';
+  form.style.display = visible ? 'none' : 'block';
+  // Imposta data di oggi come default
+  if (!visible) {
+    const today = new Date().toISOString().slice(0,10);
+    const sellDate = document.getElementById('cf-sell-date');
+    if (sellDate && !sellDate.value) sellDate.value = today;
+  }
+}
+
+// ── Anteprima P&L ─────────────────────────────────────────────────────────
+function updateCFPreview() {
+  const qty       = parseFloat(document.getElementById('cf-qty')?.value || 0);
+  const buyPrice  = parseFloat(document.getElementById('cf-buy-price')?.value || 0);
+  const sellPrice = parseFloat(document.getElementById('cf-sell-price')?.value || 0);
+  const divs      = parseFloat(document.getElementById('cf-dividends')?.value || 0);
+  const prev      = document.getElementById('cf-preview');
+  if (!prev) return;
+
+  if (!qty || !buyPrice || !sellPrice) {
+    prev.textContent = 'Inserisci quantità, prezzo carico e prezzo vendita per vedere il P&L';
+    prev.style.color = 'var(--text3)';
+    return;
+  }
+
+  const invested = qty * buyPrice;
+  const proceeds = qty * sellPrice;
+  const pl       = proceeds - invested;
+  const plPct    = (pl / invested * 100);
+  const plTot    = pl + divs;
+  const plTotPct = (plTot / invested * 100);
+  const up       = pl >= 0;
+
+  prev.innerHTML = `
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center">
+      <span>Investito: <b style="font-family:'DM Mono',monospace">€ ${fmt(invested)}</b></span>
+      <span>Incassato: <b style="font-family:'DM Mono',monospace">€ ${fmt(proceeds)}</b></span>
+      <span>P&L: <b style="color:${up?'var(--up)':'var(--down)'};font-family:'DM Mono',monospace">${up?'+':''}${fmt(pl)} € (${up?'+':''}${fmt(plPct,2)}%)</b></span>
+      ${divs > 0 ? `<span>P&L + dividendi: <b style="color:${plTot>=0?'var(--up)':'var(--down)'};font-family:'DM Mono',monospace">${plTot>=0?'+':''}${fmt(plTot)} € (${plTot>=0?'+':''}${fmt(plTotPct,2)}%)</b></span>` : ''}
+    </div>`;
+}
+
+// ── Salva operazione ──────────────────────────────────────────────────────
+async function saveClosedPosition() {
+  const ticker    = document.getElementById('cf-ticker')?.value;
+  const type      = document.getElementById('cf-type')?.value;
+  const qty       = parseFloat(document.getElementById('cf-qty')?.value);
+  const buyPrice  = parseFloat(document.getElementById('cf-buy-price')?.value);
+  const sellPrice = parseFloat(document.getElementById('cf-sell-price')?.value);
+  const sellDate  = document.getElementById('cf-sell-date')?.value;
+  const buyDate   = document.getElementById('cf-buy-date')?.value;
+  const divs      = parseFloat(document.getElementById('cf-dividends')?.value || 0);
+  const notes     = document.getElementById('cf-notes')?.value || '';
+
+  if (!ticker || !qty || !buyPrice || !sellPrice || !sellDate) {
+    alert('Compila i campi obbligatori: Titolo, Quantità, Prezzi e Data vendita');
+    return;
+  }
+
+  const invested = qty * buyPrice;
+  const proceeds = qty * sellPrice;
+  const pl       = proceeds - invested;
+  const plPct    = (pl / invested * 100);
+
+  const record = {
+    id:        Date.now(),
+    ticker, type, qty, buyPrice, sellPrice,
+    sellDate, buyDate, dividends: divs, notes,
+    invested: parseFloat(invested.toFixed(2)),
+    proceeds: parseFloat(proceeds.toFixed(2)),
+    pl:       parseFloat(pl.toFixed(2)),
+    plPct:    parseFloat(plPct.toFixed(4)),
+    plTotal:  parseFloat((pl + divs).toFixed(2)),
+  };
+
+  closedPositions.push(record);
+  closedPositions.sort((a,b) => new Date(a.sellDate) - new Date(b.sellDate));
+
+  await saveAllClosed();
+  toggleCloseForm();
+  resetCFForm();
+  renderClosed();
+}
+
+function resetCFForm() {
+  ['cf-ticker','cf-type','cf-qty','cf-buy-price','cf-sell-price',
+   'cf-sell-date','cf-buy-date','cf-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = id === 'cf-type' ? 'partial' : ''; }
+  });
+  const divEl = document.getElementById('cf-dividends');
+  if (divEl) divEl.value = '0';
+  const prev = document.getElementById('cf-preview');
+  if (prev) { prev.textContent = 'Inserisci i dati per vedere il P&L'; prev.style.color = 'var(--text3)'; }
+}
+
+// ── Elimina operazione ────────────────────────────────────────────────────
+async function deleteClosedPosition(id) {
+  if (!confirm('Eliminare questa operazione?')) return;
+  closedPositions = closedPositions.filter(p => p.id !== id);
+  await saveAllClosed();
+  renderClosed();
+}
+
+// ── Render tabella e grafici ──────────────────────────────────────────────
+function renderClosed() {
+  const tbody  = document.getElementById('closed-tbody');
+  const sumEl  = document.getElementById('closed-summary');
+  const updEl  = document.getElementById('closed-update');
+
+  if (!closedPositions.length) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="14" style="padding:20px 14px;color:var(--text3);font-size:12px;text-align:center">Nessuna operazione registrata — clicca "+ Registra operazione" per iniziare</td></tr>';
+    if (sumEl) sumEl.innerHTML = '';
+    renderClosedCharts([]);
+    return;
+  }
+
+  // Calcola statistiche
+  const totalPL    = closedPositions.reduce((s,p) => s + p.pl, 0);
+  const totalPLTot = closedPositions.reduce((s,p) => s + p.plTotal, 0);
+  const totalDiv   = closedPositions.reduce((s,p) => s + (p.dividends||0), 0);
+  const wins       = closedPositions.filter(p => p.pl >= 0).length;
+  const best       = closedPositions.reduce((a,b) => b.plPct > a.plPct ? b : a);
+  const worst      = closedPositions.reduce((a,b) => b.plPct < a.plPct ? b : a);
+
+  // Card riepilogo
+  if (sumEl) sumEl.innerHTML = `
+    <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L realizzato</div>
+      <div class="pf-metric-val" style="color:${totalPL>=0?'var(--up)':'var(--down)'}">${totalPL>=0?'+':''}${fmt(totalPL)} €</div></div>
+    <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L + dividendi</div>
+      <div class="pf-metric-val" style="color:${totalPLTot>=0?'var(--up)':'var(--down)'}">${totalPLTot>=0?'+':''}${fmt(totalPLTot)} €</div></div>
+    <div class="pf-card-metric"><div class="pf-metric-label">Dividendi incassati</div>
+      <div class="pf-metric-val" style="color:var(--up)">+ ${fmt(totalDiv)} €</div></div>
+    <div class="pf-card-metric"><div class="pf-metric-label">Operazioni</div>
+      <div class="pf-metric-val">${closedPositions.length}</div>
+      <div style="font-size:11px;color:var(--up);margin-top:2px">${wins} positive / ${closedPositions.length-wins} negative</div></div>
+    <div class="pf-card-metric"><div class="pf-metric-label">Miglior trade</div>
+      <div class="pf-metric-val" style="color:var(--up);font-size:16px">${best.ticker}</div>
+      <div style="font-size:11px;color:var(--up)">+${fmt(best.plPct,2)}%</div></div>
+    <div class="pf-card-metric"><div class="pf-metric-label">Peggior trade</div>
+      <div class="pf-metric-val" style="color:var(--down);font-size:16px">${worst.ticker}</div>
+      <div style="font-size:11px;color:var(--down)">${fmt(worst.plPct,2)}%</div></div>`;
+
+  // Tabella
+  if (tbody) tbody.innerHTML = closedPositions.slice().reverse().map(p => {
+    const up    = p.pl >= 0;
+    const upTot = p.plTotal >= 0;
+    const fmtD  = d => d ? new Date(d).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'2-digit'}) : '—';
+    const typeLabel = p.type === 'partial'
+      ? '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:var(--accent-bg);color:var(--accent)">Parziale</span>'
+      : '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:var(--up-bg);color:var(--up)">Completa</span>';
+    return `<tr style="border-bottom:.5px solid var(--border)">
+      <td style="padding:8px 14px;font-weight:500;color:var(--text)">${p.ticker}</td>
+      <td style="padding:8px 14px;text-align:center">${typeLabel}</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${p.qty}</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${fmt(p.buyPrice)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${fmt(p.sellPrice)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${fmt(p.invested)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${fmt(p.proceeds)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace;color:${up?'var(--up)':'var(--down)'}">${up?'+':''}${fmt(p.pl)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace;font-weight:500;color:${up?'var(--up)':'var(--down)'}">${up?'+':''}${fmt(p.plPct,2)}%</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace;color:var(--up)">${p.dividends>0?'+ '+fmt(p.dividends)+' €':'—'}</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace;font-weight:500;color:${upTot?'var(--up)':'var(--down)'}">${upTot?'+':''}${fmt(p.plTotal)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace;color:var(--text3)">${fmtD(p.sellDate)}</td>
+      <td style="padding:8px 14px;color:var(--text3);font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.notes||'—'}</td>
+      <td style="padding:8px 14px;text-align:center">
+        <button onclick="deleteClosedPosition(${p.id})" style="background:none;border:none;color:var(--down);cursor:pointer;font-size:14px" title="Elimina">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  if (updEl) updEl.textContent = `${closedPositions.length} operazioni registrate`;
+
+  renderClosedCharts(closedPositions);
+}
+
+// ── Grafici P&L realizzato ────────────────────────────────────────────────
+function renderClosedCharts(positions) {
+  // Barre per operazione
+  const barCtx = document.getElementById('closed-bar-chart');
+  if (barCtx) {
+    if (closedBarChart) closedBarChart.destroy();
+    if (positions.length) {
+      const labels = positions.map(p => `${p.ticker} ${new Date(p.sellDate).toLocaleDateString('it-IT',{day:'2-digit',month:'short'})}`);
+      const values = positions.map(p => p.pl);
+      const colors = values.map(v => v >= 0 ? 'rgba(34,201,138,0.75)' : 'rgba(240,82,82,0.75)');
+      closedBarChart = new Chart(barCtx, {
+        type: 'bar',
+        data: { labels, datasets:[{ data:values, backgroundColor:colors, borderRadius:4, borderSkipped:false }] },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#1c2030', bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+            callbacks:{ label: c => `P&L: ${c.parsed.y>=0?'+':''}${fmt(c.parsed.y)} €` }
+          }},
+          scales:{
+            x:{ ticks:{color:'#555c70',font:{size:10},maxRotation:30}, grid:{display:false}, border:{display:false} },
+            y:{ ticks:{color:'#555c70',font:{size:10},callback:v=>fmt(v,0)+'€'}, grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false} }
+          }
+        }
+      });
+    }
+  }
+
+  // Linea cumulativa
+  const lineCtx = document.getElementById('closed-line-chart');
+  if (lineCtx) {
+    if (closedLineChart) closedLineChart.destroy();
+    if (positions.length) {
+      const sorted = [...positions].sort((a,b) => new Date(a.sellDate)-new Date(b.sellDate));
+      let cum = 0;
+      const cumData = sorted.map(p => { cum += p.plTotal; return parseFloat(cum.toFixed(2)); });
+      const labels  = sorted.map(p => new Date(p.sellDate).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'2-digit'}));
+      const last    = cumData[cumData.length-1];
+      const col     = last >= 0 ? '#22c98a' : '#f05252';
+      closedLineChart = new Chart(lineCtx, {
+        type:'line',
+        data:{ labels, datasets:[{ data:cumData, borderColor:col, backgroundColor:col.replace(')',',0.08)').replace('rgb','rgba')||'rgba(34,201,138,0.08)', borderWidth:2, fill:true, pointRadius:4, pointBackgroundColor:col, tension:0.2 }] },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#1c2030', bodyColor:'#e8eaf0', borderColor:'rgba(255,255,255,0.1)', borderWidth:1,
+            callbacks:{ label: c => `P&L cumulativo: ${c.parsed.y>=0?'+':''}${fmt(c.parsed.y)} €` }
+          }},
+          scales:{
+            x:{ ticks:{color:'#555c70',font:{size:10},maxRotation:30}, grid:{display:false}, border:{display:false} },
+            y:{ ticks:{color:'#555c70',font:{size:10},callback:v=>fmt(v,0)+'€'}, grid:{color:'rgba(255,255,255,0.04)'}, border:{display:false}, position:'right' }
+          }
+        }
+      });
+    }
+  }
 }
 
 // ══ PORTAFOGLIO NOEMI ═══════════════════════════════════════════════════
