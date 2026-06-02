@@ -1126,10 +1126,12 @@ function showTab(name) {
     loadSVMIBData();
   }
   if (name === 'portfolio') {
-    loadPortfolio();
-    loadPortfolioHistory();
-    renderDividendsChart();
-    loadClosedPositions();
+    // Prima carica le posizioni chiuse, poi aggiorna tutto il portafoglio
+    loadClosedPositions().then(() => {
+      loadPortfolio();
+      loadPortfolioHistory();
+      renderDividendsChart();
+    });
   }
   if (name === 'noemi') {
     loadNoemi();
@@ -2719,6 +2721,19 @@ const PF_COLORS = ['#4f8ef7','#22c98a','#f05252','#ef9f27','#a78bfa','#f472b6','
 
 let pfPieChart = null;
 
+// Calcola quantità residua tenendo conto delle vendite registrate
+function getRemainingQty(ticker, originalQty) {
+  const sold = closedPositions
+    .filter(p => p.ticker === ticker)
+    .reduce((sum, p) => sum + p.qty, 0);
+  return Math.max(0, originalQty - sold);
+}
+
+// Verifica se una posizione è completamente chiusa
+function isFullyClosed(ticker, originalQty) {
+  return getRemainingQty(ticker, originalQty) === 0;
+}
+
 // Dividendi per ticker (da DIVIDENDS array)
 function getDivByTicker(ticker) {
   const d = DIVIDENDS.find(d => d.ticker === ticker);
@@ -2744,27 +2759,44 @@ async function loadPortfolio() {
     const pieLabels = [], pieData = [], pieColors = [];
 
     PORTFOLIO.forEach((pos, i) => {
-      const q     = data[i];
-      const price = q && !q.error ? parseFloat(q.close) : null;
-      const value = price !== null ? price * pos.qty : null;
-      const pl    = value !== null ? value - pos.invested : null;
-      const plPct = pl !== null ? (pl / pos.invested * 100) : null;
+      const q           = data[i];
+      const price       = q && !q.error ? parseFloat(q.close) : null;
+      const remainingQty = getRemainingQty(pos.ticker, pos.qty);
+      const fullyClosed  = remainingQty === 0;
+
+      // Investito residuo proporzionale alla quantità rimanente
+      const remainingInvested = fullyClosed ? 0 : (pos.invested / pos.qty) * remainingQty;
+      const value = price !== null && !fullyClosed ? price * remainingQty : null;
+      const pl    = value !== null ? value - remainingInvested : null;
+      const plPct = pl !== null ? (pl / remainingInvested * 100) : null;
       const up    = pl !== null && pl >= 0;
 
-      totalInvested += pos.invested;
-      if (value !== null) totalValue += value;
+      if (!fullyClosed) {
+        totalInvested += remainingInvested;
+        if (value !== null) totalValue += value;
+      }
 
       // Riga tabella
+      // Salta posizioni completamente chiuse
+      if (fullyClosed) return;
+
       // Dividendi per questo titolo
       const divAmount  = getDivByTicker(pos.ticker);
       const plTot      = pl !== null ? pl + divAmount : null;
-      const plTotPct   = plTot !== null ? (plTot / pos.invested * 100) : null;
+      const plTotPct   = plTot !== null ? (plTot / remainingInvested * 100) : null;
       const upTot      = plTot !== null && plTot >= 0;
+
+      const partialBadge = remainingQty < pos.qty
+        ? '<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(239,159,39,0.15);color:#ef9f27;margin-left:4px">parziale</span>'
+        : '';
+      const qtyCell = remainingQty < pos.qty
+        ? remainingQty + '<div style="font-size:10px;color:var(--text3)">su ' + pos.qty + ' originali</div>'
+        : remainingQty.toLocaleString('it-IT');
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${pos.name}<br><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${pos.ticker}</span></td>
-        <td style="text-align:right">${pos.qty.toLocaleString('it-IT')}</td>
+        <td>${pos.name}${partialBadge}<br><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${pos.ticker}</span></td>
+        <td style="text-align:right">${qtyCell}</td>
         <td style="text-align:right">${fmt(pos.avgPrice)} €</td>
         <td style="text-align:right;color:${price!==null?(up?'var(--up)':'var(--text)'):'var(--text3)'}">${price !== null ? fmt(price)+' €' : '—'}</td>
         <td style="text-align:right">${fmt(pos.invested)} €</td>
@@ -2783,9 +2815,9 @@ async function loadPortfolio() {
         </td>`;
       tbody.appendChild(tr);
 
-      // Dati torta (usa valore attuale se disponibile, altrimenti investito)
+      // Dati torta — solo posizioni aperte, usa valore residuo
       pieLabels.push(pos.ticker);
-      pieData.push(value !== null ? parseFloat(value.toFixed(2)) : pos.invested);
+      pieData.push(value !== null ? parseFloat(value.toFixed(2)) : remainingInvested);
       pieColors.push(PF_COLORS[i % PF_COLORS.length]);
     });
 
