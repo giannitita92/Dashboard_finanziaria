@@ -3029,13 +3029,18 @@ async function loadClosedPositions() {
   if (!CP_BIN_KEY || !CP_BIN_ID) { renderClosed(); return; }
   try {
     const r = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': CP_BIN_KEY }
+      headers: { 'X-Master-Key': CP_BIN_KEY, 'X-Bin-Meta': 'false' }
     });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    closedPositions = data.record?.closed_positions || [];
+    // JSONBin v3: risposta può essere {record:{...}} oppure direttamente {...}
+    const record = data.record || data;
+    closedPositions = record.closed_positions || [];
+    console.log('Loaded closed positions:', closedPositions.length);
     renderClosed();
   } catch(e) {
     console.error('Load closed error:', e);
+    closedPositions = [];
     renderClosed();
   }
 }
@@ -3044,23 +3049,42 @@ async function loadClosedPositions() {
 async function saveAllClosed() {
   if (!CP_BIN_KEY || !CP_BIN_ID) return;
   try {
-    // Leggi dati esistenti per non sovrascrivere il sentiment
-    const r = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': CP_BIN_KEY }
-    });
-    const existing = await r.json();
-    const record   = existing.record || {};
+    // Leggi dati esistenti
+    let record = { sentiment: [], closed_positions: [] };
+    try {
+      const rGet = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
+        headers: { 'X-Master-Key': CP_BIN_KEY, 'X-Bin-Meta': 'false' }
+      });
+      if (rGet.ok) {
+        const existing = await rGet.json();
+        // JSONBin v3 wrappa in .record
+        record = existing.record || existing || record;
+      }
+    } catch(e) {
+      console.warn('Read before save failed, proceeding anyway:', e);
+    }
+
+    // Aggiorna solo closed_positions, preserva il resto
     record.closed_positions = closedPositions;
 
-    await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}`, {
+    const rPut = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}`, {
       method:  'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': CP_BIN_KEY },
-      body:    JSON.stringify(record)
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': CP_BIN_KEY,
+        'X-Bin-Versioning': 'false'
+      },
+      body: JSON.stringify(record)
     });
+
+    if (!rPut.ok) {
+      const errText = await rPut.text();
+      throw new Error(`HTTP ${rPut.status}: ${errText}`);
+    }
     console.log('Closed positions saved:', closedPositions.length);
   } catch(e) {
     console.error('Save closed error:', e);
-    alert('Errore nel salvataggio. Riprova.');
+    alert('Errore nel salvataggio: ' + e.message);
   }
 }
 
