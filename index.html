@@ -406,7 +406,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div style="margin-bottom:6px">
       <div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:8px">
         <span style="flex:1;height:.5px;background:var(--border)"></span>
-        Posizioni chiuse · realizzato
+        <span style="cursor:pointer;display:flex;align-items:center;gap:6px;flex:1;justify-content:center" onclick="toggleKPI('kpi-closed','arr-closed')">
+          Posizioni chiuse · realizzato
+          <span id="arr-closed" style="font-size:10px;transition:transform .2s">▼</span>
+        </span>
         <span style="flex:1;height:.5px;background:var(--border)"></span>
       </div>
     </div>
@@ -423,7 +426,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div style="margin-bottom:6px">
       <div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:8px">
         <span style="flex:1;height:.5px;background:var(--border)"></span>
-        Posizioni aperte · non realizzato
+        <span style="cursor:pointer;display:flex;align-items:center;gap:6px;flex:1;justify-content:center" onclick="toggleKPI('kpi-open','arr-open')">
+          Posizioni aperte · non realizzato
+          <span id="arr-open" style="font-size:10px;transition:transform .2s">▼</span>
+        </span>
         <span style="flex:1;height:.5px;background:var(--border)"></span>
       </div>
     </div>
@@ -440,7 +446,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div style="margin-bottom:6px">
       <div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:8px">
         <span style="flex:1;height:.5px;background:var(--border)"></span>
-        Totale cumulato · chiuse + aperte
+        <span style="cursor:pointer;display:flex;align-items:center;gap:6px;flex:1;justify-content:center" onclick="toggleKPI('kpi-total','arr-total')">
+          Totale cumulato · chiuse + aperte
+          <span id="arr-total" style="font-size:10px;transition:transform .2s">▼</span>
+        </span>
         <span style="flex:1;height:.5px;background:var(--border)"></span>
       </div>
     </div>
@@ -2769,6 +2778,16 @@ const PORTFOLIO = [
 const PF_COLORS = ['#4f8ef7','#22c98a','#f05252','#ef9f27','#a78bfa','#f472b6','#34d399','#60a5fa','#fb923c'];
 
 let pfPieChart = null;
+
+// ── Toggle collasso KPI ──────────────────────────────────────────────────
+function toggleKPI(sectionId, arrowId) {
+  const section = document.getElementById(sectionId);
+  const arrow   = document.getElementById(arrowId);
+  if (!section) return;
+  const isOpen = section.style.display !== 'none';
+  section.style.display = isOpen ? 'none' : 'grid';
+  if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
 
 // ── Aggiorna i tre blocchi KPI ───────────────────────────────────────────
 function updateKPIs(openInvested, openValue, openPL) {
