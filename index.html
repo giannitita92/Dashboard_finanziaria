@@ -1177,12 +1177,10 @@ function showTab(name) {
     loadSVMIBData();
   }
   if (name === 'portfolio') {
-    // Prima carica le posizioni chiuse, poi aggiorna tutto il portafoglio
-    loadClosedPositions().then(() => {
-      loadPortfolio();
-      loadPortfolioHistory();
-      renderDividendsChart();
-    });
+    // loadClosedPositions chiama loadPortfolio internamente dopo aver caricato i dati
+    loadClosedPositions();
+    loadPortfolioHistory();
+    renderDividendsChart();
   }
   if (name === 'noemi') {
     loadNoemi();
@@ -3157,6 +3155,8 @@ async function loadClosedPositions() {
     closedPositions = record.closed_positions || [];
     console.log('Loaded closed positions:', closedPositions.length);
     renderClosed();
+    // Ricarica portafoglio per aggiornare i KPI con i dati delle posizioni chiuse
+    loadPortfolio();
   } catch(e) {
     console.error('Load closed error:', e);
     closedPositions = [];
