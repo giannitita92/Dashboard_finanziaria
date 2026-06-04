@@ -90,6 +90,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .pf-hint strong{color:var(--text);font-weight:500}
 .pf-hint code{font-family:'DM Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:12px;color:var(--accent)}
 .pf-card-metric{background:var(--surface2);border-radius:var(--rs);padding:14px 16px}
+.pf-card-metric-sm{background:var(--surface2);border-radius:var(--rs);padding:10px 12px}
+.pf-metric-val-sm{font-size:16px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
 .pf-metric-label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
 .pf-metric-val{font-size:20px;font-weight:500;font-family:'DM Mono',monospace;color:var(--text)}
 #pf-table tbody tr{border-bottom:.5px solid var(--border);transition:background .1s}
@@ -433,13 +435,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <span style="flex:1;height:.5px;background:var(--border)"></span>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px" id="kpi-open">
-      <div class="pf-card-metric"><div class="pf-metric-label">Investito residuo</div><div class="pf-metric-val" id="ko-invested">—</div></div>
-      <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="ko-value">—</div></div>
-      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L non realizzato</div><div class="pf-metric-val" id="ko-pl">—</div></div>
-      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="ko-plpct">—</div></div>
-      <div class="pf-card-metric"><div class="pf-metric-label">Dividendi su aperte</div><div class="pf-metric-val" id="ko-div">—</div></div>
-      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L + dividendi</div><div class="pf-metric-val" id="ko-pltot">—</div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;margin-bottom:14px" id="kpi-open">
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">Investito</div><div class="pf-metric-val-sm" id="ko-invested">—</div></div>
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">Valore att.</div><div class="pf-metric-val-sm" id="ko-value">—</div></div>
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">P&amp;L €</div><div class="pf-metric-val-sm" id="ko-pl">—</div></div>
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val-sm" id="ko-plpct">—</div></div>
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">Dividendi</div><div class="pf-metric-val-sm" id="ko-div">—</div></div>
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">P&amp;L + div €</div><div class="pf-metric-val-sm" id="ko-pltot">—</div></div>
+      <div class="pf-card-metric-sm"><div class="pf-metric-label">P&amp;L + div %</div><div class="pf-metric-val-sm" id="ko-pltotpct">—</div></div>
     </div>
 
     <!-- ══ KPI CUMULATI ══════════════════════════════════════════════ -->
@@ -2839,6 +2842,7 @@ function updateKPIs(openInvested, openValue, openPL) {
   setEl('ko-plpct',    `${s(openPLPct)}${fmt(openPLPct,2)}%`,        col(openPLPct));
   setEl('ko-div',      `+ ${fmt(openDivs)} €`,                        'var(--up)');
   setEl('ko-pltot',    `${s(openPLTot)}${fmt(openPLTot)} €`,         col(openPLTot));
+  setEl('ko-pltotpct', `${s(openPLTotPct)}${fmt(openPLTotPct,2)}%`,  col(openPLTotPct));
 
   // ── KPI CUMULATI ─────────────────────────────────────────────────────
   const totInvested = closedInvested + openInvested;
