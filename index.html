@@ -402,8 +402,59 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <!-- ══ PORTAFOGLIO ══════════════════════════════════════════════════════ -->
   <div id="sec-portfolio" class="section">
 
-    <!-- Riepilogo totale -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px" id="pf-summary">
+    <!-- ══ KPI POSIZIONI CHIUSE ════════════════════════════════════ -->
+    <div style="margin-bottom:6px">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:8px">
+        <span style="flex:1;height:.5px;background:var(--border)"></span>
+        Posizioni chiuse · realizzato
+        <span style="flex:1;height:.5px;background:var(--border)"></span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px" id="kpi-closed">
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L realizzato</div><div class="pf-metric-val" id="kc-pl">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="kc-plpct">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Dividendi su chiuse</div><div class="pf-metric-val" id="kc-div">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L + dividendi</div><div class="pf-metric-val" id="kc-pltot">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L tot %</div><div class="pf-metric-val" id="kc-pltotpct">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Capitale liberato</div><div class="pf-metric-val" id="kc-proceeds">—</div></div>
+    </div>
+
+    <!-- ══ KPI POSIZIONI APERTE ══════════════════════════════════════ -->
+    <div style="margin-bottom:6px">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:8px">
+        <span style="flex:1;height:.5px;background:var(--border)"></span>
+        Posizioni aperte · non realizzato
+        <span style="flex:1;height:.5px;background:var(--border)"></span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px" id="kpi-open">
+      <div class="pf-card-metric"><div class="pf-metric-label">Investito residuo</div><div class="pf-metric-val" id="ko-invested">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="ko-value">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L non realizzato</div><div class="pf-metric-val" id="ko-pl">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="ko-plpct">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Dividendi su aperte</div><div class="pf-metric-val" id="ko-div">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L + dividendi</div><div class="pf-metric-val" id="ko-pltot">—</div></div>
+    </div>
+
+    <!-- ══ KPI CUMULATI ══════════════════════════════════════════════ -->
+    <div style="margin-bottom:6px">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:4px 2px;display:flex;align-items:center;gap:8px">
+        <span style="flex:1;height:.5px;background:var(--border)"></span>
+        Totale cumulato · chiuse + aperte
+        <span style="flex:1;height:.5px;background:var(--border)"></span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px" id="kpi-total">
+      <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="kt-invested">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L complessivo</div><div class="pf-metric-val" id="kt-pl">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L %</div><div class="pf-metric-val" id="kt-plpct">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">Dividendi totali</div><div class="pf-metric-val" id="kt-div">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L + dividendi</div><div class="pf-metric-val" id="kt-pltot">—</div></div>
+      <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L tot %</div><div class="pf-metric-val" id="kt-pltotpct">—</div></div>
+    </div>
+
+    <!-- Riepilogo totale (vecchio — ora nascosto, sostituito dai KPI sopra) -->
+    <div style="display:none" id="pf-summary">
       <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="pf-invested">€ 42.188,08</div></div>
       <div class="pf-card-metric"><div class="pf-metric-label">Valore attuale</div><div class="pf-metric-val" id="pf-value">—</div></div>
       <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L totale</div><div class="pf-metric-val" id="pf-pl">—</div></div>
@@ -2721,6 +2772,73 @@ const PF_COLORS = ['#4f8ef7','#22c98a','#f05252','#ef9f27','#a78bfa','#f472b6','
 
 let pfPieChart = null;
 
+// ── Aggiorna i tre blocchi KPI ───────────────────────────────────────────
+function updateKPIs(openInvested, openValue, openPL) {
+  const setEl = (id, val, color) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val;
+    if (color) el.style.color = color;
+  };
+  const col = v => parseFloat(v) >= 0 ? 'var(--up)' : 'var(--down)';
+  const s   = v => parseFloat(v) >= 0 ? '+' : '';
+
+  // ── KPI POSIZIONI CHIUSE ─────────────────────────────────────────────
+  const closedPL       = closedPositions.reduce((s,p) => s + p.pl, 0);
+  const closedInvested = closedPositions.reduce((s,p) => s + p.invested, 0);
+  const closedProceeds = closedPositions.reduce((s,p) => s + p.proceeds, 0);
+  const closedDivs     = closedPositions.reduce((s,p) => s + (p.dividends||0), 0);
+  const closedPLTot    = closedPL + closedDivs;
+  const closedPLPct    = closedInvested > 0 ? (closedPL / closedInvested * 100) : 0;
+  const closedPLTotPct = closedInvested > 0 ? (closedPLTot / closedInvested * 100) : 0;
+
+  if (closedPositions.length > 0) {
+    setEl('kc-pl',       `${s(closedPL)}${fmt(closedPL)} €`,         col(closedPL));
+    setEl('kc-plpct',    `${s(closedPLPct)}${fmt(closedPLPct,2)}%`,  col(closedPLPct));
+    setEl('kc-div',      `+ ${fmt(closedDivs)} €`,                    'var(--up)');
+    setEl('kc-pltot',    `${s(closedPLTot)}${fmt(closedPLTot)} €`,   col(closedPLTot));
+    setEl('kc-pltotpct', `${s(closedPLTotPct)}${fmt(closedPLTotPct,2)}%`, col(closedPLTotPct));
+    setEl('kc-proceeds', `${fmt(closedProceeds)} €`,                  'var(--text)');
+  } else {
+    ['kc-pl','kc-plpct','kc-div','kc-pltot','kc-pltotpct','kc-proceeds']
+      .forEach(id => setEl(id, 'Nessuna operazione chiusa', 'var(--text3)'));
+  }
+
+  // ── KPI POSIZIONI APERTE ─────────────────────────────────────────────
+  // Dividendi solo sui titoli ancora aperti (non chiusi completamente)
+  const openTickers = PORTFOLIO
+    .filter(p => getRemainingQty(p.ticker, p.qty) > 0)
+    .map(p => p.ticker);
+  const openDivs = DIVIDENDS
+    .filter(d => openTickers.includes(d.ticker))
+    .reduce((s,d) => s + d.amount, 0);
+  const openPLTot    = openPL + openDivs;
+  const openPLPct    = openInvested > 0 ? (openPL / openInvested * 100) : 0;
+  const openPLTotPct = openInvested > 0 ? (openPLTot / openInvested * 100) : 0;
+
+  setEl('ko-invested', `${fmt(openInvested)} €`,                     'var(--text)');
+  setEl('ko-value',    openValue > 0 ? `${fmt(openValue)} €` : '—',  'var(--text)');
+  setEl('ko-pl',       `${s(openPL)}${fmt(openPL)} €`,               col(openPL));
+  setEl('ko-plpct',    `${s(openPLPct)}${fmt(openPLPct,2)}%`,        col(openPLPct));
+  setEl('ko-div',      `+ ${fmt(openDivs)} €`,                        'var(--up)');
+  setEl('ko-pltot',    `${s(openPLTot)}${fmt(openPLTot)} €`,         col(openPLTot));
+
+  // ── KPI CUMULATI ─────────────────────────────────────────────────────
+  const totInvested = closedInvested + openInvested;
+  const totPL       = closedPL + openPL;
+  const totDivs     = DIVIDENDS_TOTAL; // tutti i dividendi
+  const totPLTot    = totPL + totDivs;
+  const totPLPct    = totInvested > 0 ? (totPL / totInvested * 100) : 0;
+  const totPLTotPct = totInvested > 0 ? (totPLTot / totInvested * 100) : 0;
+
+  setEl('kt-invested', `${fmt(totInvested)} €`,                       'var(--text)');
+  setEl('kt-pl',       `${s(totPL)}${fmt(totPL)} €`,                 col(totPL));
+  setEl('kt-plpct',    `${s(totPLPct)}${fmt(totPLPct,2)}%`,          col(totPLPct));
+  setEl('kt-div',      `+ ${fmt(totDivs)} €`,                         'var(--up)');
+  setEl('kt-pltot',    `${s(totPLTot)}${fmt(totPLTot)} €`,           col(totPLTot));
+  setEl('kt-pltotpct', `${s(totPLTotPct)}${fmt(totPLTotPct,2)}%`,   col(totPLTotPct));
+}
+
 // Calcola quantità residua tenendo conto delle vendite registrate
 function getRemainingQty(ticker, originalQty) {
   const sold = closedPositions
@@ -2836,6 +2954,7 @@ async function loadPortfolio() {
 
     document.getElementById('pf-update').textContent = `Aggiornato: ${now}`;
     updateRealPL(totalValue);
+    updateKPIs(totalInvested, totalValue, totalValue - totalInvested);
 
     // Box P&L + dividendi nelle card riepilogo
     if (totalValue > 0) {
