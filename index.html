@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8">
@@ -1826,9 +1826,8 @@ async function loadSentiment() {
 
 // ══ SENTIMENT vs FTSE MIB ═══════════════════════════════════════════════
 // JSONBin config — verrà completata con API key
-const JSONBIN_KEY  = '$2a$10$NLKP6xTdyIuG7e3djQfCneweU/YCD6JE1KWjCpVlSwz3/tJf7x7B6';
-const JSONBIN_BIN  = '6a1cb68421f9ee59d2a29039';
-const JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbyPFRLCys3rQmehI0nDQcbqMLFhtwmBb6f3j-PLr4j4kJbxbF9y3Jo0_fIv5kH9oB-Jkw/exec';
+const JSONBIN_KEY=''; const JSONBIN_BIN=''; const JSONBIN_BASE='';
 
 let svmibChart   = null;
 let svmibDays    = 30;
@@ -1837,7 +1836,7 @@ let svmibSentData= []; // dati sentiment storici
 
 // ── Salva sentiment mattutino su JSONBin ─────────────────────────────────
 async function saveMorningSentiment(score) {
-  if (!JSONBIN_KEY || !JSONBIN_BIN) return;
+  if (!GS_URL) return;
   const today = new Date().toISOString().slice(0,10);
   const hour  = new Date().getHours();
   // Salva solo tra le 7:00 e le 9:30 (pre-market)
@@ -1845,41 +1844,35 @@ async function saveMorningSentiment(score) {
 
   try {
     // Leggi dati esistenti
-    const r = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
-    });
-    const existing = await r.json();
-    const records  = existing.record?.sentiment || [];
+    const rGet  = await fetch(`${GS_URL}?action=read`);
+    const existing = rGet.ok ? await rGet.json() : { sentiment: [], closed_positions: [] };
+    const records  = existing.sentiment || [];
 
     // Aggiungi solo se non esiste già per oggi
     if (records.find(s => s.date === today)) return;
 
     records.push({ date: today, score, savedAt: new Date().toISOString() });
-    // Mantieni solo ultimi 90 giorni
-    const trimmed = records.slice(-90);
+    existing.sentiment = records.slice(-90);
 
-    await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN}`, {
-      method:  'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
-      body:    JSON.stringify({ sentiment: trimmed })
+    await fetch(GS_URL, {
+      method: 'POST',
+      body:   JSON.stringify({ action: 'write', data: existing })
     });
     console.log('Sentiment salvato:', today, score);
   } catch(e) {
-    console.warn('JSONBin save error:', e);
+    console.warn('GS sentiment save error:', e);
   }
 }
 
 // ── Carica sentiment storico da JSONBin ──────────────────────────────────
 async function loadSentimentHistory() {
-  if (!JSONBIN_KEY || !JSONBIN_BIN) return [];
   try {
-    const r = await fetch(`${JSONBIN_BASE}/${JSONBIN_BIN}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_KEY }
-    });
+    const r = await fetch(`${GS_URL}?action=read`);
+    if (!r.ok) return [];
     const data = await r.json();
-    return data.record?.sentiment || [];
+    return data.sentiment || [];
   } catch(e) {
-    console.warn('JSONBin load error:', e);
+    console.warn('GS load sentiment error:', e);
     return [];
   }
 }
@@ -3161,72 +3154,45 @@ let closedBarChart  = null;
 let closedLineChart = null;
 
 // JSONBin key/bin (già configurati)
-const CP_BIN_KEY = JSONBIN_KEY;
-const CP_BIN_ID  = JSONBIN_BIN;
+// Google Sheets gestisce tutto tramite GS_URL
 
-// ── Load da JSONBin ───────────────────────────────────────────────────────
+// ── Load da Google Sheets ────────────────────────────────────────────────
 async function loadClosedPositions() {
-  if (!CP_BIN_KEY || !CP_BIN_ID) { renderClosed(); return; }
   try {
-    const r = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': CP_BIN_KEY, 'X-Bin-Meta': 'false' }
-    });
+    const r = await fetch(`${GS_URL}?action=read`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
-    // JSONBin v3: risposta può essere {record:{...}} oppure direttamente {...}
-    const record = data.record || data;
-    closedPositions = record.closed_positions || [];
-    console.log('Loaded closed positions:', closedPositions.length);
-    renderClosed();
-    // Ricarica portafoglio per aggiornare i KPI con i dati delle posizioni chiuse
-    loadPortfolio();
+    closedPositions = data.closed_positions || [];
+    console.log('Loaded from Google Sheets:', closedPositions.length, 'positions');
   } catch(e) {
     console.error('Load closed error:', e);
     closedPositions = [];
-    renderClosed();
   }
+  renderClosed();
+  loadPortfolio();
 }
 
-// ── Save su JSONBin ───────────────────────────────────────────────────────
+// ── Save su Google Sheets ────────────────────────────────────────────────
 async function saveAllClosed() {
-  if (!CP_BIN_KEY || !CP_BIN_ID) return;
   try {
-    // Leggi dati esistenti
-    let record = { sentiment: [], closed_positions: [] };
+    // Prima leggi i dati esistenti per preservare il sentiment
+    let existing = { closed_positions: [], sentiment: [] };
     try {
-      const rGet = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': CP_BIN_KEY, 'X-Bin-Meta': 'false' }
-      });
-      if (rGet.ok) {
-        const existing = await rGet.json();
-        // JSONBin v3 wrappa in .record
-        record = existing.record || existing || record;
-      }
-    } catch(e) {
-      console.warn('Read before save failed, proceeding anyway:', e);
-    }
+      const rGet = await fetch(`${GS_URL}?action=read`);
+      if (rGet.ok) existing = await rGet.json();
+    } catch(e) { console.warn('Read before save failed:', e); }
 
-    // Aggiorna solo closed_positions, preserva il resto
-    record.closed_positions = closedPositions;
+    existing.closed_positions = closedPositions;
 
-    const rPut = await fetch(`${JSONBIN_BASE}/${CP_BIN_ID}`, {
-      method:  'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': CP_BIN_KEY,
-        'X-Bin-Versioning': 'false'
-      },
-      body: JSON.stringify(record)
+    const r = await fetch(GS_URL, {
+      method:  'POST',
+      body:    JSON.stringify({ action: 'write', data: existing })
     });
-
-    if (!rPut.ok) {
-      const errText = await rPut.text();
-      throw new Error(`HTTP ${rPut.status}: ${errText}`);
-    }
-    console.log('Closed positions saved:', closedPositions.length);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    console.log('Saved to Google Sheets:', closedPositions.length, 'positions');
   } catch(e) {
-    console.error('Save closed error:', e);
-    alert('Errore nel salvataggio: ' + e.message);
+    console.error('Save error:', e);
+    alert('Errore salvataggio: ' + e.message);
   }
 }
 
