@@ -1826,7 +1826,7 @@ async function loadSentiment() {
 
 // ══ SENTIMENT vs FTSE MIB ═══════════════════════════════════════════════
 // JSONBin config — verrà completata con API key
-const GS_URL = 'https://script.google.com/macros/s/AKfycbyPFRLCys3rQmehI0nDQcbqMLFhtwmBb6f3j-PLr4j4kJbxbF9y3Jo0_fIv5kH9oB-Jkw/exec';
+const GS_URL = 'https://script.google.com/macros/s/AKfycbwXoiV6dj_gFEnqwS2mQry9W3r0Qc1klP3exhNFGjbRfnGBeTF-C6g2wxXhgU5EhYjHig/exec';
 const JSONBIN_KEY=''; const JSONBIN_BIN=''; const JSONBIN_BASE='';
 
 let svmibChart   = null;
@@ -1854,10 +1854,8 @@ async function saveMorningSentiment(score) {
     records.push({ date: today, score, savedAt: new Date().toISOString() });
     existing.sentiment = records.slice(-90);
 
-    await fetch(GS_URL, {
-      method: 'POST',
-      body:   JSON.stringify({ action: 'write', data: existing })
-    });
+    const encoded2 = encodeURIComponent(JSON.stringify(existing));
+    await fetch(`${GS_URL}?action=write&data=${encoded2}`);
     console.log('Sentiment salvato:', today, score);
   } catch(e) {
     console.warn('GS sentiment save error:', e);
@@ -3172,10 +3170,10 @@ async function loadClosedPositions() {
   loadPortfolio();
 }
 
-// ── Save su Google Sheets ────────────────────────────────────────────────
+// ── Save su Google Sheets (GET per evitare CORS) ─────────────────────────
 async function saveAllClosed() {
   try {
-    // Prima leggi i dati esistenti per preservare il sentiment
+    // Leggi dati esistenti
     let existing = { closed_positions: [], sentiment: [] };
     try {
       const rGet = await fetch(`${GS_URL}?action=read`);
@@ -3184,11 +3182,12 @@ async function saveAllClosed() {
 
     existing.closed_positions = closedPositions;
 
-    const r = await fetch(GS_URL, {
-      method:  'POST',
-      body:    JSON.stringify({ action: 'write', data: existing })
-    });
+    // Usa GET con data encodata per evitare CORS su POST
+    const encoded = encodeURIComponent(JSON.stringify(existing));
+    const r = await fetch(`${GS_URL}?action=write&data=${encoded}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const result = await r.json();
+    if (!result.ok) throw new Error('Save failed');
     console.log('Saved to Google Sheets:', closedPositions.length, 'positions');
   } catch(e) {
     console.error('Save error:', e);
