@@ -465,6 +465,87 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="pf-card-metric"><div class="pf-metric-label">P&amp;L tot %</div><div class="pf-metric-val" id="kt-pltotpct">—</div></div>
     </div>
 
+    <!-- Pulsante nuovo acquisto -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+      <button onclick="toggleBuyForm()" id="btn-open-buy-form"
+        style="background:var(--up);color:#fff;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif">
+        + Registra nuovo acquisto
+      </button>
+    </div>
+
+    <!-- Form nuovo acquisto -->
+    <div id="buy-form" style="display:none;background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:14px">🛒 Registra nuovo acquisto</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">
+
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Titolo *</div>
+          <select id="bf-ticker" style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+            <option value="">Seleziona esistente o nuovo...</option>
+            <option value="BMPS">BMPS · Monte Paschi</option>
+            <option value="ISP">ISP · Intesa Sanpaolo</option>
+            <option value="LDO">LDO · Leonardo</option>
+            <option value="BAMI">BAMI · Banco BPM</option>
+            <option value="G">G · Generali</option>
+            <option value="UCG">UCG · UniCredit</option>
+            <option value="PST">PST · Poste Italiane</option>
+            <option value="ENEL">ENEL · Enel</option>
+            <option value="MB">MB · Mediobanca</option>
+            <option value="__new__">+ Nuovo titolo...</option>
+          </select>
+        </div>
+
+        <div id="bf-new-ticker-wrap" style="display:none">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Ticker nuovo (es. RACE)</div>
+          <input type="text" id="bf-new-ticker" placeholder="es. RACE" style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;text-transform:uppercase">
+        </div>
+
+        <div id="bf-new-name-wrap" style="display:none">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Nome completo</div>
+          <input type="text" id="bf-new-name" placeholder="es. Ferrari" style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+        </div>
+
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Quantità acquistata *</div>
+          <input type="number" id="bf-qty" placeholder="es. 100" min="1" oninput="updateBFPreview()"
+            style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace">
+        </div>
+
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Prezzo di acquisto (€) *</div>
+          <input type="number" id="bf-price" placeholder="es. 8.50" step="0.0001" oninput="updateBFPreview()"
+            style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-family:'DM Mono',monospace">
+        </div>
+
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Data acquisto *</div>
+          <input type="date" id="bf-date"
+            style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+        </div>
+
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Note</div>
+          <input type="text" id="bf-notes" placeholder="opzionale"
+            style="width:100%;background:var(--surface);border:.5px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px">
+        </div>
+      </div>
+
+      <div id="bf-preview" style="background:var(--surface);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text3)">
+        Inserisci quantità e prezzo per vedere il totale investito
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="saveBuyPosition()"
+          style="background:var(--up);color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif">
+          💾 Salva acquisto
+        </button>
+        <button onclick="toggleBuyForm()"
+          style="background:var(--surface);color:var(--text2);border:.5px solid var(--border2);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif">
+          Annulla
+        </button>
+      </div>
+    </div>
+
     <!-- Riepilogo totale (vecchio — ora nascosto, sostituito dai KPI sopra) -->
     <div style="display:none" id="pf-summary">
       <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="pf-invested">€ 42.188,08</div></div>
@@ -2851,6 +2932,155 @@ function updateKPIs(openInvested, openValue, openPL) {
   setEl('kt-pltotpct', `${s(totPLTotPct)}${fmt(totPLTotPct,2)}%`,   col(totPLTotPct));
 }
 
+// ══ NUOVI ACQUISTI ═══════════════════════════════════════════════════════
+let extraBuys = []; // acquisti aggiuntivi registrati dall'utente
+
+// ── Mappa ticker → eoSym/tvSym/name per nuovi titoli ─────────────────────
+const TICKER_INFO = {
+  BMPS:{eoSym:'BMPS.MI',name:'Monte Paschi Siena'}, ISP:{eoSym:'ISP.MI',name:'Intesa Sanpaolo'},
+  LDO:{eoSym:'LDO.MI',name:'Leonardo'}, BAMI:{eoSym:'BAMI.MI',name:'Banco BPM'},
+  G:{eoSym:'G.MI',name:'Generali'}, UCG:{eoSym:'UCG.MI',name:'UniCredit'},
+  PST:{eoSym:'PST.MI',name:'Poste Italiane'}, ENEL:{eoSym:'ENEL.MI',name:'Enel'},
+  MB:{eoSym:'MB.MI',name:'Mediobanca'},
+};
+
+// ── Toggle form ───────────────────────────────────────────────────────────
+function toggleBuyForm() {
+  const form = document.getElementById('buy-form');
+  if (!form) return;
+  const visible = form.style.display !== 'none';
+  form.style.display = visible ? 'none' : 'block';
+  if (!visible) {
+    const today = new Date().toISOString().slice(0,10);
+    const dateEl = document.getElementById('bf-date');
+    if (dateEl && !dateEl.value) dateEl.value = today;
+  }
+}
+
+// ── Mostra campi nuovo titolo ────────────────────────────────────────────
+document.addEventListener('change', (e) => {
+  if (e.target?.id === 'bf-ticker') {
+    const isNew = e.target.value === '__new__';
+    document.getElementById('bf-new-ticker-wrap').style.display = isNew ? 'block' : 'none';
+    document.getElementById('bf-new-name-wrap').style.display   = isNew ? 'block' : 'none';
+  }
+});
+
+// ── Anteprima ─────────────────────────────────────────────────────────────
+function updateBFPreview() {
+  const qty   = parseFloat(document.getElementById('bf-qty')?.value || 0);
+  const price = parseFloat(document.getElementById('bf-price')?.value || 0);
+  const prev  = document.getElementById('bf-preview');
+  if (!prev) return;
+  if (!qty || !price) {
+    prev.textContent = 'Inserisci quantità e prezzo per vedere il totale investito';
+    return;
+  }
+  const total = qty * price;
+  prev.innerHTML = `Investito: <b style="font-family:'DM Mono',monospace;color:var(--text)">€ ${fmt(total)}</b> &nbsp;·&nbsp; ${qty} az. × ${fmt(price,4)} €`;
+}
+
+// ── Salva acquisto ────────────────────────────────────────────────────────
+async function saveBuyPosition() {
+  let ticker = document.getElementById('bf-ticker')?.value;
+  const qty   = parseFloat(document.getElementById('bf-qty')?.value);
+  const price = parseFloat(document.getElementById('bf-price')?.value);
+  const date  = document.getElementById('bf-date')?.value;
+  const notes = document.getElementById('bf-notes')?.value || '';
+
+  let newName = null, newEoSym = null;
+  if (ticker === '__new__') {
+    ticker   = (document.getElementById('bf-new-ticker')?.value || '').trim().toUpperCase();
+    newName  = document.getElementById('bf-new-name')?.value || ticker;
+    newEoSym = ticker + '.MI';
+    if (!ticker) { alert('Inserisci il ticker del nuovo titolo'); return; }
+  }
+
+  if (!ticker || !qty || !price || !date) {
+    alert('Compila i campi obbligatori: Titolo, Quantità, Prezzo e Data');
+    return;
+  }
+
+  const record = {
+    id: Date.now(), ticker, qty, price, date, notes,
+    invested: parseFloat((qty*price).toFixed(2)),
+    eoSym: newEoSym, name: newName,
+  };
+
+  extraBuys.push(record);
+  await saveExtraBuys();
+  toggleBuyForm();
+  resetBFForm();
+  await loadClosedPositions(); // ricarica tutto e ricostruisce il portafoglio
+}
+
+function resetBFForm() {
+  ['bf-ticker','bf-qty','bf-price','bf-date','bf-notes','bf-new-ticker','bf-new-name'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('bf-new-ticker-wrap').style.display = 'none';
+  document.getElementById('bf-new-name-wrap').style.display   = 'none';
+  const prev = document.getElementById('bf-preview');
+  if (prev) prev.textContent = 'Inserisci quantità e prezzo per vedere il totale investito';
+}
+
+// ── Persistenza extraBuys su Google Sheets ───────────────────────────────
+async function saveExtraBuys() {
+  try {
+    let existing = { closed_positions: [], sentiment: [], extra_buys: [] };
+    try {
+      const rGet = await fetch(`${GS_URL}?action=read`);
+      if (rGet.ok) existing = await rGet.json();
+    } catch(e) { console.warn('Read before save failed:', e); }
+
+    existing.extra_buys = extraBuys;
+    const encoded = encodeURIComponent(JSON.stringify(existing));
+    const r = await fetch(`${GS_URL}?action=write&data=${encoded}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    console.log('Extra buys saved:', extraBuys.length);
+  } catch(e) {
+    console.error('Save extra buys error:', e);
+    alert('Errore salvataggio: ' + e.message);
+  }
+}
+
+// ── Costruisce il portafoglio effettivo (PORTFOLIO statico + extraBuys) ──
+function getEffectivePortfolio() {
+  // Clona PORTFOLIO base
+  const map = {};
+  PORTFOLIO.forEach(p => { map[p.ticker] = { ...p }; });
+
+  // Applica gli acquisti extra
+  extraBuys.forEach(b => {
+    if (map[b.ticker]) {
+      // Titolo esistente: aggiorna qty e prezzo medio ponderato
+      const old = map[b.ticker];
+      const newQty      = old.qty + b.qty;
+      const newInvested = old.invested + b.invested;
+      map[b.ticker] = {
+        ...old,
+        qty: newQty,
+        invested: newInvested,
+        avgPrice: parseFloat((newInvested / newQty).toFixed(4)),
+      };
+    } else {
+      // Nuovo titolo
+      const info = TICKER_INFO[b.ticker] || {};
+      map[b.ticker] = {
+        ticker: b.ticker,
+        eoSym: b.eoSym || info.eoSym || (b.ticker + '.MI'),
+        name:  b.name  || info.name  || b.ticker,
+        qty: b.qty,
+        avgPrice: b.price,
+        invested: b.invested,
+      };
+    }
+  });
+
+  return Object.values(map);
+}
+
 // Calcola quantità residua tenendo conto delle vendite registrate
 function getRemainingQty(ticker, originalQty) {
   const sold = closedPositions
@@ -2871,8 +3101,9 @@ function getDivByTicker(ticker) {
 }
 
 async function loadPortfolio() {
-  const first = PORTFOLIO[0].eoSym;
-  const rest  = PORTFOLIO.slice(1).map(p => p.eoSym).join(',');
+  const EFFECTIVE_PORTFOLIO_PRE = getEffectivePortfolio();
+  const first = EFFECTIVE_PORTFOLIO_PRE[0].eoSym;
+  const rest  = EFFECTIVE_PORTFOLIO_PRE.slice(1).map(p => p.eoSym).join(',');
   const url   = `${PROXY_URL}/quote?symbol=${encodeURIComponent(first)}&s=${encodeURIComponent(rest)}`;
   const now   = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Rome'});
 
@@ -2888,7 +3119,9 @@ async function loadPortfolio() {
 
     const pieLabels = [], pieData = [], pieColors = [];
 
-    PORTFOLIO.forEach((pos, i) => {
+    const EFFECTIVE_PORTFOLIO = EFFECTIVE_PORTFOLIO_PRE;
+
+    EFFECTIVE_PORTFOLIO.forEach((pos, i) => {
       const q           = data[i];
       const price       = q && !q.error ? parseFloat(q.close) : null;
       const remainingQty = getRemainingQty(pos.ticker, pos.qty);
@@ -3161,7 +3394,8 @@ async function loadClosedPositions() {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
     closedPositions = data.closed_positions || [];
-    console.log('Loaded from Google Sheets:', closedPositions.length, 'positions');
+    extraBuys       = data.extra_buys || [];
+    console.log('Loaded from Google Sheets:', closedPositions.length, 'closed,', extraBuys.length, 'extra buys');
   } catch(e) {
     console.error('Load closed error:', e);
     closedPositions = [];
