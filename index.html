@@ -2923,9 +2923,10 @@ function updateKPIs(openInvested, openValue, openPL) {
 
   // ── KPI POSIZIONI APERTE ─────────────────────────────────────────────
   // Dividendi solo sui titoli ancora aperti (non chiusi completamente)
-  const openTickers = PORTFOLIO
-    .filter(p => getRemainingQty(p.ticker, p.qty) > 0)
-    .map(p => p.ticker);
+  const openTickers = getEffectivePortfolio()
+    .filter(p => getRemainingQty(p.ticker, p.qty, p._soldOffset || 0) > 0)
+    .map(p => p.ticker)
+    .filter((v,i,a) => a.indexOf(v) === i); // unique
   const openDivs = DIVIDENDS
     .filter(d => openTickers.includes(d.ticker))
     .reduce((s,d) => s + d.amount, 0);
@@ -3071,39 +3072,64 @@ async function saveExtraBuys() {
 }
 
 // ── Costruisce il portafoglio effettivo (PORTFOLIO statico + extraBuys) ──
+// Restituisce un array di "lotti": ogni lotto ha un ticker e una proprietà
+// _lotId per distinguere lotti diversi dello stesso ticker (es. ISP venduta
+// completamente e poi riacquistata diventa un nuovo lotto separato).
 function getEffectivePortfolio() {
-  // Clona PORTFOLIO base
-  const map = {};
-  PORTFOLIO.forEach(p => { map[p.ticker] = { ...p }; });
+  const lots = [];
 
-  // Applica gli acquisti extra
+  // 1. Lotto base da PORTFOLIO statico
+  PORTFOLIO.forEach(p => {
+    lots.push({ ...p, _lotId: 'base-' + p.ticker, _isBase: true });
+  });
+
+  // 2. Per ogni acquisto extra, decidi se va sul lotto base/esistente
+  //    oppure crea un nuovo lotto separato (se il lotto esistente è
+  //    già completamente chiuso dalle vendite registrate)
   extraBuys.forEach(b => {
-    if (map[b.ticker]) {
-      // Titolo esistente: aggiorna qty e prezzo medio ponderato
-      const old = map[b.ticker];
-      const newQty      = old.qty + b.qty;
-      const newInvested = old.invested + b.invested;
-      map[b.ticker] = {
-        ...old,
-        qty: newQty,
-        invested: newInvested,
-        avgPrice: parseFloat((newInvested / newQty).toFixed(4)),
-      };
+    // Trova un lotto esistente per questo ticker che NON sia già
+    // completamente chiuso (somma vendite < somma quantità lotto)
+    const soldQty = closedPositions
+      .filter(p => p.ticker === b.ticker)
+      .reduce((s,p) => s + p.qty, 0);
+
+    // Quantità totale già presente nei lotti per questo ticker (prima di questo buy)
+    let totalLotQty = lots
+      .filter(l => l.ticker === b.ticker)
+      .reduce((s,l) => s + l.qty, 0);
+
+    // Se le vendite hanno già consumato tutta la quantità accumulata finora,
+    // questo acquisto è un NUOVO lotto indipendente
+    const existingLot = lots.find(l => l.ticker === b.ticker && l._open !== false);
+
+    if (existingLot && soldQty < totalLotQty) {
+      // Aggiorna il lotto esistente (ancora apribile)
+      const newQty      = existingLot.qty + b.qty;
+      const newInvested = existingLot.invested + b.invested;
+      existingLot.qty      = newQty;
+      existingLot.invested = newInvested;
+      existingLot.avgPrice = parseFloat((newInvested / newQty).toFixed(4));
     } else {
-      // Nuovo titolo
+      // Nuovo lotto separato (anche se il ticker esiste già ma è esaurito)
       const info = TICKER_INFO[b.ticker] || {};
-      map[b.ticker] = {
+      // Se esisteva un lotto e ora è esaurito, marcalo come chiuso per non confonderlo
+      if (existingLot) existingLot._open = false;
+
+      lots.push({
         ticker: b.ticker,
         eoSym: b.eoSym || info.eoSym || (b.ticker + '.MI'),
-        name:  b.name  || info.name  || b.ticker,
+        name:  (b.name || info.name || b.ticker) + (existingLot ? ' (nuovo lotto)' : ''),
         qty: b.qty,
         avgPrice: b.price,
         invested: b.invested,
-      };
+        _lotId: 'extra-' + b.id,
+        _isBase: false,
+        _soldOffset: soldQty, // quante vendite "appartengono" al lotto precedente, non a questo
+      });
     }
   });
 
-  return Object.values(map);
+  return lots;
 }
 
 // ── Render tabella acquisti extra ────────────────────────────────────────
@@ -3144,17 +3170,22 @@ async function deleteExtraBuy(id) {
   await loadPortfolio();
 }
 
-// Calcola quantità residua tenendo conto delle vendite registrate
-function getRemainingQty(ticker, originalQty) {
-  const sold = closedPositions
+// Calcola quantità residua per un LOTTO specifico, tenendo conto
+// dell'offset di vendite già "consumate" da lotti precedenti dello stesso ticker
+function getRemainingQty(ticker, originalQty, soldOffset = 0) {
+  const totalSold = closedPositions
     .filter(p => p.ticker === ticker)
     .reduce((sum, p) => sum + p.qty, 0);
-  return Math.max(0, originalQty - sold);
+
+  // Vendite applicabili a questo lotto = vendite totali meno quelle già
+  // assorbite da lotti precedenti (soldOffset)
+  const soldForThisLot = Math.max(0, totalSold - soldOffset);
+  return Math.max(0, originalQty - soldForThisLot);
 }
 
-// Verifica se una posizione è completamente chiusa
-function isFullyClosed(ticker, originalQty) {
-  return getRemainingQty(ticker, originalQty) === 0;
+// Verifica se una posizione/lotto è completamente chiusa
+function isFullyClosed(ticker, originalQty, soldOffset = 0) {
+  return getRemainingQty(ticker, originalQty, soldOffset) === 0;
 }
 
 // Dividendi per ticker (da DIVIDENDS array)
@@ -3187,7 +3218,8 @@ async function loadPortfolio() {
     EFFECTIVE_PORTFOLIO.forEach((pos, i) => {
       const q           = data[i];
       const price       = q && !q.error ? parseFloat(q.close) : null;
-      const remainingQty = getRemainingQty(pos.ticker, pos.qty);
+      const soldOffset    = pos._soldOffset || 0;
+      const remainingQty = getRemainingQty(pos.ticker, pos.qty, soldOffset);
       const fullyClosed  = remainingQty === 0;
 
       // Investito residuo proporzionale alla quantità rimanente
