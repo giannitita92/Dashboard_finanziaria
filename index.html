@@ -546,6 +546,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       </div>
     </div>
 
+    <!-- Tabella acquisti registrati manualmente -->
+    <div id="extra-buys-wrap" style="display:none;margin-bottom:14px">
+      <div class="chart-panel">
+        <div style="padding:10px 14px;border-bottom:.5px solid var(--border);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)">
+          Acquisti registrati manualmente
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="border-bottom:.5px solid var(--border)">
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3)">Titolo</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Qtà</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Prezzo</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Investito</th>
+                <th style="padding:8px 14px;text-align:right;font-size:11px;font-weight:500;color:var(--text3)">Data</th>
+                <th style="padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--text3)">Note</th>
+                <th style="padding:8px 14px;text-align:center;font-size:11px;font-weight:500;color:var(--text3)">Del</th>
+              </tr>
+            </thead>
+            <tbody id="extra-buys-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- Riepilogo totale (vecchio — ora nascosto, sostituito dai KPI sopra) -->
     <div style="display:none" id="pf-summary">
       <div class="pf-card-metric"><div class="pf-metric-label">Investito totale</div><div class="pf-metric-val" id="pf-invested">€ 42.188,08</div></div>
@@ -3081,6 +3106,44 @@ function getEffectivePortfolio() {
   return Object.values(map);
 }
 
+// ── Render tabella acquisti extra ────────────────────────────────────────
+function renderExtraBuys() {
+  const wrap  = document.getElementById('extra-buys-wrap');
+  const tbody = document.getElementById('extra-buys-tbody');
+  if (!wrap || !tbody) return;
+
+  if (!extraBuys.length) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'block';
+
+  tbody.innerHTML = extraBuys.slice().reverse().map(b => {
+    const fmtD = d => d ? new Date(d).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'2-digit'}) : '—';
+    const name = b.name || (TICKER_INFO[b.ticker]?.name) || b.ticker;
+    return `<tr style="border-bottom:.5px solid var(--border)">
+      <td style="padding:8px 14px;font-weight:500;color:var(--text)">${name}<br><span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">${b.ticker}</span></td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${b.qty}</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${fmt(b.price,4)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace">${fmt(b.invested)} €</td>
+      <td style="padding:8px 14px;text-align:right;font-family:'DM Mono',monospace;color:var(--text3)">${fmtD(b.date)}</td>
+      <td style="padding:8px 14px;color:var(--text3);font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${b.notes||'—'}</td>
+      <td style="padding:8px 14px;text-align:center">
+        <button onclick="deleteExtraBuy(${b.id})" style="background:none;border:none;color:var(--down);cursor:pointer;font-size:14px" title="Elimina">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Elimina acquisto ──────────────────────────────────────────────────────
+async function deleteExtraBuy(id) {
+  if (!confirm('Eliminare questo acquisto? Il prezzo medio e le quantità del titolo torneranno ai valori precedenti.')) return;
+  extraBuys = extraBuys.filter(b => b.id !== id);
+  await saveExtraBuys();
+  renderExtraBuys();
+  await loadPortfolio();
+}
+
 // Calcola quantità residua tenendo conto delle vendite registrate
 function getRemainingQty(ticker, originalQty) {
   const sold = closedPositions
@@ -3395,6 +3458,7 @@ async function loadClosedPositions() {
     const data = await r.json();
     closedPositions = data.closed_positions || [];
     extraBuys       = data.extra_buys || [];
+    renderExtraBuys();
     console.log('Loaded from Google Sheets:', closedPositions.length, 'closed,', extraBuys.length, 'extra buys');
   } catch(e) {
     console.error('Load closed error:', e);
