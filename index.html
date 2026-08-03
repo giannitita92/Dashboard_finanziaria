@@ -3054,13 +3054,24 @@ function resetBFForm() {
 // ── Persistenza extraBuys su Google Sheets ───────────────────────────────
 async function saveExtraBuys() {
   try {
-    let existing = { closed_positions: [], sentiment: [], extra_buys: [] };
+    // Leggi dati esistenti — se fallisce NON procedere
+    let existing = null;
     try {
       const rGet = await fetch(`${GS_URL}?action=read`);
-      if (rGet.ok) existing = await rGet.json();
+      if (rGet.ok) {
+        const parsed = await rGet.json();
+        if (parsed && typeof parsed === 'object') existing = parsed;
+      }
     } catch(e) { console.warn('Read before save failed:', e); }
 
+    if (!existing) {
+      alert('Impossibile leggere i dati esistenti — salvataggio annullato per sicurezza. Riprova tra qualche secondo.');
+      return;
+    }
+
     existing.extra_buys = extraBuys;
+    existing.closed_positions = closedPositions;
+
     const encoded = encodeURIComponent(JSON.stringify(existing));
     const r = await fetch(`${GS_URL}?action=write&data=${encoded}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -3503,22 +3514,34 @@ async function loadClosedPositions() {
 // ── Save su Google Sheets (GET per evitare CORS) ─────────────────────────
 async function saveAllClosed() {
   try {
-    // Leggi dati esistenti
-    let existing = { closed_positions: [], sentiment: [] };
+    // Leggi dati esistenti — se fallisce NON procedere (evita di sovrascrivere con vuoto)
+    let existing = null;
     try {
       const rGet = await fetch(`${GS_URL}?action=read`);
-      if (rGet.ok) existing = await rGet.json();
-    } catch(e) { console.warn('Read before save failed:', e); }
+      if (rGet.ok) {
+        const parsed = await rGet.json();
+        // Verifica che la risposta sia valida e non vuota
+        if (parsed && typeof parsed === 'object') existing = parsed;
+      }
+    } catch(e) {
+      console.warn('Read before save failed:', e);
+    }
 
+    if (!existing) {
+      alert('Impossibile leggere i dati esistenti — salvataggio annullato per sicurezza. Riprova tra qualche secondo.');
+      return;
+    }
+
+    // Aggiorna solo closed_positions, preservando tutto il resto
     existing.closed_positions = closedPositions;
+    existing.extra_buys = extraBuys;
 
-    // Usa GET con data encodata per evitare CORS su POST
     const encoded = encodeURIComponent(JSON.stringify(existing));
     const r = await fetch(`${GS_URL}?action=write&data=${encoded}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const result = await r.json();
     if (!result.ok) throw new Error('Save failed');
-    console.log('Saved to Google Sheets:', closedPositions.length, 'positions');
+    console.log('Saved to Google Sheets:', closedPositions.length, 'positions,', extraBuys.length, 'extra buys');
   } catch(e) {
     console.error('Save error:', e);
     alert('Errore salvataggio: ' + e.message);
